@@ -1,0 +1,13 @@
+{
+  // File associations to languages
+  "files.associations": {
+    ".babelrc": "json",
+    "[Dd]ockerfile*": "dockerfile",
+    "docker-compose*": "yaml",
+    ".eslintrc": "json",
+    ".lintstagedrc": "json",
+    ".prettierrc": "json",
+    ".stylelintrc": "json",
+    "{start,stop}": "shellscript"
+  }
+}
