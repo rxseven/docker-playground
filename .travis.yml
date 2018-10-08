@@ -1,5 +1,14 @@
 sudo: required
 
+language: node_js
+
+node_js:
+  - 10.11.0
+
+cache:
+  directories:
+    - node_modules
+
 env:
   - DOCKER_COMPOSE_VERSION=1.22.0
 
@@ -32,3 +41,9 @@ deploy:
     script: bash ./scripts/deploy.image.sh
     on:
       branch: master
+  # Deploy to a production server
+  - provider: heroku
+    app:
+      master: docker-playground-react
+    api_key:
+      secure: $HEROKU_API_KEY
