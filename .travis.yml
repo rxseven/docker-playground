@@ -1,5 +1,14 @@
 sudo: required
 
+language: node_js
+
+node_js:
+  - 10.11.0
+
+cache:
+  directories:
+    - node_modules
+
 env:
   - DOCKER_COMPOSE_VERSION=1.22.0
 
@@ -26,9 +35,20 @@ script:
   # Run a container for testing
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
 
+after_script:
+  # Remove unused image and container
+  - docker-compose down
+  - docker image rm rxseven/playground:ci
+
 deploy:
   # Push a production image to Docker Hub
   - provider: script
-    script: bash docker_push
+    script: bash ./scripts/deploy.image.sh
     on:
       branch: master
+  # Deploy to a production server
+  - provider: heroku
+    app:
+      master: docker-playground-react
+    api_key:
+      secure: $HEROKU_API_KEY
