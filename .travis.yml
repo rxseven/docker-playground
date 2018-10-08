@@ -1,8 +1,13 @@
 sudo: required
 
 env:
-  - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
   - DOCKER_COMPOSE_VERSION=1.22.0
+
+addons:
+  apt:
+    packages:
+      # Upgrade to the latest version of Docker Community Edition
+      - docker-ce
 
 services:
   - docker
