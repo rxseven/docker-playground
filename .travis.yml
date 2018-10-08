@@ -28,9 +28,6 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 
-  # Build an image for running tests
-  - docker-compose build app
-
 script:
   # Run a container for testing
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
