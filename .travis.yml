@@ -29,6 +29,6 @@ script:
 deploy:
   # Push a production image to Docker Hub
   - provider: script
-    script: bash docker_push
+    script: bash ./scripts/deploy.image.sh
     on:
       branch: master
