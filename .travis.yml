@@ -25,3 +25,10 @@ before_install:
 script:
   # Run a container for testing
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+
+deploy:
+  # Push a production image to Docker Hub
+  - provider: script
+    script: bash docker_push
+    on:
+      branch: master
