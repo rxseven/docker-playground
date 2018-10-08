@@ -1,0 +1,20 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: "${IMAGE_REPO}-local"
+    environment:
+      - NODE_ENV=development
+    image: "local/${IMAGE_REPO}:development"
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: .
+        target: ${WORKDIR}
+      - type: volume
+        source: node_modules
+        target: "${WORKDIR}/node_modules"
+
+volumes:
+  node_modules:
