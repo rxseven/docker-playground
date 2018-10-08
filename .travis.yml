@@ -1,0 +1,12 @@
+sudo: required
+
+services:
+  - docker
+
+before_install:
+  # Build an image for running tests
+  - docker-compose build app
+
+script:
+  # Run a container for testing
+  - docker container run -e NODE_ENV=test --name playground-test --rm local/playground:development test:coverage
