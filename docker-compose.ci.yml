@@ -3,8 +3,8 @@ version: "3.7"
 services:
   app:
     command: test:coverage
-    container_name: "${IMAGE_REPO}-ci"
+    container_name: "app-ci"
     environment:
       - CI=true
       - NODE_ENV=test
-    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:ci"
+    image: "app:ci"

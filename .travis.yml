@@ -38,7 +38,7 @@ script:
 after_script:
   # Remove unused image and container
   - docker-compose down
-  - docker image rm rxseven/playground:ci
+  - docker image rm app:ci
 
 deploy:
   # Push a production image to Docker Hub
