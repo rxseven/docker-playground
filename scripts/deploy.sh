@@ -7,7 +7,7 @@ zip build.zip Dockerrun.aws.json
 docker-compose -f docker-compose.yml -f docker-compose.production.yml build
 
 # Login to Docker Hub
-echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
 # Push the production image to Docker Hub
-docker push rxseven/playground:0.0.6
+docker push rxseven/playground:${BUILD_VERSION}
