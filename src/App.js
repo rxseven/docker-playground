@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { hot } from 'react-hot-loader';
 import logo from './logo.svg';
 import './App.css';
 
@@ -19,10 +20,11 @@ class App extends Component {
           >
             Learn React
           </a>
+          <p>Bootstraped with CRA!</p>
         </header>
       </div>
     );
   }
 }
 
-export default App;
+export default hot(module)(App);
