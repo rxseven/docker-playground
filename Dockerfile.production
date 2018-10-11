@@ -35,6 +35,8 @@ FROM nginx:${NGINX_VERSION}
 
 # Specify build and environment variables
 ARG BUILD_ENV
+ARG BUILD_RELEASE_DATE
+ARG BUILD_RELEASE_VERSION
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
 
@@ -42,8 +44,8 @@ ENV NODE_ENV=${BUILD_ENV}
 LABEL description="Docker playground image"
 LABEL license="GNU Affero General Public License v3.0"
 LABEL maintainer="Theerawat Pongsupawat <rxseven.com@gmail.com>"
-LABEL release-date="2018-10-11"
-LABEL version="0.0.2"
+LABEL release-date=${BUILD_RELEASE_DATE}
+LABEL version=${BUILD_RELEASE_VERSION}
 
 # Customize web server configuration
 COPY ./config/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
