@@ -110,5 +110,8 @@
     "presets": [
       "react-app"
     ]
+  },
+  "devDependencies": {
+    "coveralls": "^3.0.2"
   }
 }
