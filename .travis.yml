@@ -56,6 +56,8 @@ deploy:
     env: "docker-playground-env"
     bucket_name: "elasticbeanstalk-ap-northeast-1-413973540256"
     bucket_path: "docker-playground"
+    skip_cleanup: true
+    zip_file: "aws.zip"
     on:
       branch: master
     access_key_id: $AWS_ACCESS_KEY
