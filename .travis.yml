@@ -31,13 +31,11 @@ before_install:
 script:
   # Run a container for testing
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
-  # Create a deployment configuration file
-  - bash ./scripts/deploy.production.sh
 
 deploy:
-  # Push a production image to Docker Hub
+  # Create deployment configuration and build a production image
   - provider: script
-    script: bash ./scripts/deploy.image.sh
+    script: bash ./scripts/deploy.sh
     on:
       branch: master
   # Deploy to a production server 1 (Heroku)
