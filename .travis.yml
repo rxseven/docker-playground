@@ -31,6 +31,8 @@ before_install:
 script:
   # Run a container for testing
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # Create a deployment configuration file
+  - bash ./scripts/deploy.production.sh
 
 deploy:
   # Push a production image to Docker Hub
@@ -46,7 +48,6 @@ deploy:
       secure: $HEROKU_API_KEY
   # Deploy to a production server 2 (AWS Elastic Beanstalk)
   - provider: elasticbeanstalk
-    script: bash ./scripts/deploy.production.sh
     region: "ap-northeast-1"
     app: "docker-playground"
     env: "docker-playground-env"
