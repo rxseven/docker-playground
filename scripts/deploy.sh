@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Create a zip file containing deployment configuration
-zip build.zip Dockerrun.aws.json
+zip ${BUILD_ZIP} Dockerrun.aws.json
 
 # Build a production image for deployment
 docker-compose -f docker-compose.yml -f docker-compose.production.yml build
