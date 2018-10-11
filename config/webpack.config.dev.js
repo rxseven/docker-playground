@@ -256,6 +256,9 @@ module.exports = {
               // debugger to show the original code. Instead, the code
               // being evaluated would be much more helpful.
               sourceMaps: false,
+
+              // React Hot Loader
+              plugins: ['react-hot-loader/babel']
             },
           },
           // "postcss" loader applies autoprefixer to our CSS.
