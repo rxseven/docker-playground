@@ -28,9 +28,6 @@ before_install:
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
 
-  # Build an image for running tests
-  - docker-compose build app
-
 script:
   # Run a container for testing
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
@@ -38,7 +35,7 @@ script:
 after_script:
   # Remove unused image and container
   - docker-compose down
-  - docker image rm rxseven/playground:ci
+  - docker image rm app:ci
 
 deploy:
   # Push a production image to Docker Hub
@@ -46,9 +43,21 @@ deploy:
     script: bash ./scripts/deploy.image.sh
     on:
       branch: master
-  # Deploy to a production server
+  # Deploy to a production server 1 (Heroku)
   - provider: heroku
     app:
       master: docker-playground-react
     api_key:
       secure: $HEROKU_API_KEY
+  # Deploy to a production server 2 (AWS Elastic Beanstalk)
+  - provider: elasticbeanstalk
+    region: "ap-northeast-1"
+    app: "docker-playground"
+    env: "docker-playground-env"
+    bucket_name: "elasticbeanstalk-ap-northeast-1-413973540256"
+    bucket_path: "docker-playground"
+    on:
+      branch: master
+    access_key_id: $AWS_ACCESS_KEY
+    secret_access_key:
+      secure: "$AWS_SECRET_KEY"

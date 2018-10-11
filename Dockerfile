@@ -16,8 +16,7 @@ WORKDIR ${WORKDIR}
 
 # Install and update dependencies
 COPY package.json yarn.lock ./
-RUN yarn
-RUN yarn cache clean
+RUN yarn && yarn cache clean
 
 # Copy the entire contents from the host and add them to the container
 COPY . .
