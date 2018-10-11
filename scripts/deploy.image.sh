@@ -7,4 +7,4 @@ docker-compose -f docker-compose.yml -f docker-compose.production.yml build
 echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 # Push the production image to Docker Hub
-docker push rxseven/playground:0.0.2
+docker push rxseven/playground:0.0.3
