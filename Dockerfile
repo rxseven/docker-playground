@@ -10,6 +10,7 @@ FROM node:${NODE_VERSION} as app
 ARG BUILD_ENV
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
+ENV PATH /usr/src/app/node_modules/.bin:${PATH}
 
 # Specify the working directory
 WORKDIR ${WORKDIR}
