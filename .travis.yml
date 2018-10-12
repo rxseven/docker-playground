@@ -35,14 +35,13 @@ before_install:
 script:
   # Run a container for testing, run tests, and generate a coverage report
   - ls
-  - mkdir coverage
-  - cd coverage && touch yo.txt
-  - ls
+  - mkdir coverage && cd coverage && touch yo.txt && ls
   - cd ..
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   - cd coverage
   - ls
   - cd ..
+  - pwd
 
 deploy:
   # Create deployment configuration and build a production image
