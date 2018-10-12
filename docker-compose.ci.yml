@@ -8,3 +8,7 @@ services:
       - CI=true
       - NODE_ENV=test
     image: "app:ci"
+    volumes:
+      - type: bind
+        source: /coverage
+        target: /coverage
