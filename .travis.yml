@@ -44,7 +44,7 @@ script:
   - pwd
   # - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
   # - docker container run app:ci test:coverage:ci1
-  - docker container run -v ${pwd}/coverage:/usr/src/app/coverage app:ci test:coverage:ci1
+  - docker container run -v ${pwd}/coverage:/usr/src/app/coverage app:ci test:coverage:ci
 
 deploy:
   # Create deployment configuration and build a production image
