@@ -38,7 +38,8 @@ script:
   - mkdir coverage
   - ls
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
-  - cd coverage && ls
+  - cd coverage
+  - ls
 
 deploy:
   # Create deployment configuration and build a production image
