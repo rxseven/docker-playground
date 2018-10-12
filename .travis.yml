@@ -42,6 +42,7 @@ script:
   - ls
   - cd ..
   - pwd
+  - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
 
 deploy:
   # Create deployment configuration and build a production image
@@ -71,7 +72,6 @@ deploy:
       secure: "$AWS_SECRET_KEY"
 
 after_script:
-  - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
   - cd coverage && ls && cd ..
   - cd node_modules && ls
   - cd / && pwd
