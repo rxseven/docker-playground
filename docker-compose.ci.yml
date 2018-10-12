@@ -10,5 +10,5 @@ services:
     image: "app:ci"
     volumes:
       - type: bind
-        source: ./coverage
-        target: /coverage
+        source: ./coverage # Travis CI
+        target: /usr/src/app/coverage  # Docker container
