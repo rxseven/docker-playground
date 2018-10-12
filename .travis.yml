@@ -34,8 +34,11 @@ before_install:
 
 script:
   # Run a container for testing, run tests, and generate a coverage report
+  - ls
   - mkdir coverage
+  - ls
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  - cd coverage && ls
 
 deploy:
   # Create deployment configuration and build a production image
