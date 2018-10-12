@@ -38,11 +38,11 @@ script:
   - mkdir coverage
   - cd coverage && touch yo.txt
   - ls
-  - cd /
+  - cd ..
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   - cd coverage
   - ls
-  - cd /
+  - cd ..
 
 deploy:
   # Create deployment configuration and build a production image
