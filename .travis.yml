@@ -71,7 +71,8 @@ deploy:
       secure: "$AWS_SECRET_KEY"
 
 after_script:
-  - docker container run --name coverage-report app:ci test:coverage:ci
-  - cd node_modules/.bin && ls
+  - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
+  - cd coverage && ls && cd ..
+  - cd node_modules && ls
   - cd / && pwd
   - cd ~/ && pwd
