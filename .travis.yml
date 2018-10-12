@@ -36,6 +36,7 @@ script:
   # Run a container for testing, run tests, and generate a coverage report
   - pwd
   - ls
+  - mkdir coverage
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   - cd coverage
   - ls
