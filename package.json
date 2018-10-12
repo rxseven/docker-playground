@@ -59,6 +59,7 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "test:coverage": "yarn test --coverage --no-cache --silent",
+    "test:coverage:ci1": "cat coverage/lcov.info | node node_modules/.bin/coveralls",
     "test:coverage:ci": "cat /usr/src/app/coverage/lcov.info | /usr/src/app/node node_modules/.bin/coveralls",
     "start:https": "HTTPS=true yarn start"
   },
