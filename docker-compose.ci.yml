@@ -10,5 +10,5 @@ services:
     image: "app:ci"
     volumes:
       - type: bind
-        source: /coverage
+        source: ./coverage
         target: /coverage
