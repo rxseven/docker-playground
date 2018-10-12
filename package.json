@@ -59,7 +59,7 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
     "test:coverage": "yarn test --coverage --no-cache --silent",
-    "test:coverage:ci": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
+    "test:coverage:ci": "cat coverage/lcov.info | node node_modules/.bin/coveralls",
     "start:https": "HTTPS=true yarn start"
   },
   "eslintConfig": {
