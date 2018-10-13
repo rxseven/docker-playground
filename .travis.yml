@@ -46,6 +46,7 @@ script:
   - cd coverage
   - ls
   - pwd
+  - cat lcov.info
   - cd ..
   - pwd
   - echo $PWD
