@@ -39,10 +39,11 @@ script:
   - npm run test:coverage
   # - mkdir coverage
   # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
-  # - cd coverage
+  - cd coverage
   - ls
-  # - cd ..
-  # - pwd
+  - pwd
+  - cd ..
+  - pwd
   # - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
   # - docker container run app:ci test:coverage:ci:travis
   # - docker container create -e NODE_ENV=test -v $PWD/coverage:/usr/src/app/coverage --name app-test-coverage app:ci test:coverage:ci
