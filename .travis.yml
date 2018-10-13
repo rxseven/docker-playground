@@ -76,7 +76,7 @@ deploy:
       secure: "$AWS_SECRET_KEY"
 
 after_script:
-  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci:legacy
+  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci:travis
   - cd coverage
   - ls
   - cd / && pwd
