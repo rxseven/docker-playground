@@ -43,7 +43,7 @@ script:
   - cd ..
   - pwd
   # - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
-  # - docker container run app:ci test:coverage:ci1
+  # - docker container run app:ci test:coverage:ci:travis
   # - docker container create -e NODE_ENV=test -v $PWD/coverage:/usr/src/app/coverage --name app-test-coverage app:ci test:coverage:ci
   # - docker container inspect app-test-coverage
   # - docker container start app-test-coverage
