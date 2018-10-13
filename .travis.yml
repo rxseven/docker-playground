@@ -47,8 +47,9 @@ script:
   - ls
   - pwd
   # - cat lcov.info
-  - cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
   - cd ..
+  - cat $PWD/coverage/lcov.info
+  # - cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
   - pwd
   - echo $PWD
   - ls $PWD/coverage
