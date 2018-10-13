@@ -46,8 +46,8 @@ script:
   - cd coverage
   - ls
   - pwd
-  - cat lcov.info
-  - cat COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
+  # - cat lcov.info
+  - cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
   - cd ..
   - pwd
   - echo $PWD
