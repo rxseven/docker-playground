@@ -47,6 +47,7 @@ script:
   # - docker container create -e NODE_ENV=test -v $PWD/coverage:/usr/src/app/coverage --name app-test-coverage app:ci test:coverage:ci
   # - docker container inspect app-test-coverage
   # - docker container start app-test-coverage
+  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci:travis
 
 deploy:
   # Create deployment configuration and build a production image
@@ -76,7 +77,7 @@ deploy:
       secure: "$AWS_SECRET_KEY"
 
 after_script:
-  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci:travis
+  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci:travis
   - cd coverage
   - ls
   - cd / && pwd
