@@ -37,10 +37,10 @@ script:
   - pwd
   - ls
   # The following legacy script works
-  # - npm run test:coverage
+  - npm run test:coverage
   # Running coverage testing in a container
-  - mkdir coverage
-  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # - mkdir coverage
+  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs
   - ls
   - cd coverage
@@ -52,7 +52,7 @@ script:
   - echo $PWD
   - ls $PWD/coverage
   # Coveralls
-  - cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
+  # - cat $PWD/coverage/lcov.info
   # - cat ./coverage/lcov.info
   - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
   # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
