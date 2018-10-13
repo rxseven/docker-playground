@@ -37,21 +37,20 @@ script:
   - pwd
   - ls
   # The following legacy script works
-  - npm run test:coverage
-  # - mkdir coverage
-  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # - npm run test:coverage
+  # Running coverage testing in a container
+  - mkdir coverage
+  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # Logs
   - cd coverage
   - ls
   - pwd
   - cd ..
   - pwd
   - echo $PWD
-  # - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
-  # - docker container run app:ci test:coverage:ci:travis
-  # - docker container create -e NODE_ENV=test -v $PWD/coverage:/usr/src/app/coverage --name app-test-coverage app:ci test:coverage:ci
-  # - docker container inspect app-test-coverage
-  # - docker container start app-test-coverage
-  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci:travis
+  - ls $PWD/coverage
+  # Coveralls
+  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
 
 deploy:
   # Create deployment configuration and build a production image
@@ -81,12 +80,10 @@ deploy:
       secure: "$AWS_SECRET_KEY"
 
 after_script:
-  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci:travis
-  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
   - pwd
   - ls
   # The following script works
-  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
+  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
   - cd coverage
   - ls
   - cd / && pwd
