@@ -47,6 +47,8 @@ script:
   - ls
   - pwd
   - stat --format '%a' lcov.info
+  - chmod 664 lcov.info
+  - stat --format '%a' lcov.info
   # - cat lcov.info
   - cd ..
   - pwd
