@@ -58,6 +58,7 @@ script:
   # - cat $PWD/coverage/lcov.info
   # - cat ./coverage/lcov.info
   # - cat ./coverage/lcov.info | coveralls
+  - stat --format '%a' $PWD/coverage/lcov.info
   - cat $PWD/coverage/lcov.info | coveralls
   - ls ./coverage
   - ls
