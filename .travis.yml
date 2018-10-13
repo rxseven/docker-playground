@@ -37,18 +37,18 @@ script:
   - pwd
   - ls
   # The following legacy script works
-  # - npm run test:coverage
+  - npm run test:coverage
   # Running coverage testing in a container
-  - mkdir coverage
-  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # - mkdir coverage
+  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs
   - ls
   - cd coverage
   - ls
   - pwd
   - stat --format '%a' lcov.info
-  - sudo chmod 664 lcov.info
-  - stat --format '%a' lcov.info
+  # - sudo chmod 664 lcov.info
+  # - stat --format '%a' lcov.info
   # - cat lcov.info
   - cd ..
   - pwd
