@@ -49,8 +49,10 @@ script:
   - pwd
   - echo $PWD
   - ls $PWD/coverage
+  # Coveralls (use $PWD)
+  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
   # Coveralls
-  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
+  - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
 
 deploy:
   # Create deployment configuration and build a production image
