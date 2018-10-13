@@ -36,6 +36,7 @@ script:
   # Run a container for testing, run tests, and generate a coverage report
   - pwd
   - ls
+  # The following legacy script works
   - npm run test:coverage
   # - mkdir coverage
   # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
@@ -44,6 +45,7 @@ script:
   - pwd
   - cd ..
   - pwd
+  - echo $PWD
   # - docker container run --name coverage-report -v $(pwd)/coverage:/usr/src/app/coverage app:ci test:coverage:ci
   # - docker container run app:ci test:coverage:ci:travis
   # - docker container create -e NODE_ENV=test -v $PWD/coverage:/usr/src/app/coverage --name app-test-coverage app:ci test:coverage:ci
@@ -83,6 +85,7 @@ after_script:
   # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
   - pwd
   - ls
+  # The following script works
   - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
   - cd coverage
   - ls
