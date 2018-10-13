@@ -37,10 +37,10 @@ script:
   - pwd
   - ls
   # The following legacy script works
-  - npm run test:coverage
+  # - npm run test:coverage
   # Running coverage testing in a container
-  # - mkdir coverage
-  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  - mkdir coverage
+  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs
   - ls
   - cd coverage
@@ -59,7 +59,7 @@ script:
   - cat $PWD/coverage/lcov.info | coveralls
   - ls ./coverage
   - ls
-  - rm -rf ./coverage
+  # - rm -rf ./coverage
   - ls
 
 deploy:
