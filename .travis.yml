@@ -56,6 +56,9 @@ script:
   # - cat ./coverage/lcov.info
   - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat $PWD/coverage/lcov.info | coveralls
   - ls ./coverage
+  - ls
+  - rm -rf ./coverage
+  - ls
   # - cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
   # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
 
