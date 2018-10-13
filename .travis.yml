@@ -37,10 +37,10 @@ script:
   - pwd
   - ls
   # The following legacy script works
-  - npm run test:coverage
+  # - npm run test:coverage
   # Running coverage testing in a container
-  # - mkdir coverage
-  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  - mkdir coverage
+  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs
   - ls
   - cd coverage
@@ -51,16 +51,15 @@ script:
   - pwd
   - echo $PWD
   - ls $PWD/coverage
-  # Coveralls
+  # Coveralls, it works without credential and node_modules path
   # - cat $PWD/coverage/lcov.info
   # - cat ./coverage/lcov.info
+  # - cat ./coverage/lcov.info | coveralls
   - cat $PWD/coverage/lcov.info | coveralls
   - ls ./coverage
   - ls
   - rm -rf ./coverage
   - ls
-  # - cat $PWD/coverage/lcov.info | node node_modules/.bin/coveralls
-  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
 
 deploy:
   # Create deployment configuration and build a production image
@@ -90,11 +89,11 @@ deploy:
       secure: "$AWS_SECRET_KEY"
 
 after_script:
-  - pwd
-  - ls
+  # - pwd
+  # - ls
   # The following script works
   # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
-  - cd coverage
-  - ls
-  - cd / && pwd
-  - cd ~/ && pwd
+  # - cd coverage
+  # - ls
+  # - cd / && pwd
+  # - cd ~/ && pwd
