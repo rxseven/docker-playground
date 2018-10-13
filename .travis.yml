@@ -47,6 +47,7 @@ script:
   - ls
   - pwd
   - cat lcov.info
+  - cat $PWD/coverage/lcov.info
   - cd ..
   - pwd
   - echo $PWD
