@@ -43,9 +43,9 @@ script:
   - ls
   - cd ..
   # The following legacy script works
-  # - npm run test:coverage
+  - npm run test:coverage
   # Running coverage testing in a container
-  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs
   - ls
   - cd coverage
