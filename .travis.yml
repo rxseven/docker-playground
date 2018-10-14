@@ -34,6 +34,7 @@ before_install:
 
 script:
   # Run a container for testing, run tests, and generate a coverage report
+  - echo $IMAGE_BASE_NODE
   - pwd
   - ls
   - mkdir coverage
