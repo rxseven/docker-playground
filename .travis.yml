@@ -36,10 +36,15 @@ script:
   # Run a container for testing, run tests, and generate a coverage report
   - pwd
   - ls
+  - mkdir coverage
+  - ls
+  - touch ./coverage/lcov.info
+  - cd ./coverage
+  - ls
+  - cd ..
   # The following legacy script works
   - npm run test:coverage
   # Running coverage testing in a container
-  # - mkdir coverage
   # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs
   - ls
