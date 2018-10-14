@@ -11,4 +11,4 @@ services:
     volumes:
       - type: bind
         source: ./coverage # Travis CI
-        target: /usr/src/app/coverage  # Docker container
+        target: "${WORKDIR}/coverage"  # Docker container
