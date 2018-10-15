@@ -46,8 +46,8 @@ script:
   - docker image ls
   - docker container ls -a
   # Copy
-  - docker cp app-ci:/usr/src/app/coverage ./
-  - cat $PWD/coverage/lcov.info
+  - docker cp app-ci:$CONTAINER_WORKDIR/coverage ./
+  # - cat $PWD/coverage/lcov.info
   - yarn replace $CONTAINER_WORKDIR $TRAVIS_BUILD_DIR $CODE_COVERAGE_DATA
   # Logs
   - ls
@@ -62,7 +62,7 @@ script:
   - echo $PWD
   - ls $PWD/coverage
   # Coveralls, it works without credential and node_modules path
-  - cat $PWD/coverage/lcov.info
+  # - cat $PWD/coverage/lcov.info
   # - stat --format '%a' $PWD/coverage/lcov.info
   - cat $PWD/coverage/lcov.info | coveralls
   - ls ./coverage
