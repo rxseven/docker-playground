@@ -44,9 +44,9 @@ script:
   # - ls
   # - cd ..
   # The following legacy script works
-  - yarn test:coverage
+  # - yarn test:coverage
   # Running coverage testing in a container
-  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs
   - ls
   - cd coverage
