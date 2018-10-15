@@ -36,12 +36,12 @@ before_install:
 
 script:
   # Run tests and generate code coverage reports
-  - ./scripts/ci.tests.sh
+  - ./scripts/ci/tests.sh
 
 deploy:
   # Create deployment configuration and build a production image
   - provider: script
-    script: bash ./scripts/deploy.sh
+    script: ./scripts/ci/deploy.sh
     on:
       branch: master
   # Deploy to a production server 1 (Heroku)
