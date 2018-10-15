@@ -3,10 +3,6 @@
 # Run a container for testing, run tests, and generate code coverage reports
 docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
 
-# List images and containers
-docker image ls
-docker container ls -a
-
 # Copy LCOV data from the container's file system to the CI's
 docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
 

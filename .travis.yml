@@ -11,12 +11,14 @@ cache:
 
 env:
   global:
+    - BINARY_PATH=/usr/local/bin
     - BUILD_VERSION=0.0.7
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
     - LCOV_DATA=./coverage/lcov.info
+    - SCRIPTS_PATH=./scripts/ci
 
 addons:
   apt:
@@ -29,19 +31,19 @@ services:
 
 before_install:
   # Upgrade Docker Compose
-  - sudo rm /usr/local/bin/docker-compose
+  - sudo rm ${BINARY_PATH}/docker-compose
   - curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
+  - sudo mv docker-compose ${BINARY_PATH}
 
 script:
   # Run tests and generate code coverage reports
-  - ./scripts/ci/tests.sh
+  - ${SCRIPTS_PATH}/tests.sh
 
 deploy:
   # Create deployment configuration and build a production image
   - provider: script
-    script: ./scripts/ci/deploy.sh
+    script: ${SCRIPTS_PATH}/deploy.sh
     on:
       branch: master
   # Deploy to a production server 1 (Heroku)
@@ -68,6 +70,9 @@ deploy:
 after_script:
   # Send LCOV data to coveralls.io
   - cat ${LCOV_DATA} | coveralls
+  # List images and containers
+  - docker image ls
+  - docker container ls -a
   # Remove unused images and containers
-  - docker-compose down
-  - docker image rm app:ci
+  # - docker-compose down
+  # - docker image rm app:ci
