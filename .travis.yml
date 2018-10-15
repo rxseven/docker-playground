@@ -13,6 +13,7 @@ env:
   global:
     - BUILD_VERSION=0.0.7
     - BUILD_ZIP=build.zip
+    - CODE_COVERAGE_DATA=./coverage/lcov.info
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
@@ -47,7 +48,7 @@ script:
   # Copy
   - docker cp app-ci:/usr/src/app/coverage ./
   - cat $PWD/coverage/lcov.info
-  - yarn replace $CONTAINER_WORKDIR $TRAVIS_BUILD_DIR ./coverage/lcov.info
+  - yarn replace $CONTAINER_WORKDIR $TRAVIS_BUILD_DIR $CODE_COVERAGE_DATA
   # Logs
   - ls
   - cd coverage
