@@ -38,13 +38,13 @@ script:
   - pwd
   - ls
   # The following legacy script works
-  # - yarn test:coverage
+  - yarn test:coverage
   # Running coverage testing in a container
-  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
-  - docker image ls
-  - docker container ls -a
+  # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # - docker image ls
+  # - docker container ls -a
   # Copy
-  - docker cp app-ci:/usr/src/app/coverage ./
+  # - docker cp app-ci:/usr/src/app/coverage ./
   # Logs
   - ls
   - cd coverage
@@ -105,7 +105,8 @@ after_script:
   # - ls
   # - cd / && pwd
   # - cd ~/ && pwd
-  - docker-compose down
-  - docker image rm app:ci
-  - docker image ls
-  - docker container ls -a
+  # Clean up Docker
+  # - docker-compose down
+  # - docker image rm app:ci
+  # - docker image ls
+  # - docker container ls -a
