@@ -1,6 +1,5 @@
 {
-  "src/**/*.{js,jsx}": [
-    "yarn test",
-    "git add"
-  ]
+  "linters": {
+    "src/**/*.{js,jsx}": ["yarn test", "git add"]
+  }
 }
