@@ -54,9 +54,9 @@ script:
   - cd coverage
   - ls
   - pwd
-  - stat --format '%a' lcov.info
-  - sudo chmod 664 lcov.info
-  - stat --format '%a' lcov.info
+  # - stat --format '%a' lcov.info
+  # - sudo chmod 664 lcov.info
+  # - stat --format '%a' lcov.info
   - cd ..
   - pwd
   - echo $PWD
