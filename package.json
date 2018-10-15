@@ -115,6 +115,7 @@
     ]
   },
   "devDependencies": {
-    "coveralls": "^3.0.2"
+    "coveralls": "^3.0.2",
+    "replace": "^1.0.0"
   }
 }
