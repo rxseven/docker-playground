@@ -37,7 +37,7 @@ script:
   - echo $IMAGE_BASE_NODE
   - pwd
   - ls
-  - mkdir coverage
+  - mkdir coverage tmp
   - ls
   # - touch ./coverage/lcov.info
   # - cd ./coverage
@@ -60,12 +60,15 @@ script:
   - pwd
   - echo $PWD
   - ls $PWD/coverage
+  # Copy
+  - cp coverage/lcov.info tmp
+  - ls tmp
   # Coveralls, it works without credential and node_modules path
   # - cat $PWD/coverage/lcov.info
   # - cat ./coverage/lcov.info
   # - cat ./coverage/lcov.info | coveralls
-  - stat --format '%a' $PWD/coverage/lcov.info
-  - cat $PWD/coverage/lcov.info | coveralls
+  # - stat --format '%a' $PWD/coverage/lcov.info
+  - cat $PWD/tmp/lcov.info | coveralls
   - ls ./coverage
   - ls
   # - rm -rf ./coverage
