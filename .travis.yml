@@ -45,24 +45,22 @@ script:
   - docker container ls -a
   # Copy
   - docker cp app-ci:/usr/src/app/coverage ./
+  - cat $PWD/coverage/lcov.info
   - yarn replace 'SF:/usr/src/app' 'SF:/home/travis/build/[secure]/docker-playground' ./coverage/lcov.info
   # Logs
   - ls
   - cd coverage
   - ls
   - pwd
-  # - stat --format '%a' lcov.info
-  # - sudo chmod 664 lcov.info
-  # - stat --format '%a' lcov.info
-  # - cat lcov.info
+  - stat --format '%a' lcov.info
+  - sudo chmod 664 lcov.info
+  - stat --format '%a' lcov.info
   - cd ..
   - pwd
   - echo $PWD
   - ls $PWD/coverage
   # Coveralls, it works without credential and node_modules path
   - cat $PWD/coverage/lcov.info
-  # - cat ./coverage/lcov.info
-  # - cat ./coverage/lcov.info | coveralls
   # - stat --format '%a' $PWD/coverage/lcov.info
   - cat $PWD/coverage/lcov.info | coveralls
   - ls ./coverage
