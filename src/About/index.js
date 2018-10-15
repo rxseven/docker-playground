@@ -2,7 +2,7 @@ import React from "react";
 
 const About = () => (
   <div>
-    <h1>About page</h1>
+    <h1>About page | Docker Playground</h1>
     <p>
       Lorem Ipsum is simply dummy text of the printing and typesetting industry.
       Lorem Ipsum has been the industry's standard dummy text ever since the
