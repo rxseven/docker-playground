@@ -43,9 +43,6 @@ script:
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   - docker image ls
   - docker container ls -a
-  - docker-compose down
-  - docker image ls
-  - docker container ls -a
   # Copy
   - docker cp app-ci:/usr/src/app/coverage ./
   # Logs
