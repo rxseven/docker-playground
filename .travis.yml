@@ -59,7 +59,7 @@ script:
   - echo $PWD
   - ls $PWD/coverage
   # Coveralls, it works without credential and node_modules path
-  # - cat $PWD/coverage/lcov.info
+  - cat $PWD/coverage/lcov.info
   # - cat ./coverage/lcov.info
   # - cat ./coverage/lcov.info | coveralls
   # - stat --format '%a' $PWD/coverage/lcov.info
@@ -105,3 +105,7 @@ after_script:
   # - ls
   # - cd / && pwd
   # - cd ~/ && pwd
+  - docker-compose down
+  - docker image rm app:ci
+  - docker image ls
+  - docker container ls -a
