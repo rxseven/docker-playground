@@ -37,22 +37,20 @@ script:
   - echo $IMAGE_BASE_NODE
   - pwd
   - ls
-  - mkdir coverage tmp
-  - ls
-  # - touch ./coverage/lcov.info
-  # - cd ./coverage
-  # - ls
-  # - cd ..
   # The following legacy script works
   # - yarn test:coverage
   # Running coverage testing in a container
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  - docker image ls
+  - docker container ls -a
+  # Copy
+  - docker cp app-ci:/usr/src/app/coverage ./
   # Logs
   - ls
   - cd coverage
   - ls
   - pwd
-  - stat --format '%a' lcov.info
+  # - stat --format '%a' lcov.info
   # - sudo chmod 664 lcov.info
   # - stat --format '%a' lcov.info
   # - cat lcov.info
@@ -60,9 +58,6 @@ script:
   - pwd
   - echo $PWD
   - ls $PWD/coverage
-  # Copy
-  - cp coverage/lcov.info tmp
-  - ls tmp
   # Coveralls, it works without credential and node_modules path
   # - cat $PWD/coverage/lcov.info
   # - cat ./coverage/lcov.info
