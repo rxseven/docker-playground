@@ -13,10 +13,10 @@ env:
   global:
     - BUILD_VERSION=0.0.7
     - BUILD_ZIP=build.zip
-    - CODE_COVERAGE_DATA=./coverage/lcov.info
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
+    - LCOV_DATA=./coverage/lcov.info
 
 addons:
   apt:
@@ -36,39 +36,16 @@ before_install:
 
 script:
   # Run a container for testing, run tests, and generate a coverage report
-  - echo $TRAVIS_BUILD_DIR
-  - pwd
-  - ls
-  # The following legacy script works
-  # - yarn test:coverage
-  # Running coverage testing in a container
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # List images and containers
   - docker image ls
   - docker container ls -a
-  # Copy
+  # Copy LCOV data from the container's file system to the CI's
   - docker cp app-ci:$CONTAINER_WORKDIR/coverage ./
-  # - cat $PWD/coverage/lcov.info
-  - yarn replace $CONTAINER_WORKDIR $TRAVIS_BUILD_DIR $CODE_COVERAGE_DATA
-  # Logs
-  - ls
-  - cd coverage
-  - ls
-  - pwd
-  # - stat --format '%a' lcov.info
-  # - sudo chmod 664 lcov.info
-  # - stat --format '%a' lcov.info
-  - cd ..
-  - pwd
-  - echo $PWD
-  - ls $PWD/coverage
-  # Coveralls, it works without credential and node_modules path
-  # - cat $PWD/coverage/lcov.info
-  # - stat --format '%a' $PWD/coverage/lcov.info
-  - cat $PWD/coverage/lcov.info | coveralls
-  - ls ./coverage
-  - ls
-  # - rm -rf ./coverage
-  - ls
+  # Replace container's working directory path with the CI's
+  - yarn replace $CONTAINER_WORKDIR $TRAVIS_BUILD_DIR $LCOV_DATA
+  # Send LCOV data to coveralls.io
+  - cat $LCOV_DATA | coveralls
 
 deploy:
   # Create deployment configuration and build a production image
@@ -98,16 +75,6 @@ deploy:
       secure: "$AWS_SECRET_KEY"
 
 after_script:
-  # - pwd
-  # - ls
-  # The following script works
-  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN cat ./coverage/lcov.info | node node_modules/.bin/coveralls
-  # - cd coverage
-  # - ls
-  # - cd / && pwd
-  # - cd ~/ && pwd
-  # Clean up Docker
+  # Clean up images and containers
   - docker-compose down
   - docker image rm app:ci
-  - docker image ls
-  - docker container ls -a
