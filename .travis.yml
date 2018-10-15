@@ -43,6 +43,9 @@ script:
   - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   - docker image ls
   - docker container ls -a
+  - docker-compose down
+  - docker image ls
+  - docker container ls -a
   # Copy
   - docker cp app-ci:/usr/src/app/coverage ./
   # Logs
@@ -63,7 +66,7 @@ script:
   # - cat ./coverage/lcov.info
   # - cat ./coverage/lcov.info | coveralls
   # - stat --format '%a' $PWD/coverage/lcov.info
-  - cat $PWD/tmp/lcov.info | coveralls
+  - cat $PWD/coverage/lcov.info | coveralls
   - ls ./coverage
   - ls
   # - rm -rf ./coverage
