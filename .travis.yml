@@ -44,8 +44,6 @@ script:
   - docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
   # Replace container's working directory path with the CI's
   - yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA}
-  # Send LCOV data to coveralls.io
-  - cat ${LCOV_DATA} | coveralls
 
 deploy:
   # Create deployment configuration and build a production image
@@ -75,6 +73,8 @@ deploy:
       secure: ${AWS_SECRET_KEY}
 
 after_script:
-  # Clean up images and containers
+  # Send LCOV data to coveralls.io
+  - cat ${LCOV_DATA} | coveralls
+  # Remove unused images and containers
   - docker-compose down
   - docker image rm app:ci
