@@ -1,5 +1,7 @@
 {
-  "linters": {
-    "src/**/*.{js,jsx}": ["yarn test", "git add"]
+  "lint-staged": {
+    "linters": {
+      "src/**/*.{js,jsx}": ["yarn test", "git add"]
+    }
   }
 }
