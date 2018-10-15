@@ -73,6 +73,3 @@ after_script:
   # List images and containers
   - docker image ls
   - docker container ls -a
-  # Remove unused images and containers
-  # - docker-compose down
-  # - docker image rm app:ci
