@@ -46,7 +46,7 @@ script:
   # Copy
   - docker cp app-ci:/usr/src/app/coverage ./
   - cat $PWD/coverage/lcov.info
-  - yarn replace 'SF:/usr/src/app' 'SF:$TRAVIS_BUILD_DIR' ./coverage/lcov.info
+  - yarn replace '/usr/src/app' $TRAVIS_BUILD_DIR ./coverage/lcov.info
   # Logs
   - ls
   - cd coverage
