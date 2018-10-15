@@ -39,12 +39,12 @@ script:
   - ls
   - mkdir coverage
   - ls
-  - touch ./coverage/lcov.info
-  - cd ./coverage
-  - ls
-  - cd ..
+  # - touch ./coverage/lcov.info
+  # - cd ./coverage
+  # - ls
+  # - cd ..
   # The following legacy script works
-  - npm run test:coverage
+  - yarn test:coverage
   # Running coverage testing in a container
   # - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
   # Logs

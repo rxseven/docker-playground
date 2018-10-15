@@ -58,7 +58,7 @@
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
     "test": "node scripts/test.js",
-    "test:coverage": "yarn test --coverage --no-cache --silent",
+    "test:coverage": "yarn test --coverage --coverageReporters=text-lcov --no-cache --silent",
     "test:coverage:ci": "cat /usr/src/app/coverage/lcov.info | /usr/src/app/node node_modules/.bin/coveralls",
     "test:coverage:ci:legacy": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "test:coverage:ci:travis": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
