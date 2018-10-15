@@ -23,18 +23,15 @@ env:
 addons:
   apt:
     packages:
-      # Upgrade to the latest version of Docker Community Edition
+      # Update to the latest version of Docker Community Edition
       - docker-ce
 
 services:
   - docker
 
 before_install:
-  # Upgrade Docker Compose
-  - sudo rm ${BINARY_PATH}/docker-compose
-  - curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose ${BINARY_PATH}
+  # Update dependencies
+  - ${SCRIPTS_PATH}/updates.sh
 
 script:
   # Run tests and generate code coverage reports
