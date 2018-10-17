@@ -30,11 +30,11 @@ services:
 
 before_install:
   # Install additional dependencies required for running on the CI environment
-  - ${SCRIPTS_PATH}/updates.sh
+  - ${SCRIPTS_PATH}/update.sh
 
 script:
   # Run tests and generate code coverage reports
-  - ${SCRIPTS_PATH}/tests.sh
+  - ${SCRIPTS_PATH}/test.sh
 
 deploy:
   # Create deployment configuration and build a production image
