@@ -1,16 +1,19 @@
 version: "3.7"
 
 services:
+  proxy:
+    container_name: "${IMAGE_REPO}-proxy"
   app:
     build:
       args:
         BUILD_RELEASE_DATE: ${IMAGE_RELEASE_DATE}
         BUILD_RELEASE_VERSION: ${IMAGE_TAG}
-        NGINX_VERSION: ${IMAGE_BASE_NGINX}
+        IMAGE_BASE_NGINX: ${IMAGE_BASE_NGINX}
       dockerfile: Dockerfile.production
     environment:
       - NODE_ENV=production
-    ports:
-      - "80:80"
+      - VIRTUAL_HOST=${IMAGE_REPO}
+      - VIRTUAL_PORT=80
+    expose:
+      - "80"
     restart: always
-
