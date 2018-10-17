@@ -1,10 +1,10 @@
 # Specify global variables
 ARG BUILD_ENV=development
-ARG NODE_VERSION
+ARG IMAGE_BASE_NODE
 
 # Development stage
 # Initialize a new build stage and set the base image
-FROM node:${NODE_VERSION} as development
+FROM ${IMAGE_BASE_NODE} as development
 
 # Specify build and environment variables
 ARG BUILD_ENV
@@ -21,6 +21,9 @@ RUN yarn && yarn cache clean
 
 # Copy the entire contents from the host and add them to the container
 COPY . .
+
+# Specify network ports
+EXPOSE 3000
 
 # Specify the default executable when a container is started
 ENTRYPOINT ["yarn"]
