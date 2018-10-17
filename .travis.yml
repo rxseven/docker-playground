@@ -12,7 +12,7 @@ cache:
 env:
   global:
     - BINARY_PATH=/usr/local/bin
-    - BUILD_VERSION=0.0.7
+    - BUILD_VERSION=0.0.8
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_VERSION=1.22.0
