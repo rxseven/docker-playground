@@ -7,5 +7,6 @@ services:
         NODE_VERSION: ${IMAGE_BASE_NODE}
         WORKDIR: ${WORKDIR}
       context: .
+      dockerfile: Dockerfile
     container_name: "${IMAGE_REPO}"
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${IMAGE_TAG}"
