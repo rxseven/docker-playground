@@ -1,6 +1,0 @@
-{
-  "src/**/*.{js,jsx}": [
-    "yarn test",
-    "git add"
-  ]
-}
