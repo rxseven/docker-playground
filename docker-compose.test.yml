@@ -6,4 +6,3 @@ services:
     container_name: "${IMAGE_REPO}-test"
     environment:
       - NODE_ENV=test
-    image: "local/${IMAGE_REPO}:development"
