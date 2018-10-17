@@ -1,13 +1,17 @@
 version: "3.7"
 
 services:
+  proxy:
+    container_name: "${IMAGE_REPO}-local-proxy"
   app:
     container_name: "${IMAGE_REPO}-local"
     environment:
       - NODE_ENV=development
+      - VIRTUAL_HOST=${IMAGE_REPO}.local
+      - VIRTUAL_PORT=3000
+    expose:
+      - "3000"
     image: "local/${IMAGE_REPO}:development"
-    ports:
-      - "3000:3000"
     volumes:
       - type: bind
         source: .
