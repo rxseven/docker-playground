@@ -1,11 +1,11 @@
 # Specify global variables
 ARG BUILD_ENV=production
-ARG NODE_VERSION
-ARG NGINX_VERSION
+ARG IMAGE_BASE_NGINX
+ARG IMAGE_BASE_NODE
 
 # Build stage
 # Initialize a new build stage and set the base image for production build
-FROM node:${NODE_VERSION} as app
+FROM ${IMAGE_BASE_NODE} as app
 
 # Specify build and environment variables
 ARG BUILD_ENV
@@ -31,7 +31,7 @@ RUN yarn build
 
 # Serve stage
 # Initialize a new build stage and set the base image for production build
-FROM nginx:${NGINX_VERSION}
+FROM ${IMAGE_BASE_NGINX}
 
 # Specify build and environment variables
 ARG BUILD_ENV
