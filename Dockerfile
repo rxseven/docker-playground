@@ -2,9 +2,9 @@
 ARG BUILD_ENV=development
 ARG NODE_VERSION
 
-# App
+# Development stage
 # Initialize a new build stage and set the base image
-FROM node:${NODE_VERSION} as app
+FROM node:${NODE_VERSION} as development
 
 # Specify build and environment variables
 ARG BUILD_ENV
