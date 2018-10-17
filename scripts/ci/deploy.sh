@@ -4,7 +4,7 @@
 zip ${BUILD_ZIP} Dockerrun.aws.json
 
 # Build a production image for deployment
-docker-compose -f docker-compose.yml -f docker-compose.production.yml build
+docker-compose -f docker-compose.yml -f docker-compose.production.yml build app
 
 # Login to Docker Hub
 echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin

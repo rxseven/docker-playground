@@ -1,11 +1,26 @@
 version: "3.7"
 
 services:
+  proxy:
+    image: ${IMAGE_BASE_PROXY}
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: always
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /tmp/docker.sock
+        read_only: true
+      - type: bind
+        source: ./config/nginx/certs
+        target: /etc/nginx/certs
   app:
     build:
       args:
-        NODE_VERSION: ${IMAGE_BASE_NODE}
+        IMAGE_BASE_NODE: ${IMAGE_BASE_NODE}
         WORKDIR: ${WORKDIR}
       context: .
+      dockerfile: Dockerfile
     container_name: "${IMAGE_REPO}"
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${IMAGE_TAG}"

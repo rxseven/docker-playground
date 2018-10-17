@@ -11,35 +11,35 @@ cache:
 
 env:
   global:
-    - BUILD_VERSION=0.0.7
+    - BINARY_PATH=/usr/local/bin
+    - BUILD_VERSION=0.0.8
     - BUILD_ZIP=build.zip
-    - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
+    - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_VERSION=1.22.0
+    - LCOV_DATA=./coverage/lcov.info
+    - SCRIPTS_PATH=./scripts/ci
 
 addons:
   apt:
     packages:
-      # Upgrade to the latest version of Docker Community Edition
+      # Update to the latest version of Docker Community Edition
       - docker-ce
 
 services:
   - docker
 
 before_install:
-  # Upgrade Docker Compose
-  - sudo rm /usr/local/bin/docker-compose
-  - curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-  - chmod +x docker-compose
-  - sudo mv docker-compose /usr/local/bin
+  # Install additional dependencies required for running on the CI environment
+  - ${SCRIPTS_PATH}/updates.sh
 
 script:
-  # Run a container for testing
-  - docker-compose -f docker-compose.yml -f docker-compose.ci.yml up
+  # Run tests and generate code coverage reports
+  - ${SCRIPTS_PATH}/tests.sh
 
 deploy:
   # Create deployment configuration and build a production image
   - provider: script
-    script: bash ./scripts/deploy.sh
+    script: ${SCRIPTS_PATH}/deploy.sh
     on:
       branch: master
   # Deploy to a production server 1 (Heroku)
@@ -47,7 +47,7 @@ deploy:
     app:
       master: docker-playground-react
     api_key:
-      secure: $HEROKU_API_KEY
+      secure: ${HEROKU_API_KEY}
   # Deploy to a production server 2 (AWS Elastic Beanstalk)
   - provider: elasticbeanstalk
     region: "ap-northeast-1"
@@ -59,6 +59,13 @@ deploy:
     zip_file: ${BUILD_ZIP}
     on:
       branch: master
-    access_key_id: $AWS_ACCESS_KEY
+    access_key_id: ${AWS_ACCESS_KEY}
     secret_access_key:
-      secure: "$AWS_SECRET_KEY"
+      secure: ${AWS_SECRET_KEY}
+
+after_script:
+  # Send LCOV data to coveralls.io
+  - cat ${LCOV_DATA} | coveralls
+  # List images and containers
+  - docker image ls
+  - docker container ls -a
