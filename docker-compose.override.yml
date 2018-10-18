@@ -12,6 +12,8 @@ services:
     expose:
       - "3000"
     image: "local/${IMAGE_REPO}:development"
+    ports:
+      - "3000:3000"
     volumes:
       - type: bind
         source: .
