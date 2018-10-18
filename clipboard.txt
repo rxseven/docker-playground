@@ -1,0 +1,115 @@
+  test:
+    build:
+      args:
+        node_version: ${IMAGE_BASE_NODE}
+        workdir: ${WORKDIR}
+      context: .
+      dockerfile: Dockerfile
+      target: app
+    command: test
+    container_name: "${IMAGE_REPO}-test"
+    environment:
+      - NODE_ENV=test
+    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${IMAGE_TAG}-test"
+    volumes:
+      - type: bind
+        source: .
+        target: ${WORKDIR}
+      - type: volume
+        source: node_modules
+        target: "${WORKDIR}/node_modules"
+
+  githooks:
+    build:
+      context: .
+      dockerfile: Dockerfile.githooks
+    container_name: "${IMAGE_REPO}-githooks"
+    image: "${IMAGE_USERNAME}/${IMAGE_REPO}-githooks:${IMAGE_TAG}"
+    volumes:
+      - ./.git:/tmp/.git
+      - ./hooks:/tmp/hooks
+
+--------------------------------------------------------------------------------
+
+version: "3.7"
+
+services:
+  development:
+    build:
+      args:
+        NODE_VERSION: ${IMAGE_BASE_NODE}
+        WORKDIR: ${WORKDIR}
+      context: .
+    container_name: "${IMAGE_REPO}-dev"
+    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${IMAGE_TAG}-dev"
+    ports:
+      - "3000:3000"
+    volumes:
+      - type: bind
+        source: .
+        target: ${WORKDIR}
+      - type: volume
+        source: node_modules
+        target: "${WORKDIR}/node_modules"
+
+  test:
+    build:
+      args:
+        NODE_VERSION: ${IMAGE_BASE_NODE}
+        WORKDIR: ${WORKDIR}
+      context: .
+    command: test
+    container_name: "${IMAGE_REPO}-test"
+    environment:
+      - NODE_ENV=test
+    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${IMAGE_TAG}-test"
+    volumes:
+      - type: bind
+        source: .
+        target: ${WORKDIR}
+      - type: volume
+        source: node_modules
+        target: "${WORKDIR}/node_modules"
+
+  production:
+    build:
+      args:
+        NGINX_VERSION: ${IMAGE_BASE_NGINX}
+        NODE_VERSION: ${IMAGE_BASE_NODE}
+        WORKDIR: ${WORKDIR}
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: "${IMAGE_REPO}"
+    environment:
+      - NODE_ENV=production
+    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${IMAGE_TAG}"
+    ports:
+      - "80:80"
+
+volumes:
+  node_modules:
+
+--------------------------------------------------------------------------------
+
+.travis.yml
+
+after_script:
+  # Coverrals
+  # Reuse ci/app:latest image
+  # docker
+  # - COVERALLS_REPO_TOKEN=$COVERALLS_REPO_TOKEN npm run test:coverage:ci
+
+--------------------------------------------------------------------------------
+
+docker-compose.ci.yml
+
+version: "3.7"
+
+services:
+  app:
+    command: test:coverage
+    container_name: "app-ci"
+    environment:
+      - CI=true
+      - NODE_ENV=test
+    image: "ci/app:latest"
