@@ -29,4 +29,4 @@ EXPOSE 3000
 ENTRYPOINT ["yarn"]
 
 # Provide defaults for an executing container
-CMD ["start:https"]
+CMD ["start"]
