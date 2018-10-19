@@ -79,17 +79,22 @@ start-production-build: ## Build images before starting the production and rever
 	-f docker-compose.production.yml \
 	up
 
-##@ CI/CD:
+##@ Continuous Integration:
 
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
-	@echo "Installing additional dependencies..."
+	@printf "\e[32;1mInstalling additional dependencies...\e[0m \n"
 	@${SCRIPTS_PATH}/update.sh
 
 .PHONY: ci-test
 ci-test: ## Run tests and create code coverage reports
-	@echo "Running tests and creating code coverage reports..."
+	@printf "\e[32;1mRunning tests and creating code coverage reports...\e[0m \n"
 	@${SCRIPTS_PATH}/test.sh
+
+.PHONY: ci-deploy
+ci-deploy: ## Create deployment configuration and build a production image
+	@printf "\e[32;1mCreating deployment configuration and building a production image...\e[0m \n"
+	@${SCRIPTS_PATH}/deploy.sh
 
 ##@ Miscellaneous:
 
@@ -101,5 +106,5 @@ ztag: ## Sandbox
 help: ## Print usage
 	@awk 'BEGIN {FS = ":.*##"; \
 	printf "\nUsage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ \
-	{ printf "  \033[36m%-30s\033[0m %s\n", $$1, $$2 } /^##@/ \
-	{ printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	{ printf "  \033[36m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
+	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
