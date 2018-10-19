@@ -81,9 +81,16 @@ start-production-build: ## Build images before starting the production and rever
 
 ##@ CI/CD:
 
-.PHONY: ci-playground
-ci-playground: ## CI Playground
-	@echo "Try to print ENV from .travis.yml : ${CONTAINER_WORKDIR}"
+.PHONY: ci-test
+ci-test: ## Run tests and create code coverage reports
+	# Print task status
+	@echo "Running tests and creating code coverage reports..."
+	# Run a container for testing, run tests, and generate code coverage reports
+	@docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
+	# Copy LCOV data from the container's file system to the CI's
+	@docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
+	# Replace container's working directory path with the CI's
+	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA}
 
 ##@ Miscellaneous:
 
