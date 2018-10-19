@@ -12,12 +12,14 @@ cache:
 env:
   global:
     - BINARY_PATH=/usr/local/bin
+    - BUILD_REPO=rxseven/playground
     - BUILD_VERSION=0.0.9
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
     - LCOV_DATA=./coverage/lcov.info
+    - PRODUCTION_CONFIG=Dockerrun.aws.json
     - SCRIPTS_PATH=./scripts/ci
 
 addons:
@@ -72,5 +74,6 @@ after_script:
   - docker container ls -a
   # Playground
   - cat Dockerrun.aws.json
-  - sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" Dockerrun.aws.json
+  - sed -i='' "s/<IMAGE_REPO>/${BUILD_REPO}/" ${PRODUCTION_CONFIG}
+  - sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" ${PRODUCTION_CONFIG}
   - cat Dockerrun.aws.json
