@@ -5,6 +5,11 @@ include .env
 SHELL := /bin/bash
 IMAGE_TAG := rxseven\/playground:${RELEASE_VERSION}
 
+# Generate console log
+define console
+	@printf "\e[${ANSI_COLOR_MAGENTA};1m$(1)\e[0m \n"
+endef
+
 # Default goal
 .DEFAULT_GOAL := help
 
@@ -12,28 +17,28 @@ IMAGE_TAG := rxseven\/playground:${RELEASE_VERSION}
 
 .PHONY: install
 install: ## TODO
-	@echo "Cloning the repository..."
+	@$(call console,Cloning the repository...)
 
 ##@ Development:
 
 .PHONY: start
 start: ## Build, (re)create, start, and attach to containers for a service
-	@echo "Starting the development and reverse proxy containers..."
+	@$(call console,Starting the development and reverse proxy containers...)
 	@docker-compose up
 
 .PHONY: restart
 restart: ## Build images before starting the development and reverse proxy containers
-	@echo "Restarting the development and reverse proxy containers..."
+	@$(call console,Restarting the development and reverse proxy containers...)
 	@docker-compose up --build
 
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
-	@echo "Attaching an interactive shell to the development container"
+	@$(call console,Attaching an interactive shell to the development container...)
 	@docker container exec -it playground-local sh
 
 .PHONY: test
 test: ## Run tests in watch mode
-	@echo "Starting the testing container based on the development image..."
+	@$(call console,Starting the testing container based on the development image...)
 	@docker-compose \
 	-f docker-compose.yml \
 	-f docker-compose.override.yml \
@@ -46,25 +51,25 @@ test: ## Run tests in watch mode
 
 .PHONY: clean
 clean: ## Stop containers, remove containers and networks
-	@echo "Cleaning up containers and networks"
+	@$(call console,Cleaning up containers and networks...)
 	@docker-compose down
 
 .PHONY: clean-all
 clean-all: ## Stop containers, remove containers, networks, and volumes
-	@echo "Cleaning up containers, networks, and volumes"
+	@$(call console,Cleaning up containers, networks, and volumes...)
 	@docker-compose down -v
 
 .PHONY: reset
 reset: clean-all ## Remove containers, networks, volumes, and the development image
-	@echo "Removing all images..."
+	@$(call console,Removing all images...)
 	@docker image rm local/playground:development
 
 ##@ Deployment:
 
 .PHONY: start-production
 start-production: ## Create and run the optimized production build
-	@echo "Creating the optimized production build..."
-	@echo "Starting the production and reverse proxy containers..."
+	@$(call console,Creating the optimized production build...)
+	@$(call console,Starting the production and reverse proxy containers...)
 	@docker-compose \
 	-f docker-compose.yml \
 	-f docker-compose.production.yml \
@@ -72,8 +77,8 @@ start-production: ## Create and run the optimized production build
 
 .PHONY: start-production-build
 start-production-build: ## Build images before starting the production and reverse proxy containers
-	@echo "Creating the optimized production build..."
-	@echo "Restarting the production and reverse proxy containers..."
+	@$(call console,Creating the optimized production build...)
+	@$(call console,Restarting the production and reverse proxy containers...)
 	@docker-compose \
 	-f docker-compose.yml \
 	-f docker-compose.production.yml \
@@ -83,28 +88,30 @@ start-production-build: ## Build images before starting the production and rever
 
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
-	@printf "\e[32;1mInstalling additional dependencies...\e[0m \n"
+	@$(call console,Installing additional dependencies...)
 	@${SCRIPTS_PATH}/update.sh
 
 .PHONY: ci-test
 ci-test: ## Run tests and create code coverage reports
-	@printf "\e[32;1mRunning tests and creating code coverage reports...\e[0m \n"
+	@$(call console,Running tests and creating code coverage reports...)
 	@${SCRIPTS_PATH}/test.sh
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@printf "\e[32;1mCreating deployment configuration and building a production image...\e[0m \n"
+	@$(call console,Creating deployment configuration and building a production image...)
 	@${SCRIPTS_PATH}/deploy.sh
 
 ##@ Miscellaneous:
 
 .PHONY: ztag
 ztag: ## Sandbox
-	@sed -i='' "s/<IMAGE_TAG>/${IMAGE_TAG}/" Dockerrun.aws.json
+	@sed -i='' "s/<IMAGE_ACCOUNT>/rxseven/" Dockerrun.aws.json
+	@sed -i='' "s/<IMAGE_REPO>/playground/" Dockerrun.aws.json
+	@sed -i='' "s/<IMAGE_TAG>/0.0.9/" Dockerrun.aws.json
 
 .PHONY: help
 help: ## Print usage
 	@awk 'BEGIN {FS = ":.*##"; \
-	printf "\nUsage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ \
-	{ printf "  \033[36m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
+	printf "\nUsage: make \033[${ANSI_COLOR_CYAN}m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ \
+	{ printf "  \033[${ANSI_COLOR_CYAN}m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
 	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
