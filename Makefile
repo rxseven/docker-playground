@@ -1,35 +1,39 @@
-# Phony targets
-.PHONY: clean clean-all shell start start-build start-production test
+# Dependencies
+include .env
 
-# Stops containers, removes containers and the default network (if one is used)
-clean:
-	@docker-compose down
+# Variables
+SHELL := /bin/bash
+IMAGE_TAG := rxseven\/playground:${RELEASE_VERSION}
 
-# Stops containers, removes containers, networks (if one is used), and volumes
-clean-all:
-	@docker-compose down -v
+# Default goal
+.DEFAULT_GOAL := help
 
-# Attaches an interactive shell to a running container
-shell:
-	@docker container exec -it playground-local sh
+##@ Common:
 
-# Builds, (re)creates, starts, and attaches to containers for a service
-start:
+.PHONY: install
+install: ## TODO
+	@echo "Cloning the repository..."
+
+##@ Development:
+
+.PHONY: start
+start: ## Build, (re)create, start, and attach to containers for a service
+	@echo "Starting the development and reverse proxy containers..."
 	@docker-compose up
 
-# Builds images before starting development and reverse proxy containers
-start-build:
+.PHONY: restart
+restart: ## Build images before starting the development and reverse proxy containers
+	@echo "Restarting the development and reverse proxy containers..."
 	@docker-compose up --build
 
-# Runs an optimized production build locally
-start-production:
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.production.yml \
-	up
+.PHONY: shell
+shell: ## Attach an interactive shell to the development container
+	@echo "Attaching an interactive shell to the development container"
+	@docker container exec -it playground-local sh
 
-# Runs tests
-test:
+.PHONY: test
+test: ## Run tests in watch mode
+	@echo "Starting the testing container based on the development image..."
 	@docker-compose \
 	-f docker-compose.yml \
 	-f docker-compose.override.yml \
@@ -38,5 +42,52 @@ test:
 	--rm \
 	app
 
-# Default command
-default: start
+##@ Cleanup:
+
+.PHONY: clean
+clean: ## Stop containers, remove containers and networks
+	@echo "Cleaning up containers and networks"
+	@docker-compose down
+
+.PHONY: clean-all
+clean-all: ## Stop containers, remove containers, networks, and volumes
+	@echo "Cleaning up containers, networks, and volumes"
+	@docker-compose down -v
+
+.PHONY: reset
+reset: clean-all ## Remove containers, networks, volumes, and the development image
+	@echo "Removing all images..."
+	@docker image rm local/playground:development
+
+##@ Deployment:
+
+.PHONY: start-production
+start-production: ## Create and run the optimized production build
+	@echo "Creating the optimized production build..."
+	@echo "Starting the production and reverse proxy containers..."
+	@docker-compose \
+	-f docker-compose.yml \
+	-f docker-compose.production.yml \
+	up --build
+
+.PHONY: start-production-build
+start-production-build: ## Build images before starting the production and reverse proxy containers
+	@echo "Creating the optimized production build..."
+	@echo "Restarting the production and reverse proxy containers..."
+	@docker-compose \
+	-f docker-compose.yml \
+	-f docker-compose.production.yml \
+	up
+
+##@ Miscellaneous:
+
+.PHONY: ztag
+ztag: ## Sandbox
+	@sed -i='' "s/<IMAGE_TAG>/${IMAGE_TAG}/" Dockerrun.aws.json
+
+.PHONY: help
+help: ## Print usage
+	@awk 'BEGIN {FS = ":.*##"; \
+	printf "\nUsage: make \033[36m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ \
+	{ printf "  \033[36m%-30s\033[0m %s\n", $$1, $$2 } /^##@/ \
+	{ printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
