@@ -7,4 +7,4 @@ docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
 
 # Replace container's working directory path with the CI's
-yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA}
+yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} -silent
