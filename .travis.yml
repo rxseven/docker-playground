@@ -75,6 +75,7 @@ after_script:
   - docker container ls -a
   # Playground
   - cat Dockerrun.aws.json
+  - sed -i='' "s/<IMAGE_ACCOUNT>/${BUILD_ACCOUNT}/" ${PRODUCTION_CONFIG}
   - sed -i='' "s/<IMAGE_REPO>/${BUILD_REPO}/" ${PRODUCTION_CONFIG}
   - sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" ${PRODUCTION_CONFIG}
   - cat Dockerrun.aws.json
