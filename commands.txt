@@ -1,0 +1,24 @@
+# Keychain Access
+
+sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain playground.dev.crt
+
+--------------------------------------------------------------------------------
+
+# OpenSSL
+
+openssl req \
+    -newkey rsa:2048 \
+    -x509 \
+    -nodes \
+    -keyout playground.local.key \
+    -new \
+    -out playground.local.crt \
+    -subj /CN=\*.playground.local \
+    -reqexts SAN \
+    -extensions SAN \
+    -config <(cat /System/Library/OpenSSL/openssl.cnf \
+        <(printf '[SAN]\nsubjectAltName=DNS:\*.playground.local')) \
+    -sha256 \
+    -days 3650
+
+--------------------------------------------------------------------------------
