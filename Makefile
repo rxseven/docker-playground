@@ -79,6 +79,12 @@ start-production-build: ## Build images before starting the production and rever
 	-f docker-compose.production.yml \
 	up
 
+##@ CI/CD:
+
+.PHONY: ci-playground
+ci-playground: ## CI Playground
+	@echo "Try to print ENV from .travis.yml : ${CONTAINER_WORKDIR}"
+
 ##@ Miscellaneous:
 
 .PHONY: ztag

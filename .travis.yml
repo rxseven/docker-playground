@@ -36,10 +36,10 @@ script:
   # Run tests and generate code coverage reports
   - ${SCRIPTS_PATH}/test.sh
   # Playground
-  - make help
   - cat Dockerrun.aws.json
   - make ztag
   - cat Dockerrun.aws.json
+  - make ci-playground
 
 deploy:
   # Create deployment configuration and build a production image
