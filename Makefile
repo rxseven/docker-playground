@@ -64,7 +64,7 @@ reset: clean-all ## Remove containers, networks, volumes, and the development im
 	@$(call console,Removing all images...)
 	@docker image rm local/playground:development
 
-##@ Deployment:
+##@ Production:
 
 .PHONY: start-production
 start-production: ## Create and run the optimized production build
@@ -83,6 +83,12 @@ start-production-build: ## Build images before starting the production and rever
 	-f docker-compose.yml \
 	-f docker-compose.production.yml \
 	up
+
+##@ Release & Deployment
+
+.PHONY: release
+release: ## TODO: Set release version to package.json, .travis.yml, .env
+	@$(call console,TODO: Set release version)
 
 ##@ Continuous Integration:
 
