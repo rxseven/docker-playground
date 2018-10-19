@@ -15,6 +15,7 @@ env:
     - BUILD_VERSION=0.0.8
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
+    - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
     - LCOV_DATA=./coverage/lcov.info
     - SCRIPTS_PATH=./scripts/ci
@@ -30,7 +31,7 @@ services:
 
 before_install:
   # Install additional dependencies required for running on the CI environment
-  - ${SCRIPTS_PATH}/update.sh
+  - make ci-update
 
 script:
   # Run tests and create code coverage reports
