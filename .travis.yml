@@ -12,7 +12,8 @@ cache:
 env:
   global:
     - BINARY_PATH=/usr/local/bin
-    - BUILD_REPO=rxseven/playground
+    - BUILD_ACCOUNT=rxseven
+    - BUILD_REPO=playground
     - BUILD_VERSION=0.0.9
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
