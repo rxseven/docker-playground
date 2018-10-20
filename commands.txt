@@ -22,3 +22,74 @@ openssl req \
     -days 3650
 
 --------------------------------------------------------------------------------
+
+# Phony targets
+#.PHONY: clean clean-all help install reset shell start restart start-production start-production-build test ztag
+
+--------------------------------------------------------------------------------
+
+##@ CI/CD:
+
+.PHONY: ci-test
+ci-test: ## Run tests and create code coverage reports
+	# Print task status
+	@echo "Running tests and creating code coverage reports..."
+
+	# Run a container for testing, run tests, and generate code coverage reports
+	@docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
+
+	# Copy LCOV data from the container's file system to the CI's
+	@docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
+
+	# Replace container's working directory path with the CI's
+	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA}
+
+--------------------------------------------------------------------------------
+
+##@ Release & Deployment
+
+.PHONY: release
+release: ## TODO: Set release version to package.json, .travis.yml, .env
+	@$(call console,TODO: Set release version)
+	@sed -i='' "s/<BUILD_VERSION>/${RELEASE_VERSION}/" ${CONFIG_FILE_CI}
+
+--------------------------------------------------------------------------------
+
+scripts/deploy.sh
+
+sed -i='' "s/<IMAGE_ACCOUNT>/${BUILD_ACCOUNT}/" ${PRODUCTION_CONFIG}
+sed -i='' "s/<IMAGE_REPO>/${BUILD_REPO}/" ${PRODUCTION_CONFIG}
+sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" ${PRODUCTION_CONFIG}
+
+--------------------------------------------------------------------------------
+
+.PHONY: ci-deploy
+ci-deploy: ## Create deployment configuration and build a production image
+	@$(call console,Creating deployment configuration and building a production image...)
+	@${SCRIPTS_PATH}/deploy.sh
+
+--------------------------------------------------------------------------------
+
+.PHONY: ci-deploy
+ci-deploy: ## Create deployment configuration and build a production image
+	@$(create-deployment-config)
+	@$(create-production-image)
+
+--------------------------------------------------------------------------------
+
+.PHONY: version
+version: ## TODO: Set release version
+	@$(call set-property,version,${RELEASE_VERSION},${CONFIG_FILE_NPM})
+	@$(call set-property,Name,${IMAGE_NAME},${CONFIG_FILE_PRODUCTION})
+
+--------------------------------------------------------------------------------
+
+.PHONY: deploy
+deploy: ## Deploy
+	@$(create-deployment-config)
+
+.PHONY: yo
+yo: ## Yo
+	@echo "Running tests and creating code coverage reports..."
+	@printf "\e[32;1mRunning tests and creating code coverage reports...\e[0m \n"
+    

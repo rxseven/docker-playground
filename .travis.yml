@@ -11,18 +11,17 @@ cache:
 
 env:
   global:
-    - CI_BINARY_PATH=/usr/local/bin
-    - CI_BUILD_ZIP=build.zip
-    - CI_CONTAINER_WORKDIR=/usr/src/app
-    - CI_LCOV_DATA=./coverage/lcov.info
-    - CI_SCRIPTS_PATH=./scripts/ci
+    - BINARY_PATH=/usr/local/bin
+    - BUILD_ACCOUNT=rxseven
+    - BUILD_REPO=playground
+    - BUILD_VERSION=0.0.10
+    - BUILD_ZIP=build.zip
+    - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
-    # Dobule check
-    - CI_BUILD_ACCOUNT=rxseven
-    - CI_BUILD_REPO=playground
-    - CI_BUILD_VERSION=0.0.10
-    - CI_PRODUCTION_CONFIG=Dockerrun.aws.json
+    - LCOV_DATA=./coverage/lcov.info
+    - PRODUCTION_CONFIG=Dockerrun.aws.json
+    - SCRIPTS_PATH=./scripts/ci
 
 addons:
   apt:
@@ -44,7 +43,7 @@ script:
 deploy:
   # Create deployment configuration and build a production image
   - provider: script
-    script: ${CI_SCRIPTS_PATH}/deploy.sh
+    script: ${SCRIPTS_PATH}/deploy.sh
     on:
       branch: master
   # Deploy to a production server 1 (Heroku)
@@ -61,7 +60,7 @@ deploy:
     bucket_name: "elasticbeanstalk-ap-northeast-1-413973540256"
     bucket_path: "docker-playground"
     skip_cleanup: true
-    zip_file: ${CI_BUILD_ZIP}
+    zip_file: ${BUILD_ZIP}
     on:
       branch: master
     access_key_id: ${AWS_ACCESS_KEY}
@@ -70,7 +69,13 @@ deploy:
 
 after_script:
   # Send LCOV data to coveralls.io
-  - cat ${CI_LCOV_DATA} | coveralls
+  - cat ${LCOV_DATA} | coveralls
   # List images and containers
   - docker image ls
   - docker container ls -a
+  # Playground
+  - cat Dockerrun.aws.json
+  - sed -i='' "s/<IMAGE_ACCOUNT>/${BUILD_ACCOUNT}/" ${PRODUCTION_CONFIG}
+  - sed -i='' "s/<IMAGE_REPO>/${BUILD_REPO}/" ${PRODUCTION_CONFIG}
+  - sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" ${PRODUCTION_CONFIG}
+  - cat Dockerrun.aws.json
