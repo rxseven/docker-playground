@@ -11,17 +11,17 @@ cache:
 
 env:
   global:
-    - BINARY_PATH=/usr/local/bin
-    - BUILD_ACCOUNT=rxseven
-    - BUILD_REPO=playground
-    - BUILD_VERSION=<BUILD_VERSION>
-    - BUILD_ZIP=build.zip
-    - CONTAINER_WORKDIR=/usr/src/app
+    - CI_BINARY_PATH=/usr/local/bin
+    - CI_BUILD_ACCOUNT=rxseven
+    - CI_BUILD_REPO=playground
+    - CI_BUILD_VERSION=<CI_BUILD_VERSION>
+    - CI_BUILD_ZIP=build.zip
+    - CI_CONTAINER_WORKDIR=/usr/src/app
+    - CI_LCOV_DATA=./coverage/lcov.info
+    - CI_PRODUCTION_CONFIG=Dockerrun.aws.json
+    - CI_SCRIPTS_PATH=./scripts/ci
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
-    - LCOV_DATA=./coverage/lcov.info
-    - PRODUCTION_CONFIG=Dockerrun.aws.json
-    - SCRIPTS_PATH=./scripts/ci
 
 addons:
   apt:
@@ -60,7 +60,7 @@ deploy:
     bucket_name: "elasticbeanstalk-ap-northeast-1-413973540256"
     bucket_path: "docker-playground"
     skip_cleanup: true
-    zip_file: ${BUILD_ZIP}
+    zip_file: ${CI_BUILD_ZIP}
     on:
       branch: master
     access_key_id: ${AWS_ACCESS_KEY}
@@ -69,13 +69,13 @@ deploy:
 
 after_script:
   # Send LCOV data to coveralls.io
-  - cat ${LCOV_DATA} | coveralls
+  - cat ${CI_LCOV_DATA} | coveralls
   # List images and containers
   - docker image ls
   - docker container ls -a
   # Playground
   - cat Dockerrun.aws.json
-  - sed -i='' "s/<IMAGE_ACCOUNT>/${BUILD_ACCOUNT}/" ${PRODUCTION_CONFIG}
-  - sed -i='' "s/<IMAGE_REPO>/${BUILD_REPO}/" ${PRODUCTION_CONFIG}
-  - sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" ${PRODUCTION_CONFIG}
+  - sed -i='' "s/<IMAGE_ACCOUNT>/${CI_BUILD_ACCOUNT}/" ${CI_PRODUCTION_CONFIG}
+  - sed -i='' "s/<IMAGE_REPO>/${CI_BUILD_REPO}/" ${CI_PRODUCTION_CONFIG}
+  - sed -i='' "s/<IMAGE_TAG>/${CI_BUILD_VERSION}/" ${CI_PRODUCTION_CONFIG}
   - cat Dockerrun.aws.json

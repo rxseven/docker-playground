@@ -33,7 +33,7 @@ define create-deployment-config
 
 	# Create a zip file containing deployment configuration
 	echo "[2/2] Create a zip file containing deployment configuration"
-	zip ${BUILD_ZIP} ${CONFIG_FILE_PRODUCTION} -q
+	zip ${CI_BUILD_ZIP} ${CONFIG_FILE_PRODUCTION} -q
 
 	# End task
 	$(call console-done,Done)
@@ -54,7 +54,7 @@ define create-production-image
 
 	# Push the production image to Docker Hub
 	echo "[3/3] Push the production image to Docker Hub"
-	docker push rxseven/playground:${BUILD_VERSION}
+	docker push rxseven/playground:${CI_BUILD_VERSION}
 
 	# End task
 	$(call console-done,Done)
@@ -139,19 +139,19 @@ start-production-build: ## Build images before starting the production and rever
 .PHONY: release
 release: ## TODO: Set release version to package.json, .travis.yml, .env
 	@$(call console,TODO: Set release version)
-	@sed -i='' "s/<BUILD_VERSION>/${RELEASE_VERSION}/" ${CONFIG_FILE_CI}
+	@sed -i='' "s/<CI_BUILD_VERSION>/${RELEASE_VERSION}/" ${CONFIG_FILE_CI}
 
 ##@ Continuous Integration:
 
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
 	@$(call console,Installing additional dependencies...)
-	@${SCRIPTS_PATH}/update.sh
+	@${CI_SCRIPTS_PATH}/update.sh
 
 .PHONY: ci-test
 ci-test: ## Run tests and create code coverage reports
 	@$(call console,Running tests and creating code coverage reports...)
-	@${SCRIPTS_PATH}/test.sh
+	@${CI_SCRIPTS_PATH}/test.sh
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
