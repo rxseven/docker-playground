@@ -14,7 +14,7 @@ env:
     - BINARY_PATH=/usr/local/bin
     - BUILD_ACCOUNT=rxseven
     - BUILD_REPO=playground
-    - BUILD_VERSION=0.0.9
+    - BUILD_VERSION=<BUILD_VERSION>
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
@@ -43,7 +43,7 @@ script:
 deploy:
   # Create deployment configuration and build a production image
   - provider: script
-    script: ${SCRIPTS_PATH}/deploy.sh
+    script: make ci-deploy
     on:
       branch: master
   # Deploy to a production server 1 (Heroku)
