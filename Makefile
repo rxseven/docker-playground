@@ -113,7 +113,7 @@ ci-deploy: ## Create deployment configuration and build a production image
 ztag: ## Sandbox
 	@sed -i='' "s/<IMAGE_ACCOUNT>/rxseven/" Dockerrun.aws.json
 	@sed -i='' "s/<IMAGE_REPO>/playground/" Dockerrun.aws.json
-	@sed -i='' "s/<IMAGE_TAG>/0.0.9/" Dockerrun.aws.json
+	@sed -i='' "s/<IMAGE_TAG>/0.0.10/" Dockerrun.aws.json
 
 .PHONY: help
 help: ## Print usage
