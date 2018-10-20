@@ -1,13 +1,63 @@
 # Dependencies
 include .env
 
+# Escape
+, := ,
+blank :=
+space := $(blank) $(blank)
+
 # Variables
 SHELL := /bin/bash
-IMAGE_TAG := rxseven\/playground:${RELEASE_VERSION}
+
+# ANSI Colors
+ANSI_COLOR_CYAN=36
+ANSI_COLOR_GREEN=32
+ANSI_COLOR_MAGENTA=35
+ANSI_COLOR_RED=31
 
 # Generate console log
-define console
-	@printf "\e[${ANSI_COLOR_MAGENTA};1m$(1)\e[0m \n"
+console = @printf "\e[${ANSI_COLOR_MAGENTA};1m$(1)\e[0m \n"
+console-done = @printf "\e[${ANSI_COLOR_GREEN};1m$(1)\e[0m \n"
+
+# Set configuration property
+set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
+
+# Create deployment configuration
+define create-deployment-config
+	# Start task
+	$(call console,Creating deployment configuration...)
+
+	# Create a deployment configuration file
+	echo "[1/2] Create a deployment configuration file"
+	$(call set-property,Name,${IMAGE_NAME},${CONFIG_FILE_PRODUCTION})
+
+	# Create a zip file containing deployment configuration
+	echo "[2/2] Create a zip file containing deployment configuration"
+	zip build.zip Dockerrun.aws.json -q
+
+	# End task
+	$(call console-done,Done)
+endef
+
+# Create a production image
+define create-production-image
+	# Start task
+	$(call console,Creating a production image...)
+
+	# Build a production image for deployment
+	echo "[1/3] Build a production image"
+	docker-compose -f docker-compose.yml -f docker-compose.production.yml build app
+
+	# Login to Docker Hub
+	echo "[2/3] Login to Docker Hub"
+	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+	# Push the production image to Docker Hub
+	echo "[3/3] Push the production image to Docker Hub"
+	docker push rxseven/playground:${BUILD_VERSION}
+
+	# End task
+	$(call console-done,Done)
 endef
 
 # Default goal
@@ -56,7 +106,7 @@ clean: ## Stop containers, remove containers and networks
 
 .PHONY: clean-all
 clean-all: ## Stop containers, remove containers, networks, and volumes
-	@$(call console,Cleaning up containers, networks, and volumes...)
+	@$(call console,Cleaning up containers$(,) networks$(,) and volumes...)
 	@docker-compose down -v
 
 .PHONY: reset
@@ -89,6 +139,7 @@ start-production-build: ## Build images before starting the production and rever
 .PHONY: release
 release: ## TODO: Set release version to package.json, .travis.yml, .env
 	@$(call console,TODO: Set release version)
+	@sed -i='' "s/<BUILD_VERSION>/${RELEASE_VERSION}/" ${CONFIG_FILE_CI}
 
 ##@ Continuous Integration:
 
@@ -104,16 +155,10 @@ ci-test: ## Run tests and create code coverage reports
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@$(call console,Creating deployment configuration and building a production image...)
-	@${SCRIPTS_PATH}/deploy.sh
+	@$(create-deployment-config)
+	@$(create-production-image)
 
 ##@ Miscellaneous:
-
-.PHONY: ztag
-ztag: ## Sandbox
-	@sed -i='' "s/<IMAGE_ACCOUNT>/rxseven/" Dockerrun.aws.json
-	@sed -i='' "s/<IMAGE_REPO>/playground/" Dockerrun.aws.json
-	@sed -i='' "s/<IMAGE_TAG>/0.0.9/" Dockerrun.aws.json
 
 .PHONY: help
 help: ## Print usage
