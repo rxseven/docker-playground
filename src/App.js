@@ -21,7 +21,7 @@ const App = () => (
           <Route component={NotFound} />
         </Switch>
       </main>
-      <footer>Footer - v0.0.10</footer>
+      <footer>Footer - v0.0.11</footer>
     </React.Fragment>
   </Router>
 );
