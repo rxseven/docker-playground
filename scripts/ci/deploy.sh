@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Create deployment configuration
-sed -i='' "s/<IMAGE_ACCOUNT>/${CI_BUILD_ACCOUNT}/" ${CI_PRODUCTION_CONFIG}
-sed -i='' "s/<IMAGE_REPO>/${CI_BUILD_REPO}/" ${CI_PRODUCTION_CONFIG}
-sed -i='' "s/<IMAGE_TAG>/${CI_BUILD_VERSION}/" ${CI_PRODUCTION_CONFIG}
+# sed -i='' "s/<IMAGE_ACCOUNT>/${CI_BUILD_ACCOUNT}/" ${CI_PRODUCTION_CONFIG}
+# sed -i='' "s/<IMAGE_REPO>/${CI_BUILD_REPO}/" ${CI_PRODUCTION_CONFIG}
+# sed -i='' "s/<IMAGE_TAG>/${CI_BUILD_VERSION}/" ${CI_PRODUCTION_CONFIG}
+sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${CI_BUILD_ACCOUNT}\/${CI_BUILD_REPO}:${CI_BUILD_VERSION}\",|" ${CI_PRODUCTION_CONFIG}
 zip ${CI_BUILD_ZIP} ${CI_PRODUCTION_CONFIG}
 
 # Build a production image for deployment

@@ -18,6 +18,11 @@ env:
     - CI_SCRIPTS_PATH=./scripts/ci
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
+    # Dobule check
+    - CI_BUILD_ACCOUNT=rxseven
+    - CI_BUILD_REPO=playground
+    - CI_BUILD_VERSION=0.0.10
+    - CI_PRODUCTION_CONFIG=Dockerrun.aws.json
 
 addons:
   apt:

@@ -52,8 +52,8 @@ define create-production-image
 	echo "[2/3] Login to Docker Hub"
 	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 
-	# Push the production image to Docker Hub
-	echo "[3/3] Push the production image to Docker Hub"
+	# Push the image to Docker Hub
+	echo "[3/3] Push the image to Docker Hub"
 	docker push ${IMAGE_NAME}
 
 	# End task
@@ -148,8 +148,7 @@ ci-test: ## Run tests and create code coverage reports
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@$(create-deployment-config)
-	@$(create-production-image)
+	@${CI_SCRIPTS_PATH}/deploy.sh
 
 ##@ Miscellaneous:
 
