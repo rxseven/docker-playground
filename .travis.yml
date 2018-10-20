@@ -73,9 +73,3 @@ after_script:
   # List images and containers
   - docker image ls
   - docker container ls -a
-  # Playground
-  - cat Dockerrun.aws.json
-  - sed -i='' "s/<IMAGE_ACCOUNT>/${CI_BUILD_ACCOUNT}/" ${CI_PRODUCTION_CONFIG}
-  - sed -i='' "s/<IMAGE_REPO>/${CI_BUILD_REPO}/" ${CI_PRODUCTION_CONFIG}
-  - sed -i='' "s/<IMAGE_TAG>/${CI_BUILD_VERSION}/" ${CI_PRODUCTION_CONFIG}
-  - cat Dockerrun.aws.json
