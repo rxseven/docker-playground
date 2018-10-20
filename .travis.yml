@@ -44,7 +44,7 @@ script:
 deploy:
   # Create deployment configuration and build a production image
   - provider: script
-    script: make ci-deploy
+    script: ${CI_SCRIPTS_PATH}/deploy.sh
     on:
       branch: master
   # Deploy to a production server 1 (Heroku)
