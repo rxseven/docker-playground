@@ -54,7 +54,7 @@ define create-production-image
 
 	# Push the production image to Docker Hub
 	echo "[3/3] Push the production image to Docker Hub"
-	docker push rxseven/playground:${CI_BUILD_VERSION}
+	docker push ${IMAGE_NAME}
 
 	# End task
 	$(call console-done,Done)
@@ -133,13 +133,6 @@ start-production-build: ## Build images before starting the production and rever
 	-f docker-compose.yml \
 	-f docker-compose.production.yml \
 	up
-
-##@ Release & Deployment
-
-.PHONY: release
-release: ## TODO: Set release version to package.json, .travis.yml, .env
-	@$(call console,TODO: Set release version)
-	@sed -i='' "s/<CI_BUILD_VERSION>/${RELEASE_VERSION}/" ${CONFIG_FILE_CI}
 
 ##@ Continuous Integration:
 

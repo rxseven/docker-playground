@@ -12,13 +12,9 @@ cache:
 env:
   global:
     - CI_BINARY_PATH=/usr/local/bin
-    - CI_BUILD_ACCOUNT=rxseven
-    - CI_BUILD_REPO=playground
-    - CI_BUILD_VERSION=<CI_BUILD_VERSION>
     - CI_BUILD_ZIP=build.zip
     - CI_CONTAINER_WORKDIR=/usr/src/app
     - CI_LCOV_DATA=./coverage/lcov.info
-    - CI_PRODUCTION_CONFIG=Dockerrun.aws.json
     - CI_SCRIPTS_PATH=./scripts/ci
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
