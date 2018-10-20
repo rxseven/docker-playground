@@ -33,7 +33,7 @@ define create-deployment-config
 
 	# Create a zip file containing deployment configuration
 	echo "[2/2] Create a zip file containing deployment configuration"
-	zip build.zip Dockerrun.aws.json -q
+	zip ${BUILD_ZIP} ${CONFIG_FILE_PRODUCTION} -q
 
 	# End task
 	$(call console-done,Done)
