@@ -20,12 +20,12 @@ ANSI_COLOR_YELLOW=33
 ANSI_COLOR_WHITE=37
 
 # Logger
-logger = @printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
+logger = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-info = $(call logger,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call logger,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
-newline = @echo ""
+newline = echo ""
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
