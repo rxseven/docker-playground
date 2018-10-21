@@ -27,15 +27,19 @@ log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 newline = @echo ""
 
-# Test
+# Test script
 define ci-test-script
 	# Run a container for testing, run tests, and generate code coverage reports
+	@$(call log-step,[Step 1/4] Create and start a container for testing)
+	@$(call log-step,[Step 2/4] Run tests and generate code coverage reports)
 	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 
 	# Copy LCOV data from the container's file system to the CI's
+	@$(call log-step,[Step 3/4] Copy LCOV data from the container's file system to the CI's)
 	docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
 
 	# Replace container's working directory path with the CI's
+	@$(call log-step,[Step 4/4] Fix source paths in the LCOV file)
 	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 endef
 
