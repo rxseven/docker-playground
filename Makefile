@@ -30,23 +30,23 @@ newline = @echo ""
 # Test script
 define script-test
 	# Run a container for testing, run tests, and generate code coverage reports
-	@$(call log-step,[Step 1/4] Create and start a container for running tests)
-	@$(call log-step,[Step 2/4] Run tests and generate code coverage reports)
+	$(call log-step,[Step 1/4] Create and start a container for running tests)
+	$(call log-step,[Step 2/4] Run tests and generate code coverage reports)
 	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 
 	# Copy LCOV data from the container's file system to the CI's
-	@$(call log-step,[Step 3/4] Copy LCOV data from the container's file system to the CI's)
+	$(call log-step,[Step 3/4] Copy LCOV data from the container's file system to the CI's)
 	docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
 
 	# Replace container's working directory path with the CI's
-	@$(call log-step,[Step 4/4] Fix source paths in the LCOV file)
+	$(call log-step,[Step 4/4] Fix source paths in the LCOV file)
 	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 endef
 
 # Dependencies installation script
 define script-update
 	# Update Docker Compose
-	@$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
+	$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
 	sudo rm ${BINARY_PATH}/docker-compose
 	curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
 	chmod +x docker-compose
@@ -56,14 +56,14 @@ endef
 # Deployment script
 define script-deploy
 	# Create deployment configuration
-	echo "Creating a deployment configuration"
+	$(call log-start,Creating a deployment configuration...)
 	$(call log-step,[Step 1/2] Create ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
 	sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
-	echo "[2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service"
+	$(call log-step,[2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service)
 	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
 
 	# Build a production image for deployment
-	echo "Building a production image for deployment..."
+	$(call log-start,Building a production image for deployment...)
 	$(call log-step,[Step 1/3] Build the image)
 	docker-compose -f docker-compose.yml -f docker-compose.production.yml build app
 
@@ -189,7 +189,6 @@ ci-test: ## Run tests and create code coverage reports
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@$(call log-start,Creating deployment configuration and building a production image...)
 	@${script-deploy}
 
 .PHONY: ci-coveralls
