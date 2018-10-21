@@ -27,6 +27,9 @@ log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 newline = @echo ""
 
+# Hosts script
+script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
+
 # Test script
 define script-test
 	# Run a container for testing, run tests, and generate code coverage reports
@@ -90,8 +93,9 @@ set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 setup: ## Setup the development environment and install required dependencies
 	@$(call log-start,Setting up the project...)
 	@$(call log-step,[Step 1/2] Install dependencies required for running the development environment)
-	@$(call log-step,[Step 2/2] TODO: /etc/hosts)
-	@echo "127.0.0.1       playground.prod" | sudo tee -a /etc/hosts
+	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
+	@$(call script-host,${APP_HOST_LOCAL})
+	@$(call script-host,${APP_HOST_BUILD})
 	@$(call log-success,Done)
 
 ##@ Development:
@@ -102,7 +106,7 @@ start: ## Build, (re)create, start, and attach to containers for a service
 	@$(call log-step,[Step 1/3] Build images (if needed))
 	@$(call log-step,[Step 2/3] Run the development and reverse proxy containers)
 	@$(call log-step,[Step 3/3] Start the development server)
-	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL})
+	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up
 
 .PHONY: restart
