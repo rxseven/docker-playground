@@ -64,7 +64,7 @@ define script-deploy
 	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
 
 	# Build a production image for deployment
-	$(call log-start,Building a production image for deployment...)
+	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	$(call log-step,[Step 1/3] Build the image)
 	docker-compose -f docker-compose.yml -f docker-compose.production.yml build app
 
