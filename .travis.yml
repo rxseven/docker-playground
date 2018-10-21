@@ -75,3 +75,11 @@ after_script:
   - docker container ls -a
   - docker network ls
   - docker volume ls
+  - ls
+  # Cleanup
+  - make ci-clean
+  - docker image ls
+  - docker container ls -a
+  - docker network ls
+  - docker volume ls
+  - ls

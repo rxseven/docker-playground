@@ -147,6 +147,14 @@ ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
 	@$(call log-step,[Step 2/2] Send the data to coveralls.io)
 	@cat ${LCOV_DATA} | coveralls
 
+.PHONY: ci-clean
+ci-clean: ## Remove unused data from the CI server
+	@$(call log-start,Removing unused data...)
+	@$(call log-step,[Step 1/2] Remove Docker data)
+	@docker system prune --all --volumes --force
+	@$(call log-step,[Step 2/2] Remove the production build)
+	@sudo rm build.zip
+
 ##@ Miscellaneous:
 
 .PHONY: help
