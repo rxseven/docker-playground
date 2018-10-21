@@ -42,7 +42,7 @@ endef
 # Creating LCOV data script
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
-	$(call log-step,[Step 1/2] Copy LCOV data from the container's file system to the CI's)
+	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
 	docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
 
 	# Replace container's working directory path with the CI's
@@ -200,7 +200,7 @@ ci-update: ## Install additional dependencies required for running on the CI env
 .PHONY: ci-setup
 ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-start,Setting up the CI environment...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running the CI environment)
+	@$(call log-step,[Step 1/1] Install dependencies required for running the CI environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
 	@$(call log-success,Done)
