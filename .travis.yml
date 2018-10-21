@@ -85,3 +85,4 @@ after_script:
   - docker network ls
   - docker volume ls
   - ls
+  - make try-aws
