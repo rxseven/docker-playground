@@ -46,12 +46,14 @@ deploy:
     script: make ci-deploy
     on:
       branch: master
+    skip_cleanup: true
   # Deploy to a production server 1 (Heroku)
   - provider: heroku
     app:
       master: docker-playground-react
     api_key:
       secure: ${HEROKU_API_KEY}
+    skip_cleanup: true
   # Deploy to a production server 2 (AWS Elastic Beanstalk)
   - provider: elasticbeanstalk
     region: "ap-northeast-1"
