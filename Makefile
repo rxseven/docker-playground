@@ -28,7 +28,7 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 newline = @echo ""
 
 # Test
-define ci-test-script =
+define ci-test-script
 	# Run a container for testing, run tests, and generate code coverage reports
 	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 
