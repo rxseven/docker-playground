@@ -27,6 +27,18 @@ log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 newline = @echo ""
 
+# Test
+define ci-test-script =
+	# Run a container for testing, run tests, and generate code coverage reports
+	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
+
+	# Copy LCOV data from the container's file system to the CI's
+	docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
+
+	# Replace container's working directory path with the CI's
+	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
+endef
+
 # Set configuration property
 set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 
@@ -135,7 +147,7 @@ ci-update: ## Install additional dependencies required for running on the CI env
 .PHONY: ci-test
 ci-test: ## Run tests and create code coverage reports
 	@$(call log-start,Running tests and creating code coverage reports...)
-	@${SCRIPTS_PATH}/test.sh
+	@$(ci-test-script)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
