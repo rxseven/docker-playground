@@ -82,3 +82,4 @@ after_script:
   - docker volume ls
   - ls
   - make try-aws
+  - make try-env
