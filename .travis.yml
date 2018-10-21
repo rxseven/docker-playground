@@ -14,7 +14,7 @@ env:
     - BINARY_PATH=/usr/local/bin
     - BUILD_ACCOUNT=rxseven
     - BUILD_REPO=playground
-    - BUILD_VERSION=0.0.11
+    - BUILD_VERSION=0.0.12
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
@@ -69,13 +69,7 @@ deploy:
 
 after_script:
   # Send LCOV data to coveralls.io
-  - cat ${LCOV_DATA} | coveralls
+  - make ci-coveralls
   # List images and containers
   - docker image ls
   - docker container ls -a
-  # Playground
-  - cat Dockerrun.aws.json
-  - sed -i='' "s/<IMAGE_ACCOUNT>/${BUILD_ACCOUNT}/" ${PRODUCTION_CONFIG}
-  - sed -i='' "s/<IMAGE_REPO>/${BUILD_REPO}/" ${PRODUCTION_CONFIG}
-  - sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" ${PRODUCTION_CONFIG}
-  - cat Dockerrun.aws.json
