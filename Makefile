@@ -93,6 +93,9 @@ set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 setup: ## Setup the development environment and install required dependencies
 	@$(call log-start,Setting up the project...)
 	@$(call log-step,[Step 1/2] Install dependencies required for running the development environment)
+	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${IMAGE_BASE_PROXY}
 	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
 	@$(call script-host,${APP_HOST_LOCAL})
 	@$(call script-host,${APP_HOST_BUILD})
