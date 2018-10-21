@@ -30,16 +30,17 @@ newline = @echo ""
 # Test script
 define script-test
 	# Run a container for testing, run tests, and generate code coverage reports
-	$(call log-step,[Step 1/4] Create and start a container for running tests)
-	$(call log-step,[Step 2/4] Run tests and generate code coverage reports)
+	$(call log-step,[Step 1/5] Build an image based on the development environment)
+	$(call log-step,[Step 2/5] Create and start a container for running tests)
+	$(call log-step,[Step 3/5] Run tests and generate code coverage reports)
 	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 
 	# Copy LCOV data from the container's file system to the CI's
-	$(call log-step,[Step 3/4] Copy LCOV data from the container's file system to the CI's)
+	$(call log-step,[Step 4/5] Copy LCOV data from the container's file system to the CI's)
 	docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
 
 	# Replace container's working directory path with the CI's
-	$(call log-step,[Step 4/4] Fix source paths in the LCOV file)
+	$(call log-step,[Step 5/5] Fix source paths in the LCOV file)
 	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 endef
 
@@ -59,7 +60,7 @@ define script-deploy
 	$(call log-start,Creating a deployment configuration...)
 	$(call log-step,[Step 1/2] Create ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
 	sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
-	$(call log-step,[2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service)
+	$(call log-step,[Step 2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service)
 	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
 
 	# Build a production image for deployment
