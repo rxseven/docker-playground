@@ -81,7 +81,6 @@ define script-deploy
 	# Push the production image to Docker Hub
 	$(call log-step,[Step 3/3] Push the image to Docker Hub)
 	docker push ${IMAGE_NAME}
-	echo "Done"
 endef
 
 # Set configuration property
@@ -142,12 +141,13 @@ test: ## Run tests in watch mode
 clean: ## Stop containers, remove containers and networks
 	@$(call log-start,Cleaning up containers and networks...)
 	@docker-compose down
+	@$(call log-success,Done)
 
 .PHONY: clean-all
 clean-all: ## Stop containers, remove containers, networks, and volumes
 	@$(call log-start,Cleaning up containers$(,) networks$(,) and volumes...)
 	@docker-compose down -v
-	@$(call log-success,Cleaned up successfully.)
+	@$(call log-success,Done)
 
 .PHONY: reset
 reset: ## Remove containers, networks, volumes, and the development image
@@ -189,6 +189,7 @@ start-production-build: ## Build an image and run the production build
 .PHONY: release
 release: ## TODO: Set release version to package.json, .travis.yml, .env
 	@$(call log-start,TODO: Set release version)
+	@$(call log-success,Done)
 
 ##@ Continuous Integration:
 
@@ -196,6 +197,7 @@ release: ## TODO: Set release version to package.json, .travis.yml, .env
 ci-update: ## Install additional dependencies required for running on the CI environment
 	@$(call log-start,Installing additional dependencies...)
 	@$(script-update)
+	@$(call log-success,Done)
 
 .PHONY: ci-setup
 ci-setup: ## Setup the CI environment and install required dependencies
@@ -211,15 +213,18 @@ ci-setup: ## Setup the CI environment and install required dependencies
 ci-test: ## Run tests and generate code coverage reports
 	@$(call log-start,Running tests...)
 	@$(script-test)
+	@$(call log-success,Done)
 
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage reports (LCOV format)
 	@$(call log-start,Creating code coverage reports...)
 	@$(script-coverage)
+	@$(call log-success,Done)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
 	@${script-deploy}
+	@$(call log-success,Done)
 
 .PHONY: ci-coveralls
 ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
@@ -227,11 +232,13 @@ ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
 	@$(call log-step,[Step 1/2] Collect LCOV data from /coverage/lcov.info)
 	@$(call log-step,[Step 2/2] Send the data to coveralls.io)
 	@cat ${LCOV_DATA} | coveralls
+	@$(call log-success,Done)
 
 .PHONY: ci-clean
 ci-clean: ## Remove unused data from the CI server
 	@$(call log-start,Removing unused data...)
 	@docker system prune --all --volumes --force
+	@$(call log-success,Done)
 
 ##@ Miscellaneous:
 
