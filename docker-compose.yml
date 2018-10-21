@@ -23,4 +23,4 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: "${IMAGE_REPO}"
-    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${IMAGE_TAG}"
+    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"
