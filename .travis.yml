@@ -14,7 +14,7 @@ env:
     - BINARY_PATH=/usr/local/bin
     - BUILD_ACCOUNT=rxseven
     - BUILD_REPO=playground
-    - BUILD_VERSION=0.0.13
+    - BUILD_VERSION=0.0.14
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
@@ -43,15 +43,17 @@ script:
 deploy:
   # Create deployment configuration and build a production image
   - provider: script
-    script: ${SCRIPTS_PATH}/deploy.sh
+    script: make ci-deploy
     on:
       branch: master
+    skip_cleanup: true
   # Deploy to a production server 1 (Heroku)
   - provider: heroku
     app:
       master: docker-playground-react
     api_key:
       secure: ${HEROKU_API_KEY}
+    skip_cleanup: true
   # Deploy to a production server 2 (AWS Elastic Beanstalk)
   - provider: elasticbeanstalk
     region: "ap-northeast-1"
