@@ -33,17 +33,20 @@ script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
 # Test script
 define script-test
 	# Run a container for testing, run tests, and generate code coverage reports
-	$(call log-step,[Step 1/5] Build an image based on the development environment)
-	$(call log-step,[Step 2/5] Create and start a container for running tests)
-	$(call log-step,[Step 3/5] Run tests and generate code coverage reports)
+	$(call log-step,[Step 1/3] Build an image based on the development environment)
+	$(call log-step,[Step 2/3] Create and start a container for running tests)
+	$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
 	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
+endef
 
+# Creating LCOV data script
+define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
-	$(call log-step,[Step 4/5] Copy LCOV data from the container's file system to the CI's)
+	$(call log-step,[Step 1/2] Copy LCOV data from the container's file system to the CI's)
 	docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
 
 	# Replace container's working directory path with the CI's
-	$(call log-step,[Step 5/5] Fix source paths in the LCOV file)
+	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
 	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 endef
 
@@ -203,9 +206,14 @@ ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-success,Done)
 
 .PHONY: ci-test
-ci-test: ## Run tests and create code coverage reports
-	@$(call log-start,Running tests and creating code coverage reports...)
+ci-test: ## Run tests and generate code coverage reports
+	@$(call log-start,Running tests...)
 	@$(script-test)
+
+.PHONY: ci-coverage
+ci-coverage: ## Create code coverage reports (LCOV format)
+	@$(call log-start,Creating code coverage reports...)
+	@$(script-coverage)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
