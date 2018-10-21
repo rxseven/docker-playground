@@ -219,6 +219,29 @@ yo: ## Yo
 
 .PHONY: try-aws
 try-aws: ## Try AWS
+	@$(call log-start,Trying to update Dockerrun.aws.json...)
 	@cat Dockerrun.aws.json
 	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 	@cat Dockerrun.aws.json
+
+.PHONY: try-env
+try-env: ## Try ENV
+	@$(call log-start,Trying to log ENV from .env...)
+	@echo "RELEASE_DATE = ${RELEASE_DATE}"
+	@echo "RELEASE_VERSION = ${RELEASE_VERSION}"
+	@echo "APP_NAME = ${APP_NAME}"
+	@echo "APP_URL_PROTOCAL = ${APP_URL_PROTOCAL}"
+	@echo "APP_URL_LOCAL = ${APP_URL_LOCAL}"
+	@echo "APP_URL = ${APP_URL}"
+	@echo "IMAGE_BASE_NGINX = ${IMAGE_BASE_NGINX}"
+	@echo "IMAGE_BASE_NODE = ${IMAGE_BASE_NODE}"
+	@echo "IMAGE_BASE_PROXY = ${IMAGE_BASE_PROXY}"
+	@echo "IMAGE_NAME = ${IMAGE_NAME}"
+	@echo "IMAGE_RELEASE_DATE = ${IMAGE_RELEASE_DATE}"
+	@echo "IMAGE_REPO = ${IMAGE_REPO}"
+	@echo "IMAGE_TAG = ${IMAGE_TAG}"
+	@echo "IMAGE_USERNAME = ${IMAGE_USERNAME}"
+	@echo "WORKDIR = ${WORKDIR}"
+	@echo "CONFIG_FILE_CI = ${CONFIG_FILE_CI}"
+	@echo "CONFIG_FILE_NPM = ${CONFIG_FILE_NPM}"
+	@echo "CONFIG_FILE_AWS = ${CONFIG_FILE_AWS}"
