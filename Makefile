@@ -86,9 +86,13 @@ set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 
 ##@ Common:
 
-.PHONY: install
-install: ## TODO
-	@$(call log-start,Cloning the repository...)
+.PHONY: setup
+setup: ## Setup the development environment and install required dependencies
+	@$(call log-start,Setting up the project...)
+	@$(call log-step,[Step 1/2] Install dependencies required for running the development environment)
+	@$(call log-step,[Step 2/2] TODO: /etc/hosts)
+	@echo "127.0.0.1       playground.prod" | sudo tee -a /etc/hosts
+	@$(call log-success,Done)
 
 ##@ Development:
 
