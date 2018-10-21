@@ -69,7 +69,7 @@ deploy:
 
 after_script:
   # Send LCOV data to coveralls.io
-  - cat ${LCOV_DATA} | coveralls
+  - make ci-coveralls
   # List images and containers
   - docker image ls
   - docker container ls -a

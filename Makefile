@@ -140,6 +140,11 @@ ci-deploy: ## Create deployment configuration and build a production image
 	@$(call log-start,Creating deployment configuration and building a production image...)
 	@${SCRIPTS_PATH}/deploy.sh
 
+.PHONY: ci-coveralls
+ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
+	@$(call log-start,Sending LCOV data to coveralls.io...)
+	@cat ${LCOV_DATA} | coveralls
+
 ##@ Miscellaneous:
 
 .PHONY: help
