@@ -85,15 +85,17 @@ clean-all: ## Stop containers, remove containers, networks, and volumes
 	@$(call log-success,Cleaned up successfully.)
 
 .PHONY: reset
-reset: clean-all ## Remove containers, networks, volumes, and the development image
-	@$(call log-start,Removing images...)
-	@$(call log-step,[Step 1/3] Remove the development image)
-	@docker image rm local/playground:development
-	@$(call log-step,[Step 2/3] Remove the production image)
-	@docker image rm ${IMAGE_NAME}
-	@$(call log-step,[Step 3/3] Remove the intermediate images)
-	@docker image prune --filter label=stage=intermediate
-	@$(call log-success,Cleaned up successfully.)
+reset: ## Remove containers, networks, volumes, and the development image
+	@$(call log-start,Removing unused data...)
+	@$(call log-step,[Step 1/4] Remove containers$(,) networks$(,) and volumes...)
+	-@docker-compose down -v
+	@$(call log-step,[Step 2/4] Remove the development image)
+	-@docker image rm local/playground:development
+	@$(call log-step,[Step 3/4] Remove the production image)
+	-@docker image rm ${IMAGE_NAME}
+	@$(call log-step,[Step 4/4] Remove the intermediate images)
+	-@docker image prune --filter label=stage=intermediate --force
+	@$(call log-success,Done)
 
 ##@ Production:
 
