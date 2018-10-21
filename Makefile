@@ -73,7 +73,7 @@ define script-deploy
 
 	# Push the production image to Docker Hub
 	$(call log-step,[Step 3/3] Push the image to Docker Hub)
-	docker push rxseven/playground:${BUILD_VERSION}
+	docker push ${IMAGE_NAME}
 	echo "Done"
 endef
 
