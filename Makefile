@@ -43,6 +43,16 @@ define script-test
 	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 endef
 
+# Dependencies installation script
+define script-update
+	# Update Docker Compose
+	@$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
+	sudo rm ${BINARY_PATH}/docker-compose
+	curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+	chmod +x docker-compose
+	sudo mv docker-compose ${BINARY_PATH}
+endef
+
 # Set configuration property
 set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 
@@ -146,7 +156,7 @@ release: ## TODO: Set release version to package.json, .travis.yml, .env
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
 	@$(call log-start,Installing additional dependencies...)
-	@${SCRIPTS_PATH}/update.sh
+	@$(script-update)
 
 .PHONY: ci-test
 ci-test: ## Run tests and create code coverage reports
