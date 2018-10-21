@@ -14,7 +14,7 @@ env:
     - BINARY_PATH=/usr/local/bin
     - BUILD_ACCOUNT=rxseven
     - BUILD_REPO=playground
-    - BUILD_VERSION=0.0.11
+    - BUILD_VERSION=0.0.12
     - BUILD_ZIP=build.zip
     - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
