@@ -28,9 +28,9 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 newline = @echo ""
 
 # Test script
-define ci-test-script
+define script-test
 	# Run a container for testing, run tests, and generate code coverage reports
-	@$(call log-step,[Step 1/4] Create and start a container for testing)
+	@$(call log-step,[Step 1/4] Create and start a container for running tests)
 	@$(call log-step,[Step 2/4] Run tests and generate code coverage reports)
 	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 
@@ -151,7 +151,7 @@ ci-update: ## Install additional dependencies required for running on the CI env
 .PHONY: ci-test
 ci-test: ## Run tests and create code coverage reports
 	@$(call log-start,Running tests and creating code coverage reports...)
-	@$(ci-test-script)
+	@$(script-test)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
