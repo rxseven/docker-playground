@@ -73,3 +73,5 @@ after_script:
   # List images and containers
   - docker image ls
   - docker container ls -a
+  - docker network ls
+  - docker volume ls
