@@ -1,9 +1,6 @@
 #!/bin/bash
 
 # Create deployment configuration
-# sed -i='' "s/<IMAGE_ACCOUNT>/${BUILD_ACCOUNT}/" ${PRODUCTION_CONFIG}
-# sed -i='' "s/<IMAGE_REPO>/${BUILD_REPO}/" ${PRODUCTION_CONFIG}
-# sed -i='' "s/<IMAGE_TAG>/${BUILD_VERSION}/" ${PRODUCTION_CONFIG}
 echo "Creating a deployment config..."
 echo "[1/2] Create Dockerrun.aws.json on the fly"
 sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${BUILD_ACCOUNT}\/${BUILD_REPO}:${BUILD_VERSION}\",|" ${PRODUCTION_CONFIG}
