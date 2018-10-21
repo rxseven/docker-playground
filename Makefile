@@ -194,6 +194,14 @@ ci-update: ## Install additional dependencies required for running on the CI env
 	@$(call log-start,Installing additional dependencies...)
 	@$(script-update)
 
+.PHONY: ci-setup
+ci-setup: ## Setup the CI environment and install required dependencies
+	@$(call log-start,Setting up the CI environment...)
+	@$(call log-step,[Step 1/2] Install dependencies required for running the CI environment)
+	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${IMAGE_BASE_NODE}
+	@$(call log-success,Done)
+
 .PHONY: ci-test
 ci-test: ## Run tests and create code coverage reports
 	@$(call log-start,Running tests and creating code coverage reports...)
