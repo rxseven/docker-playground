@@ -37,8 +37,12 @@ before_script:
   - make ci-setup
 
 script:
-  # Run tests and create code coverage reports
+  # Run tests and generate code coverage reports
   - make ci-test
+
+after_success:
+  # Create code coverage reports (LCOV format)
+  - make ci-coverage
 
 deploy:
   # Create deployment configuration and build a production image
