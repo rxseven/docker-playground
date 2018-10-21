@@ -53,6 +53,30 @@ define script-update
 	sudo mv docker-compose ${BINARY_PATH}
 endef
 
+# Deployment script
+define script-deploy
+	# Create deployment configuration
+	echo "Creating a deployment configuration"
+	$(call log-step,[Step 1/2] Create ${PRODUCTION_CONFIG} for AWS Elastic Beanstalk deployment)
+	sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${BUILD_ACCOUNT}\/${BUILD_REPO}:${BUILD_VERSION}\",|" ${PRODUCTION_CONFIG}
+	echo "[2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service"
+	zip ${BUILD_ZIP} ${PRODUCTION_CONFIG}
+
+	# Build a production image for deployment
+	echo "Building a production image for deployment..."
+	$(call log-step,[Step 1/3] Build the image)
+	docker-compose -f docker-compose.yml -f docker-compose.production.yml build app
+
+	# Login to Docker Hub
+	$(call log-step,[Step 2/3] Login to Docker Hub)
+	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+
+	# Push the production image to Docker Hub
+	$(call log-step,[Step 3/3] Push the image to Docker Hub)
+	docker push rxseven/playground:${BUILD_VERSION}
+	echo "Done"
+endef
+
 # Set configuration property
 set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 
@@ -166,7 +190,7 @@ ci-test: ## Run tests and create code coverage reports
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
 	@$(call log-start,Creating deployment configuration and building a production image...)
-	@${SCRIPTS_PATH}/deploy.sh
+	@${script-deploy}
 
 .PHONY: ci-coveralls
 ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
