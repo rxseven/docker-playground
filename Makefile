@@ -8,7 +8,6 @@ space := $(blank) $(blank)
 
 # Variables
 SHELL := /bin/bash
-IMAGE_TAG := rxseven\/playground:${RELEASE_VERSION}
 
 # ANSI Colors
 ANSI_COLOR_BLACK=30
@@ -142,12 +141,6 @@ ci-deploy: ## Create deployment configuration and build a production image
 	@${SCRIPTS_PATH}/deploy.sh
 
 ##@ Miscellaneous:
-
-.PHONY: ztag
-ztag: ## Sandbox
-	@sed -i='' "s/<IMAGE_ACCOUNT>/rxseven/" Dockerrun.aws.json
-	@sed -i='' "s/<IMAGE_REPO>/playground/" Dockerrun.aws.json
-	@sed -i='' "s/<IMAGE_TAG>/0.0.11/" Dockerrun.aws.json
 
 .PHONY: help
 help: ## Print usage
