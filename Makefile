@@ -216,3 +216,9 @@ help: ## Print usage
 .PHONY: yo
 yo: ## Yo
 	@$(call log-step,yo-text-here)
+
+.PHONY: try-aws
+try-aws: ## Try AWS
+	@cat Dockerrun.aws.json
+	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	@cat Dockerrun.aws.json
