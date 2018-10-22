@@ -65,7 +65,7 @@ define script-deploy
 	# Create deployment configuration
 	$(call log-start,Creating a deployment configuration...)
 	$(call log-step,[Step 1/2] Create ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	$(call set-property,Name,${IMAGE_NAME},${CONFIG_FILE_AWS})
+	$(call set-props,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
 	$(call log-step,[Step 2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service)
 	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
 
@@ -84,7 +84,7 @@ define script-deploy
 endef
 
 # Set configuration property
-set-property = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
+set-props  = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 
 # Default goal
 .DEFAULT_GOAL := help
