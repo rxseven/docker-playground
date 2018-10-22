@@ -30,6 +30,7 @@ newline = echo ""
 
 # Set configuration values
 set-json = sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
+set-env = sed -i '' 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
