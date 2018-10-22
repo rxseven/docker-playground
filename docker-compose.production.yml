@@ -14,5 +14,5 @@ services:
     environment:
       - NODE_ENV=production
       - VIRTUAL_HOST=${IMAGE_REPO}
-      - VIRTUAL_PORT=80
+      - VIRTUAL_PORT=${PORT_EXPOSE_PROXY}
     restart: always
