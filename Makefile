@@ -95,6 +95,18 @@ define script-deploy
 	docker push ${IMAGE_NAME}
 endef
 
+# Clean summary script
+define script-sum
+	$(call log-sum,[Summary] List all images (including intermediates))
+	docker image ls -a
+	$(call log-sum,[Summary] List all containers (including exited state))
+	docker container ls -a
+	$(call log-sum,[Summary] List volumes)
+	docker volume ls
+	$(call log-sum,[Summary] List networks)
+	docker network ls
+endef
+
 # Set configuration property
 set-props  = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 
@@ -174,14 +186,7 @@ reset: ## Remove containers, networks, volumes, and the development image
 	-@docker image prune --filter label=stage=intermediate --force
 	@$(call log-step,[Step 5/5] Remove all unused images (optional))
 	-@docker image prune
-	@$(call log-sum,[Log] Images)
-	@docker image ls
-	@$(call log-sum,[Log] Containers)
-	@docker container ls -a
-	@$(call log-sum,[Log] Volumes)
-	@docker volume ls
-	@$(call log-sum,[Log] Networks)
-	@docker network ls
+	@$(script-sum)
 	@$(call log-success,Done)
 
 ##@ Production:
