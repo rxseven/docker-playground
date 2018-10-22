@@ -8,7 +8,7 @@ services:
     environment:
       - NODE_ENV=development
       - VIRTUAL_HOST=${IMAGE_REPO}.local
-      - VIRTUAL_PORT=3000
+      - VIRTUAL_PORT=${PORT_EXPOSE_APP}
     image: "local/${IMAGE_REPO}:development"
     volumes:
       - type: bind
