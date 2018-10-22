@@ -60,6 +60,15 @@ define script-update
 	sudo mv docker-compose ${BINARY_PATH}
 endef
 
+# Release script
+define script-release
+	$(call log-step,[Step 1/2] Create ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
+	$(call set-props,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
+	$(call set-props,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
+	$(call log-step,[Step 2/2] Update ${CONFIG_FILE_NPM} for AWS Node.js deployment)
+	$(call set-props,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+endef
+
 # Deployment script
 define script-deploy
 	# Create deployment configuration
@@ -190,6 +199,7 @@ start-production-build: ## Build an image and run the production build
 .PHONY: release
 release: ## TODO: Set release version to package.json, .travis.yml, .env
 	@$(call log-start,TODO: Set release version)
+	@$(script-release)
 	@$(call log-success,Done)
 
 ##@ Continuous Integration:
