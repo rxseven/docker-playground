@@ -12,11 +12,6 @@ services:
     expose:
       - "3000"
     image: "local/${IMAGE_REPO}:development"
-    ports:
-      - mode: host
-        protocol: tcp
-        published: 3000
-        target: 3000
     volumes:
       - type: bind
         source: .
