@@ -4,8 +4,8 @@ services:
   proxy:
     image: ${IMAGE_BASE_PROXY}
     ports:
-      - "80:80"
-      - "443:443"
+      - ${PORT_MAPPING_DEFAULT}
+      - ${PORT_MAPPING_SSL}
     restart: always
     volumes:
       - type: bind
