@@ -28,8 +28,8 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 
-# Set configuration property
-set-json = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
+# Set configuration values
+set-json = sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
