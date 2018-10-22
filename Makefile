@@ -25,6 +25,7 @@ log-info = $(call logger,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call logger,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
+log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 
 # Hosts script
@@ -163,14 +164,24 @@ clean-all: ## Stop containers, remove containers, networks, and volumes
 .PHONY: reset
 reset: ## Remove containers, networks, volumes, and the development image
 	@$(call log-start,Removing unused data...)
-	@$(call log-step,[Step 1/4] Remove containers$(,) networks$(,) and volumes...)
+	@$(call log-step,[Step 1/5] Remove containers$(,) networks$(,) and volumes...)
 	-@docker-compose down -v
-	@$(call log-step,[Step 2/4] Remove the development image)
+	@$(call log-step,[Step 2/5] Remove the development image)
 	-@docker image rm local/playground:development
-	@$(call log-step,[Step 3/4] Remove the production image)
+	@$(call log-step,[Step 3/5] Remove the production image)
 	-@docker image rm ${IMAGE_NAME}
-	@$(call log-step,[Step 4/4] Remove the intermediate images)
+	@$(call log-step,[Step 4/5] Remove the intermediate images)
 	-@docker image prune --filter label=stage=intermediate --force
+	@$(call log-step,[Step 5/5] Remove all unused images (optional))
+	-@docker image prune
+	@$(call log-sum,[Log] Images)
+	@docker image ls
+	@$(call log-sum,[Log] Containers)
+	@docker container ls -a
+	@$(call log-sum,[Log] Volumes)
+	@docker volume ls
+	@$(call log-sum,[Log] Networks)
+	@docker network ls
 	@$(call log-success,Done)
 
 ##@ Production:
