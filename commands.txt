@@ -154,6 +154,30 @@ endef
 
 --------------------------------------------------------------------------------
 
+@$(call set-property,version,${RELEASE_VERSION},${CONFIG_FILE_NPM})
+
+--------------------------------------------------------------------------------
+
+-@docker image prune --filter label=project=docker-playground --force
+
+set-property2 = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)".*|\1: '"\"$(2)\"|" $(3)
+
+--------------------------------------------------------------------------------
+
+# Add metadata to an image
+LABEL project="docker-playground"
+LABEL description="Docker playground image"
+LABEL environment="Development"
+LABEL license="GNU Affero General Public License v3.0"
+LABEL maintainer="Theerawat Pongsupawat <rxseven.com@gmail.com>"
+
+--------------------------------------------------------------------------------
+
+      - ${PORT_DEFAULT}:${PORT_DEFAULT}
+      - ${PORT_SSL}:${PORT_SSL}
+
+--------------------------------------------------------------------------------
+
 .PHONY: deploy
 deploy: ## Deploy
 	@$(create-deployment-config)
