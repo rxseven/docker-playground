@@ -28,6 +28,9 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 
+# Set configuration property
+set-json = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
+
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
 
@@ -75,10 +78,10 @@ endef
 # Release script
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	$(call set-props,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
-	$(call set-props,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
+	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
+	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
 	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
-	$(call set-props,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 endef
 
 # Deployment script
@@ -105,9 +108,6 @@ define script-deploy
 	$(call log-step,[Step 3/3] Push the image to Docker Hub)
 	docker push ${IMAGE_NAME}
 endef
-
-# Set configuration property
-set-props  = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 
 # Default goal
 .DEFAULT_GOAL := help
