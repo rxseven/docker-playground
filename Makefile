@@ -62,21 +62,22 @@ endef
 
 # Release script
 define script-release
-	$(call log-step,[Step 1/2] Create ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
+	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
 	$(call set-props,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
 	$(call set-props,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
-	$(call log-step,[Step 2/2] Update ${CONFIG_FILE_NPM} for AWS Node.js deployment)
+	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
 	$(call set-props,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 endef
 
 # Deployment script
 define script-deploy
-	# Create deployment configuration
-	$(call log-start,Creating a deployment configuration...)
-	$(call log-step,[Step 1/2] Create ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	$(call set-props,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
-	$(call set-props,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
-	$(call log-step,[Step 2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service)
+	# Configure a deployment configuration
+	$(call log-start,Configuring a deployment configuration...)
+	$(script-release)
+
+	# Build a deployment configuration
+	$(call log-start,Building a deployment configuration...)
+	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
 	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
 
 	# Build a production image for deployment
