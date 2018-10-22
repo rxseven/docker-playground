@@ -5,6 +5,6 @@ services:
     command: test:coverage
     container_name: "app-ci"
     environment:
-      CI: true
+      CI: "true"
       NODE_ENV: test
     image: "app:ci"
