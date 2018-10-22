@@ -106,18 +106,6 @@ define script-deploy
 	docker push ${IMAGE_NAME}
 endef
 
-# Clean summary script
-define script-sum
-	$(call log-sum,[Summary] List all images (including intermediates))
-	docker image ls -a
-	$(call log-sum,[Summary] List all containers (including exited state))
-	docker container ls -a
-	$(call log-sum,[Summary] List volumes)
-	docker volume ls
-	$(call log-sum,[Summary] List networks)
-	docker network ls
-endef
-
 # Set configuration property
 set-props  = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 
@@ -176,12 +164,22 @@ test: ## Run tests in watch mode
 clean: ## Stop containers, remove containers and networks
 	@$(call log-start,Cleaning up containers and networks...)
 	@docker-compose down
+	@$(call log-sum,[sum] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[sum] Networks)
+	@docker network ls
 	@$(call log-success,Done)
 
 .PHONY: clean-all
 clean-all: ## Stop containers, remove containers, networks, and volumes
 	@$(call log-start,Cleaning up containers$(,) networks$(,) and volumes...)
 	@docker-compose down -v
+	@$(call log-sum,[sum] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[sum] Networks)
+	@docker network ls
+	@$(call log-sum,[sum] Volumes)
+	@docker volume ls
 	@$(call log-success,Done)
 
 .PHONY: reset
@@ -189,6 +187,12 @@ reset: ## Remove containers, networks, volumes, and the development image
 	@$(call log-start,Removing unused data...)
 	@$(call log-step,[Step 1/5] Remove containers$(,) networks$(,) and volumes...)
 	-@docker-compose down -v
+	@$(call log-sum,[sum] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[sum] Networks)
+	@docker network ls
+	@$(call log-sum,[sum] Volumes)
+	@docker volume ls
 	@$(call log-step,[Step 2/5] Remove the development image)
 	-@docker image rm local/playground:development
 	@$(call log-step,[Step 3/5] Remove the production image)
@@ -197,7 +201,8 @@ reset: ## Remove containers, networks, volumes, and the development image
 	-@docker image prune --filter label=stage=intermediate --force
 	@$(call log-step,[Step 5/5] Remove all unused images (optional))
 	-@docker image prune
-	@$(script-sum)
+	@$(call log-sum,[sum] Images (including intermediates))
+	@docker image ls -a
 	@$(call log-success,Done)
 
 ##@ Production:
@@ -286,6 +291,11 @@ ci-clean: ## Remove unused data from the CI server
 	@$(call log-success,Done)
 
 ##@ Miscellaneous:
+
+.PHONY: info
+info: ## Show project information
+	@$(call log-start,Show project information)
+	@echo "Release date : ${RELEASE_DATE}"
 
 .PHONY: help
 help: ## Print usage
