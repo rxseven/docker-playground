@@ -94,7 +94,7 @@ set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 .PHONY: setup
 setup: ## Setup the development environment and install required dependencies
 	@$(call log-start,Setting up the project...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running the development environment)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
 	@docker pull ${IMAGE_BASE_PROXY}
