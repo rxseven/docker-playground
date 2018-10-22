@@ -61,6 +61,17 @@ define script-update
 	sudo mv docker-compose ${BINARY_PATH}
 endef
 
+# Versioning script
+define script-version
+	read -p "Enter a version number: " VERSION; \
+	if [ "$VERSION" != "" ]; then \
+		echo "Your next release will be v$VERSION"; \
+		sed -i '' 's;^RELEASE_VERSION=.*;RELEASE_VERSION='"$VERSION"';' .env; \
+	else \
+		echo "You did not enter a version number, please try again"; \
+	fi;
+endef
+
 # Release script
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
@@ -213,9 +224,15 @@ start-production-build: ## Build an image and run the production build
 
 ##@ Release & Deployment
 
+.PHONY: version
+version: ## Set the next release version
+	@$(call log-start,Set the next release version)
+	@$(value script-version)
+	@$(call log-success,Done)
+
 .PHONY: release
-release: ## TODO: Set release version to package.json, .travis.yml, .env
-	@$(call log-start,TODO: Set release version)
+release: ## Release new features
+	@$(call log-start,Release new features)
 	@$(script-release)
 	@$(call log-success,Done)
 
