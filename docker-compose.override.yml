@@ -6,9 +6,9 @@ services:
   app:
     container_name: "${IMAGE_REPO}-local"
     environment:
-      - NODE_ENV=development
-      - VIRTUAL_HOST=${IMAGE_REPO}.local
-      - VIRTUAL_PORT=${PORT_EXPOSE_APP}
+      NODE_ENV: development
+      VIRTUAL_HOST: ${IMAGE_REPO}.local
+      VIRTUAL_PORT: ${PORT_EXPOSE_APP}
     image: "local/${IMAGE_REPO}:development"
     volumes:
       - type: bind

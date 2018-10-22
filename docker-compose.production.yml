@@ -12,7 +12,7 @@ services:
         PORT_EXPOSE: ${PORT_EXPOSE_PROXY}
       dockerfile: Dockerfile.production
     environment:
-      - NODE_ENV=production
-      - VIRTUAL_HOST=${IMAGE_REPO}
-      - VIRTUAL_PORT=${PORT_EXPOSE_PROXY}
+      NODE_ENV: production
+      VIRTUAL_HOST: ${IMAGE_REPO}
+      VIRTUAL_PORT: ${PORT_EXPOSE_PROXY}
     restart: always
