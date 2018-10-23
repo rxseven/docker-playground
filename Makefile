@@ -85,8 +85,8 @@ define script-release
 	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 endef
 
-# Deployment script
-define script-deploy
+# Predeploy script
+define script-predeploy
 	# Configure a deployment configuration
 	$(call log-start,Configuring a deployment configuration...)
 	$(script-release)
@@ -95,7 +95,10 @@ define script-deploy
 	$(call log-start,Building a deployment configuration...)
 	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
 	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
+endef
 
+# Deployment script
+define script-deploy
 	# Build a production image for deployment
 	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	$(call log-step,[Step 1/3] Build the image)
@@ -286,6 +289,7 @@ ci-coverage: ## Create code coverage reports (LCOV format)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
+	@${script-predeploy}
 	@${script-deploy}
 	@$(call log-success,Done)
 
@@ -303,11 +307,6 @@ ci-clean: ## Remove unused data from the CI server
 	@docker system prune --all --volumes --force
 	@$(call log-success,Done)
 
-.PHONY: ci-check
-ci-check: ## Check CI
-	@sed -i 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
-	@cat ${CONFIG_FILE_AWS}
-
 ##@ Miscellaneous:
 
 .PHONY: info
@@ -324,13 +323,13 @@ help: ## Print usage
 
 .PHONY: yo
 yo: ## Yo
-	@$(call log-step,yo-text-here2)
+	@$(call log-step,yo-text-here)
 
 .PHONY: try-aws
 try-aws: ## Try AWS
 	@$(call log-start,Trying to update Dockerrun.aws.json...)
 	@cat Dockerrun.aws.json
-	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 	@cat Dockerrun.aws.json
 
 .PHONY: try-env
