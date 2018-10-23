@@ -102,5 +102,6 @@ notifications:
   slack:
     rooms:
       - ${SLACK_ACCOUNT}:${SLACK_TOKEN}
+      - ${SLACK_ACCOUNT}:${SLACK_TOKEN}#general
     on_success: always
     on_failure: always
