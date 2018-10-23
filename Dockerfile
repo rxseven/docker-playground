@@ -8,6 +8,7 @@ FROM ${IMAGE_BASE_NODE} as development
 
 # Specify build and environment variables
 ARG BUILD_ENV
+ARG PORT_EXPOSE
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
 ENV PATH /usr/src/app/node_modules/.bin:${PATH}
@@ -23,7 +24,7 @@ RUN yarn && yarn cache clean
 COPY . .
 
 # Specify network ports
-EXPOSE 3000
+EXPOSE ${PORT_EXPOSE}
 
 # Specify the default executable when a container is started
 ENTRYPOINT ["yarn"]

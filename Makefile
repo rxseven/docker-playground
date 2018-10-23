@@ -25,7 +25,12 @@ log-info = $(call logger,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call logger,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
+log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
+
+# Set configuration values
+set-json = sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
+set-env = sed -i '' 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
@@ -60,15 +65,40 @@ define script-update
 	sudo mv docker-compose ${BINARY_PATH}
 endef
 
+# Versioning script
+define script-version
+	read -p "Enter a version number: " VERSION; \
+	if [ "$VERSION" != "" ]; then \
+		echo "Your next release will be v$VERSION"; \
+		sed -i '' 's;^RELEASE_VERSION=.*;RELEASE_VERSION='"$VERSION"';' .env; \
+	else \
+		echo "You did not enter a version number, please try again"; \
+	fi;
+endef
+
+# Release script
+define script-release
+	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
+	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
+	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
+	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
+	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+endef
+
+# Predeploy script
+define script-predeploy
+	# Configure a deployment configuration
+	$(call log-start,Configuring a deployment configuration...)
+	$(script-release)
+
+	# Build a deployment configuration
+	$(call log-start,Building a deployment configuration...)
+	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
+	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
+endef
+
 # Deployment script
 define script-deploy
-	# Create deployment configuration
-	$(call log-start,Creating a deployment configuration...)
-	$(call log-step,[Step 1/2] Create ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
-	$(call log-step,[Step 2/2] Create ${BUILD_ZIP} for uploading to AWS S3 service)
-	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
-
 	# Build a production image for deployment
 	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	$(call log-step,[Step 1/3] Build the image)
@@ -83,9 +113,6 @@ define script-deploy
 	docker push ${IMAGE_NAME}
 endef
 
-# Set configuration property
-set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
-
 # Default goal
 .DEFAULT_GOAL := help
 
@@ -94,7 +121,7 @@ set-property = @sed -ie 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 .PHONY: setup
 setup: ## Setup the development environment and install required dependencies
 	@$(call log-start,Setting up the project...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running the development environment)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
 	@docker pull ${IMAGE_BASE_PROXY}
@@ -108,7 +135,7 @@ setup: ## Setup the development environment and install required dependencies
 .PHONY: start
 start: ## Build, (re)create, start, and attach to containers for a service
 	@$(call log-start,Starting the development environment...)
-	@$(call log-step,[Step 1/3] Build images (if needed))
+	@$(call log-step,[Step 1/3] Build the images (if needed))
 	@$(call log-step,[Step 2/3] Run the development and reverse proxy containers)
 	@$(call log-step,[Step 3/3] Start the development server)
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
@@ -135,31 +162,63 @@ test: ## Run tests in watch mode
 	--rm \
 	app
 
+.PHONY: build
+build: ## Create an optimized production build
+	@$(call log-start,Creating an optimized production build...)
+	@$(call log-step,[Step 1/4] Build the development image (if needed))
+	@$(call log-step,[Step 2/4] Create and start a container for building the app)
+	@$(call log-step,[Step 3/4] Create an optimized production build)
+	@$(call log-step,[Step 4/4] Stop and remove the container)
+	@docker-compose run --rm app build
+	@$(call log-success,Done)
+
 ##@ Cleanup:
 
 .PHONY: clean
 clean: ## Stop containers, remove containers and networks
 	@$(call log-start,Cleaning up containers and networks...)
 	@docker-compose down
+	@$(call log-sum,[sum] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[sum] Networks)
+	@docker network ls
 	@$(call log-success,Done)
 
 .PHONY: clean-all
 clean-all: ## Stop containers, remove containers, networks, and volumes
 	@$(call log-start,Cleaning up containers$(,) networks$(,) and volumes...)
 	@docker-compose down -v
+	@$(call log-sum,[sum] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[sum] Networks)
+	@docker network ls
+	@$(call log-sum,[sum] Volumes)
+	@docker volume ls
 	@$(call log-success,Done)
 
 .PHONY: reset
 reset: ## Remove containers, networks, volumes, and the development image
 	@$(call log-start,Removing unused data...)
-	@$(call log-step,[Step 1/4] Remove containers$(,) networks$(,) and volumes...)
+	@$(call log-step,[Step 1/6] Remove containers$(,) networks$(,) and volumes...)
 	-@docker-compose down -v
-	@$(call log-step,[Step 2/4] Remove the development image)
+	@$(call log-sum,[sum] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[sum] Networks)
+	@docker network ls
+	@$(call log-sum,[sum] Volumes)
+	@docker volume ls
+	@$(call log-step,[Step 2/6] Remove the development image)
 	-@docker image rm local/playground:development
-	@$(call log-step,[Step 3/4] Remove the production image)
+	@$(call log-step,[Step 3/6] Remove the production image)
 	-@docker image rm ${IMAGE_NAME}
-	@$(call log-step,[Step 4/4] Remove the intermediate images)
+	@$(call log-step,[Step 4/6] Remove the intermediate images)
 	-@docker image prune --filter label=stage=intermediate --force
+	@$(call log-step,[Step 5/6] Remove all unused images (optional))
+	-@docker image prune
+	@$(call log-sum,[sum] Images (including intermediates))
+	@docker image ls -a
+	@$(call log-step,[Step 6/6] Remove the build artifacts)
+	@rm -rf -v build coverage
 	@$(call log-success,Done)
 
 ##@ Production:
@@ -186,9 +245,16 @@ start-production-build: ## Build an image and run the production build
 
 ##@ Release & Deployment
 
+.PHONY: version
+version: ## Set the next release version
+	@$(call log-start,Set the next release version)
+	@$(value script-version)
+	@$(call log-success,Done)
+
 .PHONY: release
-release: ## TODO: Set release version to package.json, .travis.yml, .env
-	@$(call log-start,TODO: Set release version)
+release: ## Release new features
+	@$(call log-start,Release new features)
+	@$(script-release)
 	@$(call log-success,Done)
 
 ##@ Continuous Integration:
@@ -223,6 +289,7 @@ ci-coverage: ## Create code coverage reports (LCOV format)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
+	@${script-predeploy}
 	@${script-deploy}
 	@$(call log-success,Done)
 
@@ -241,6 +308,11 @@ ci-clean: ## Remove unused data from the CI server
 	@$(call log-success,Done)
 
 ##@ Miscellaneous:
+
+.PHONY: info
+info: ## Show project information
+	@$(call log-start,Show project information)
+	@echo "Release date : ${RELEASE_DATE}"
 
 .PHONY: help
 help: ## Print usage

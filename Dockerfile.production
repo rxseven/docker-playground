@@ -37,6 +37,7 @@ FROM ${IMAGE_BASE_NGINX}
 ARG BUILD_ENV
 ARG BUILD_RELEASE_DATE
 ARG BUILD_RELEASE_VERSION
+ARG PORT_EXPOSE
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
 
@@ -54,7 +55,7 @@ COPY ./config/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
 COPY --from=app ${WORKDIR}/build /usr/share/nginx/html
 
 # Specify network ports
-EXPOSE 80
+EXPOSE ${PORT_EXPOSE}
 
 # Start a web server
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
