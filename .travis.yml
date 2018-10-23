@@ -100,6 +100,6 @@ notifications:
   # Send notifications to Slack channels about build results
   slack:
     rooms:
-      - "${SLACK_ACCOUNT}:${SLACK_TOKEN}"
+      - secure: ${SLACK}
     on_success: always
     on_failure: always
