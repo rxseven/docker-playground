@@ -311,6 +311,9 @@ ci-clean: ## Remove unused data from the CI server
 ci-check: ## Check CI
 	@sed -i.backup 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 	@cat ${CONFIG_FILE_AWS}
+	@ls
+	@rm ${CONFIG_FILE_AWS}.backup
+	@ls
 
 ##@ Miscellaneous:
 
