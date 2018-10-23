@@ -77,19 +77,18 @@ after_script:
   # Send LCOV data to coveralls.io
   - make ci-coveralls
   # List images and containers
-  - docker image ls
+  - docker image ls -a
   - docker container ls -a
   - docker network ls
   - docker volume ls
   - ls
   # Cleanup
   - make ci-clean
-  - docker image ls
+  - docker image ls -a
   - docker container ls -a
   - docker network ls
   - docker volume ls
   - ls
-  - make try-aws
   - make try-env
 
 notifications:
