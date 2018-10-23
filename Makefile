@@ -305,7 +305,7 @@ ci-clean: ## Remove unused data from the CI server
 
 .PHONY: ci-check
 ci-check: ## Check CI
-	@sed -i '' -e 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	@sed -i 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 	@cat ${CONFIG_FILE_AWS}
 
 ##@ Miscellaneous:
