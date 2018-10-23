@@ -92,7 +92,7 @@ after_script:
   - make try-env
 
 notifications:
-  # Default notification settings
+  # Default email notification settings
   email:
     on_success: change
     on_failure: always
