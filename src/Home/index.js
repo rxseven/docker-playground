@@ -15,6 +15,7 @@ const Home = () => (
       Ipsum.
     </p>
     <p>Line 2 - Content</p>
+    <p>Line 3 - Content</p>
   </div>
 );
 
