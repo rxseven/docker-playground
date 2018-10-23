@@ -98,6 +98,7 @@ notifications:
     on_failure: always
   # Send notifications to Slack channels about build results
   slack:
-    ${SLACK_ACCOUNT}:${SLACK_TOKEN}
+    rooms:
+      - ${SLACK_ACCOUNT}:${SLACK_TOKEN}
     on_success: always
     on_failure: always
