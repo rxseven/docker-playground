@@ -90,3 +90,9 @@ after_script:
   - docker volume ls
   - ls
   - make try-env
+
+notifications:
+  # Default notification settings
+  email:
+    on_success: always
+    on_failure: always
