@@ -27,6 +27,7 @@ log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
+txt-bold = \e[1m$(1)\e[0m
 
 # Set configuration values
 set-json = sed -i.backup 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
@@ -63,17 +64,6 @@ define script-update
 	curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
 	chmod +x docker-compose
 	sudo mv docker-compose ${BINARY_PATH}
-endef
-
-# Versioning script
-define script-version
-	read -p "Enter a version number: " VERSION; \
-	if [ "$VERSION" != "" ]; then \
-		echo "Your next release will be v$VERSION"; \
-		sed -i '' 's;^RELEASE_VERSION=.*;RELEASE_VERSION='"$VERSION"';' .env; \
-	else \
-		echo "You did not enter a version number, please try again"; \
-	fi;
 endef
 
 # Release script
@@ -138,15 +128,18 @@ setup: ## Setup the development environment and install required dependencies
 .PHONY: start
 start: ## Build, (re)create, start, and attach to containers for a service
 	@$(call log-start,Starting the development environment...)
-	@$(call log-step,[Step 1/3] Build the images (if needed))
-	@$(call log-step,[Step 2/3] Run the development and reverse proxy containers)
+	@$(call log-step,[Step 1/3] Download base images and build the development image (if needed))
+	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
 	@$(call log-step,[Step 3/3] Start the development server)
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up
 
 .PHONY: restart
 restart: ## Build images before starting the development and reverse proxy containers
-	@$(call log-start,Restarting the development and reverse proxy containers...)
+	@$(call log-start,Restarting the development environment...)
+	@$(call log-step,[Step 1/3] Rebuild the development image)
+	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
+	@$(call log-step,[Step 3/3] Start the development server)
 	@docker-compose up --build
 
 .PHONY: shell
@@ -168,12 +161,31 @@ test: ## Run tests in watch mode
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
-	@$(call log-step,[Step 1/4] Build the development image (if needed))
-	@$(call log-step,[Step 2/4] Create and start a container for building the app)
-	@$(call log-step,[Step 3/4] Create an optimized production build)
-	@$(call log-step,[Step 4/4] Stop and remove the container)
+	@$(call log-step,[Step 1/6] Remove the existing build)
+	@rm -rf build
+	@$(call log-step,[Step 2/6] Download base images (if needed))
+	@$(call log-step,[Step 3/6] Build the development image (if needed))
+	@$(call log-step,[Step 4/6] Create and start a container for building the app)
+	@$(call log-step,[Step 5/6] Create an optimized production build)
+	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm app build
 	@$(call log-success,Done)
+
+.PHONY: preview
+preview: ## Preview the production build
+	@$(call log-start,Running the production build...)
+	@$(call log-step,[Step 1/6] Remove intermediate and unused images (when necessary))
+	-@docker image prune --filter label=stage=intermediate --force
+	@$(call log-step,[Step 2/6] Download base images (if needed))
+	@$(call log-step,[Step 3/6] Create an optimized production build)
+	@$(call log-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
+	@$(call log-step,[Step 5/6] Create and start the app and reverse proxy containers)
+	@$(call log-step,[Step 6/6] Start the web (for serving the app) and reverse proxy servers)
+	@$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
+	@docker-compose \
+	-f docker-compose.yml \
+	-f docker-compose.production.yml \
+	up --build
 
 ##@ Cleanup:
 
@@ -224,34 +236,20 @@ reset: ## Remove containers, networks, volumes, and the development image
 	@rm -rf -v build coverage
 	@$(call log-success,Done)
 
-##@ Production:
-
-.PHONY: start-production
-start-production: ## Run the production build
-	@$(call log-start,Running the production build...)
-	@$(call log-step,[Step 1/3] Create an optimized production build)
-	@$(call log-step,[Step 2/4] Build an image (if needed))
-	@$(call log-step,[Step 3/4] Run a production container)
-	@$(call log-step,[Step 4/4] Start the web server serving the production build)
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.production.yml \
-	up
-
-.PHONY: start-production-build
-start-production-build: ## Build an image and run the production build
-	@$(call log-start,Build an image and run the production build...)
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.production.yml \
-	up --build
-
 ##@ Release & Deployment
 
 .PHONY: version
 version: ## Set the next release version
 	@$(call log-start,Set the next release version)
-	@$(value script-version)
+	@read -p "Enter a version number: " VERSION; \
+	if [ "$$VERSION" != "" ]; then \
+		echo "Your next release will be v$$VERSION"; \
+		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_FILE_ENV}); \
+		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_FILE_ENV}); \
+		rm ${CONFIG_FILE_ENV}.backup; \
+	else \
+		echo "You did not enter a version number, please try again"; \
+	fi;
 	@$(call log-success,Done)
 
 .PHONY: release
@@ -309,6 +307,10 @@ ci-clean: ## Remove unused data from the CI server
 	@$(call log-start,Removing unused data...)
 	@docker system prune --all --volumes --force
 	@$(call log-success,Done)
+
+.PHONY: ci-check
+ci-check: ## Check CI (won't work on Travis CI)
+	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 
 ##@ Miscellaneous:
 

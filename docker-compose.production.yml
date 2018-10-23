@@ -7,7 +7,7 @@ services:
     build:
       args:
         BUILD_RELEASE_DATE: ${RELEASE_DATE}
-        BUILD_RELEASE_VERSION: ${IMAGE_TAG}
+        BUILD_RELEASE_VERSION: ${RELEASE_VERSION}
         IMAGE_BASE_NGINX: ${IMAGE_BASE_NGINX}
         PORT_EXPOSE: ${PORT_EXPOSE_PROXY}
       dockerfile: Dockerfile.production

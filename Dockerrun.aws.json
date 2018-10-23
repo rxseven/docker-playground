@@ -1,7 +1,7 @@
 {
   "AWSEBDockerrunVersion": "1",
   "Image": {
-    "Name": "rxseven/playground:latest",
+    "Name": "rxseven/playground:0.0.19",
     "Update": "true"
   },
   "Ports": [
