@@ -311,7 +311,7 @@ ci-clean: ## Remove unused data from the CI server
 	@$(call log-success,Done)
 
 .PHONY: ci-check
-ci-check: ## Check CI
+ci-check: ## Check CI (won't work on Travis CI)
 	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 
 ##@ Miscellaneous:
