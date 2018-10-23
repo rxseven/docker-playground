@@ -93,11 +93,15 @@ after_script:
   - make try-env
 
 notifications:
+  # Default notification settings
   email:
     recipients:
       - rxseven.com@gmail.com
     on_success: change
     on_failure: always
+  # Send notifications to Slack channels about build results
   slack:
     rooms:
       - ${SLACK_ACCOUNT}:${SLACK_TOKEN}
+    on_success: always
+    on_failure: always
