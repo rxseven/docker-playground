@@ -303,6 +303,10 @@ ci-clean: ## Remove unused data from the CI server
 	@docker system prune --all --volumes --force
 	@$(call log-success,Done)
 
+.PHONY: ci-check
+ci-check: ## Check CI
+	@$(script-release)
+
 ##@ Miscellaneous:
 
 .PHONY: info
