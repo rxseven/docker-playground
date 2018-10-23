@@ -324,6 +324,11 @@ help: ## Print usage
 .PHONY: ci-check
 ci-check: ## CI check
 	@ls
+	@echo "AWS file = ${CONFIG_FILE_AWS}" 
+	@echo "NPM file = ${CONFIG_FILE_NPM}" 
+	@echo "Image name = ${IMAGE_NAME}"
+	@cat ${CONFIG_FILE_AWS}
+	@cat ${CONFIG_FILE_NPM}
 	@$(script-release)
 	@cat ${CONFIG_FILE_AWS}
 	@cat ${CONFIG_FILE_NPM}
