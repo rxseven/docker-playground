@@ -27,6 +27,7 @@ log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
+txt-bold = \e[1m$(1)\e[0m
 
 # Set configuration values
 set-json = sed -i.backup 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
@@ -160,12 +161,31 @@ test: ## Run tests in watch mode
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
-	@$(call log-step,[Step 1/4] Download base images and build the development image (if needed))
-	@$(call log-step,[Step 2/4] Create and start a container for building the app)
-	@$(call log-step,[Step 3/4] Create an optimized production build)
-	@$(call log-step,[Step 4/4] Stop and remove the container)
+	@$(call log-step,[Step 1/6] Remove the existing build)
+	@rm -rf build
+	@$(call log-step,[Step 2/6] Download base images (if needed))
+	@$(call log-step,[Step 3/6] Build the development image (if needed))
+	@$(call log-step,[Step 4/6] Create and start a container for building the app)
+	@$(call log-step,[Step 5/6] Create an optimized production build)
+	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm app build
 	@$(call log-success,Done)
+
+.PHONY: preview
+preview: ## Preview the production build
+	@$(call log-start,Running the production build...)
+	@$(call log-step,[Step 1/6] Remove intermediate and unused images (when necessary))
+	-@docker image prune --filter label=stage=intermediate --force
+	@$(call log-step,[Step 2/6] Download base images (if needed))
+	@$(call log-step,[Step 3/6] Create an optimized production build)
+	@$(call log-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
+	@$(call log-step,[Step 5/6] Create and start the app and reverse proxy containers)
+	@$(call log-step,[Step 6/6] Start the web (for serving the app) and reverse proxy servers)
+	@$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
+	@docker-compose \
+	-f docker-compose.yml \
+	-f docker-compose.production.yml \
+	up --build
 
 ##@ Cleanup:
 
@@ -215,28 +235,6 @@ reset: ## Remove containers, networks, volumes, and the development image
 	@$(call log-step,[Step 6/6] Remove the build artifacts)
 	@rm -rf -v build coverage
 	@$(call log-success,Done)
-
-##@ Production:
-
-.PHONY: start-production
-start-production: ## Run the production build
-	@$(call log-start,Running the production build...)
-	@$(call log-step,[Step 1/3] Create an optimized production build)
-	@$(call log-step,[Step 2/4] Build an image (if needed))
-	@$(call log-step,[Step 3/4] Run a production container)
-	@$(call log-step,[Step 4/4] Start the web server serving the production build)
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.production.yml \
-	up
-
-.PHONY: start-production-build
-start-production-build: ## Build an image and run the production build
-	@$(call log-start,Build an image and run the production build...)
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.production.yml \
-	up --build
 
 ##@ Release & Deployment
 
