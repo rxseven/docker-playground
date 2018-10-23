@@ -85,8 +85,8 @@ define script-release
 	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 endef
 
-# Predeploy script
-define script-predeploy
+# Deployment script
+define script-deploy
 	# Configure a deployment configuration
 	$(call log-start,Configuring a deployment configuration...)
 	$(script-release)
@@ -95,10 +95,7 @@ define script-predeploy
 	$(call log-start,Building a deployment configuration...)
 	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
 	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
-endef
 
-# Deployment script
-define script-deploy
 	# Build a production image for deployment
 	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	$(call log-step,[Step 1/3] Build the image)
@@ -289,7 +286,6 @@ ci-coverage: ## Create code coverage reports (LCOV format)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@${script-predeploy}
 	@${script-deploy}
 	@$(call log-success,Done)
 
