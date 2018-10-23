@@ -91,3 +91,10 @@ after_script:
   - ls
   - make try-aws
   - make try-env
+
+notifications:
+  email:
+    recipients:
+      - rxseven.com@gmail.com
+    on_success: never
+    on_failure: always
