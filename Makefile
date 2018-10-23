@@ -31,6 +31,7 @@ newline = echo ""
 # Set configuration values
 set-json = sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i '' 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
+set-property = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
@@ -79,10 +80,11 @@ endef
 # Release script
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
-	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
-	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
-	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+	# $(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
+	$(call set-property,Name,${IMAGE_NAME},${CONFIG_FILE_AWS})
+	# $(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
+	# $(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
+	# $(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 endef
 
 # Predeploy script
