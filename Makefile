@@ -321,9 +321,17 @@ help: ## Print usage
 	{ printf "  \033[${ANSI_COLOR_CYAN}m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
 	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+.PHONY: ci-check
+ci-check: ## CI check
+	@ls
+	@$(script-release)
+	@cat ${CONFIG_FILE_AWS}
+	@cat ${CONFIG_FILE_NPM}
+
 .PHONY: yo
 yo: ## Yo
 	@$(call log-step,yo-text-here)
+	@$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
 
 .PHONY: try-aws
 try-aws: ## Try AWS
