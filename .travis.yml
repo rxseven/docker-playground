@@ -34,8 +34,7 @@ before_install:
 
 before_script:
   # Setup the CI environment and install required dependencies
-  - sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"myimage:0.0.1\",|" Dockerrun.aws.json
-  - cat Dockerrun.aws.json
+  - make ci-check
   - make ci-setup
 
 script:
