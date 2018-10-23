@@ -157,7 +157,7 @@ test: ## Run tests in watch mode
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
-	@$(call log-step,[Step 1/4] Build the development image (if needed))
+	@$(call log-step,[Step 1/4] Download base images and build the development image (if needed))
 	@$(call log-step,[Step 2/4] Create and start a container for building the app)
 	@$(call log-step,[Step 3/4] Create an optimized production build)
 	@$(call log-step,[Step 4/4] Stop and remove the container)
