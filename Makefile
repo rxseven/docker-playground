@@ -81,7 +81,8 @@ endef
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
 	# $(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
-	$(call set-property,Name,${IMAGE_NAME},${CONFIG_FILE_AWS})
+	sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	# $(call set-property,Name,${IMAGE_NAME},${CONFIG_FILE_AWS})
 	# $(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
 	# $(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
 	# $(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
