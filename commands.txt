@@ -178,6 +178,16 @@ LABEL maintainer="Theerawat Pongsupawat <rxseven.com@gmail.com>"
 
 --------------------------------------------------------------------------------
 
+.PHONY: ci-check
+ci-check: ## Check CI
+	@sed -i.backup 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	@cat ${CONFIG_FILE_AWS}
+	@ls
+	@rm ${CONFIG_FILE_AWS}.backup
+	@ls
+
+--------------------------------------------------------------------------------
+
 .PHONY: deploy
 deploy: ## Deploy
 	@$(create-deployment-config)
