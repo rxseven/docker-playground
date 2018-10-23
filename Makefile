@@ -29,8 +29,8 @@ log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 
 # Set configuration values
-set-json = sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
-set-env = sed -i '' 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
+set-json = sed -i.backup 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
+set-env = sed -i.backup 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
@@ -83,6 +83,9 @@ define script-release
 	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
 	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
 	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+	
+	# Remove .backup files after performing text transformations
+	rm *.backup
 endef
 
 # Predeploy script
