@@ -31,7 +31,6 @@ newline = echo ""
 # Set configuration values
 set-json = sed -i '' 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i '' 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
-set-property = @sed -i '' 's|\(.*"$(1)"\): "\(.*\)",.*|\1: '"\"$(2)\",|" $(3)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
@@ -80,12 +79,10 @@ endef
 # Release script
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	# $(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
-	sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" Dockerrun.aws.json
-	# $(call set-property,Name,${IMAGE_NAME},${CONFIG_FILE_AWS})
-	# $(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
-	# $(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
-	# $(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
+	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
+	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
+	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 endef
 
 # Predeploy script
@@ -324,22 +321,9 @@ help: ## Print usage
 	{ printf "  \033[${ANSI_COLOR_CYAN}m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
 	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
-.PHONY: ci-check
-ci-check: ## CI check
-	@ls
-	@echo "AWS file = ${CONFIG_FILE_AWS}" 
-	@echo "NPM file = ${CONFIG_FILE_NPM}" 
-	@echo "Image name = ${IMAGE_NAME}"
-	@cat ${CONFIG_FILE_AWS}
-	@cat ${CONFIG_FILE_NPM}
-	@$(script-release)
-	@cat ${CONFIG_FILE_AWS}
-	@cat ${CONFIG_FILE_NPM}
-
 .PHONY: yo
 yo: ## Yo
 	@$(call log-step,yo-text-here)
-	@$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
 
 .PHONY: try-aws
 try-aws: ## Try AWS
