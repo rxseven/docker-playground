@@ -100,6 +100,6 @@ notifications:
   # Send notifications to Slack channels about build results
   slack:
     rooms:
-      - secure: ${SLACK}
+      - secure: "hs+eOloJTwJniTLoac740Bka6feXA7ud+ZSVaG2n0qV/3B3mOOL/MXmZGbTHOKP4dOGdEzGfM4UU7aRcZTcMUeGZbIURrT97yn3CgiUJeWJNL6RpvRjmYVL3T44dJTDjRPnFyJEL/mLTbyLC3yw9+yf1aKTo/T2d2oja5a2g1tKWsTyDcXxs15jPz4dIBMgTE/oBFjOc/KQYs2O7IanJgOUXW515QwCjXO/hp3kPqefpYflywoQCyBFsoeAjlMvCE9HiMLr0wRv+rTWdeymbfRQ9BpseulDxK3Z8tTiquugcOsLCOYZ5IpWDGhLL4euWMRJK6P6XYWSwx4XbGKnBiYbD9uiO8L+UebZTTa1XOfI1tDaHlEpc9eDvlxV/qAzJ8uKUZ+Fq38DnBA6eAUEikBu7W1ScuIBZD35TosOaXWQiBAmmIL463uyI7y8vHStrKAlfnPbA5/5X9vIRuzPiuFPeYLoUgdZoIcVQ2KEtkrQrIhDMHvxf0RVGdfTW3+b2c9MPjL+NurCvKxIGXggF/613cMyBEVbrlFq49teBzdxQP44+vB2NVapKM1rkeHUGQeuZKNm9r2AjiTDzow9MmXOOMjbNDV+lfuSr9t7U6K0qxLSR+E3duplL25fNAUKr4Ab19oyT0KIucihmnJXVrLdrJY+tPsb0gaKXwp5OW9M="
     on_success: always
     on_failure: always
