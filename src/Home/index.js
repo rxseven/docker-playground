@@ -14,7 +14,7 @@ const Home = () => (
       publishing software like Aldus PageMaker including versions of Lorem
       Ipsum.
     </p>
-    <p>Line 2</p>
+    <p>Line 2 - Content</p>
   </div>
 );
 
