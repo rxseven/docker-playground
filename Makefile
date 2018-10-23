@@ -149,7 +149,10 @@ shell: ## Attach an interactive shell to the development container
 
 .PHONY: test
 test: ## Run tests in watch mode
-	@$(call log-start,Starting the testing container based on the development image...)
+	@$(call log-start,Running tests...)
+	@$(call log-step,[Step 1/3] Download base images (if needed))
+	@$(call log-step,[Step 2/3] Build the development image (if needed))
+	@$(call log-step,[Step 3/3] Create and start a container for running tests in watch mode)
 	@docker-compose \
 	-f docker-compose.yml \
 	-f docker-compose.override.yml \
