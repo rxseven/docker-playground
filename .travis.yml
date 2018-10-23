@@ -34,17 +34,15 @@ before_install:
 
 before_script:
   # Setup the CI environment and install required dependencies
-  - make ci-check
   - make ci-setup
 
 script:
   # Run tests and generate code coverage reports
-  - echo "Skip running tests for now"
-  # - make ci-test
+  - make ci-test
 
 after_success:
   # Create code coverage reports (LCOV format)
-  # - make ci-coverage
+  - make ci-coverage
 
 deploy:
   # Create deployment configuration and build a production image
