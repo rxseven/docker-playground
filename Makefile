@@ -78,11 +78,11 @@ endef
 
 # Release script
 define script-release
-	$(call log-step,[Step 1/2] Configure Dockerrun.aws.json for AWS Elastic Beanstalk deployment)
-	$(call set-json,Name,${IMAGE_NAME},$(,),Dockerrun.aws.json)
-	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),Dockerrun.aws.json)
-	$(call log-step,[Step 2/2] Configure package.json for AWS Node.js deployment)
-	$(call set-json,version,${RELEASE_VERSION},$(,),package.json)
+	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
+	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
+	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
+	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
+	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 endef
 
 # Predeploy script
