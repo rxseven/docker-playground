@@ -330,7 +330,7 @@ yo: ## Yo
 try-aws: ## Try AWS
 	@$(call log-start,Trying to update Dockerrun.aws.json...)
 	@cat Dockerrun.aws.json
-	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 	@cat Dockerrun.aws.json
 
 .PHONY: try-env
