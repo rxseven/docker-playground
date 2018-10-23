@@ -305,7 +305,7 @@ ci-clean: ## Remove unused data from the CI server
 
 .PHONY: ci-check
 ci-check: ## Check CI
-	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 	@cat ${CONFIG_FILE_AWS}
 
 ##@ Miscellaneous:
@@ -330,7 +330,7 @@ yo: ## Yo
 try-aws: ## Try AWS
 	@$(call log-start,Trying to update Dockerrun.aws.json...)
 	@cat Dockerrun.aws.json
-	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
+	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 	@cat Dockerrun.aws.json
 
 .PHONY: try-env
