@@ -135,7 +135,10 @@ start: ## Build, (re)create, start, and attach to containers for a service
 
 .PHONY: restart
 restart: ## Build images before starting the development and reverse proxy containers
-	@$(call log-start,Restarting the development and reverse proxy containers...)
+	@$(call log-start,Restarting the development environment...)
+	@$(call log-step,[Step 1/3] Rebuild the development image)
+	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
+	@$(call log-step,[Step 3/3] Start the development server)
 	@docker-compose up --build
 
 .PHONY: shell
