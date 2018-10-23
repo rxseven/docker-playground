@@ -323,7 +323,7 @@ help: ## Print usage
 
 .PHONY: yo
 yo: ## Yo
-	@$(call log-step,yo-text-here)
+	@$(call log-step,yo-text-here2)
 
 .PHONY: try-aws
 try-aws: ## Try AWS
