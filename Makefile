@@ -310,6 +310,10 @@ ci-clean: ## Remove unused data from the CI server
 	@docker system prune --all --volumes --force
 	@$(call log-success,Done)
 
+.PHONY: ci-check
+ci-check: ## Check CI
+	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+
 ##@ Miscellaneous:
 
 .PHONY: info
