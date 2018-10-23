@@ -127,8 +127,8 @@ setup: ## Setup the development environment and install required dependencies
 .PHONY: start
 start: ## Build, (re)create, start, and attach to containers for a service
 	@$(call log-start,Starting the development environment...)
-	@$(call log-step,[Step 1/3] Build the images (if needed))
-	@$(call log-step,[Step 2/3] Run the development and reverse proxy containers)
+	@$(call log-step,[Step 1/3] Download base images and build the development image (if needed))
+	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
 	@$(call log-step,[Step 3/3] Start the development server)
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up
