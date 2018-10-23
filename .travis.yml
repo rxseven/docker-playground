@@ -98,3 +98,6 @@ notifications:
       - rxseven.com@gmail.com
     on_success: change
     on_failure: always
+  slack:
+    rooms:
+      - ${SLACK_ACCOUNT}:${SLACK_TOKEN}
