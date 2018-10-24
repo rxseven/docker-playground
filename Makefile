@@ -29,6 +29,7 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 txt-bold = \e[1m$(1)\e[0m
+txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 
 # Set configuration values
 set-json = sed -i.backup 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
@@ -355,9 +356,68 @@ ci-check: ## Check CI (won't work on Travis CI)
 ##@ Miscellaneous:
 
 .PHONY: info
-info: ## Show project information
-	@$(call log-start,Show project information)
-	@echo "Release date : ${RELEASE_DATE}"
+info: ## Display system-wide information
+	@$(call txt-headline,Releases)
+	@echo "Date                           : ${RELEASE_DATE}"
+	@echo "Version                        : ${RELEASE_VERSION}"
+	@$(newline)
+	@$(call txt-headline,App)
+	@echo "Name                           : ${APP_NAME}"
+	@echo "Repository                     : ${APP_REPO}"
+	@echo "Live URL                       : ${APP_URL_LIVE}"
+	@$(newline)
+	@$(call txt-headline,Domain name & URLs)
+	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
+	@echo "Top level domain (TLD)         : ${APP_TLD}"
+	@echo "Domain name                    : ${APP_DOMAIN}"
+	@echo "Development URL                : ${APP_URL_LOCAL}"
+	@echo "Production build URL           : ${APP_URL_BUILD}"
+	@$(newline)
+	@$(call txt-headline,Host machine)
+	@echo "Hosts file                     : ${HOST_CONFIG}"
+	@echo "Working directory              : $$PWD"
+	@echo "Temporary path                 : ${HOST_TEMP}"
+	@echo "IP address                     : ${HOST_IP}"
+	@$(newline)
+	@$(call txt-headline,Base images)
+	@echo "NGINX                          : ${IMAGE_BASE_NGINX}"
+	@echo "Node.js                        : ${IMAGE_BASE_NODE}"
+	@echo "Proxy                          : ${IMAGE_BASE_PROXY}"
+	@$(newline)
+	@$(call txt-headline,Image & Container)
+	@echo "Cloud-based registry service   : ${IMAGE_REGISTRY}"
+	@echo "Username                       : ${IMAGE_USERNAME}"
+	@echo "Repository                     : ${IMAGE_REPO}"
+	@echo "Tag                            : ${RELEASE_VERSION}"
+	@echo "Name                           : ${IMAGE_NAME}"
+	@echo "Temporary path                 : ${CONTAINER_TEMP}"
+	@echo "Working directory              : ${WORKDIR}"
+	@$(newline)
+	@$(call txt-headline,Configuration files)
+	@echo "Amazon Web Services (AWS)      : ${CONFIG_FILE_AWS}"
+	@echo "NPM & Yarn                     : ${CONFIG_FILE_NPM}"
+	@echo "Travis CI                      : ${CONFIG_FILE_CI}"
+	@echo "Environment variables          : ${CONFIG_FILE_ENV}"
+	@$(newline)
+	@$(call txt-headline,Files & Directories)
+	@echo "Optimized production build     : ${DIRECTORY_BUILD}"
+	@echo "Code coverage                  : ${DIRECTORY_COVERAGE}"
+	@echo "Temporary                      : ${DIRECTORY_TEMP}"
+	@echo "Treemap                        : ${TREEMAP}"
+	@$(newline)
+	@$(call txt-headline,Ports)
+	@echo "Development server             : ${PORT_EXPOSE_APP}"
+	@echo "Reverse proxy server           : ${PORT_EXPOSE_PROXY}"
+	@echo "Unsecured HTTP port mapping    : ${PORT_MAPPING_DEFAULT}"
+	@echo "SSL port mapping               : ${PORT_MAPPING_SSL}"
+	@$(newline)
+	@$(call txt-headline,Miscellaneous)
+	@echo "Default browser                : ${BROWSER_DEFAULT}"
+	@$(newline)
+	@$(call txt-headline,Maintainer)
+	@echo "Name                           : ${AUTHOR_NAME}"
+	@echo "Email                          : ${AUTHOR_EMAIL}"
+	@$(newline)
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies
