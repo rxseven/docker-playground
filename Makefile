@@ -359,8 +359,6 @@ info: ## Show project information
 	@$(call log-start,Show project information)
 	@echo "Release date : ${RELEASE_DATE}"
 
-##@ Common:
-
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies
 	@$(call log-start,Setting up the development environment...)
