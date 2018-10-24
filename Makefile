@@ -112,8 +112,8 @@ endef
 ##@ Common:
 
 .PHONY: setup
-setup: ## Setup the development environment and install required dependencies
-	@$(call log-start,Setting up the project...)
+setup: ## Setup the development environment and install dependencies
+	@$(call log-start,Setting up the development environment...)
 	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
