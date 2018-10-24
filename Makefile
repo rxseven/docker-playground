@@ -1,13 +1,11 @@
 # Dependencies
 include .env
 
-# Escape
+# Variables
+SHELL := /bin/bash
 , := ,
 blank :=
 space := $(blank) $(blank)
-
-# Variables
-SHELL := /bin/bash
 
 # ANSI Colors
 ANSI_COLOR_BLACK=30
@@ -18,6 +16,9 @@ ANSI_COLOR_MAGENTA=35
 ANSI_COLOR_RED=31
 ANSI_COLOR_YELLOW=33
 ANSI_COLOR_WHITE=37
+
+# Default goal
+.DEFAULT_GOAL := help
 
 # Logger
 logger = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
@@ -105,9 +106,6 @@ define script-deploy
 	$(call log-step,[Step 3/3] Push the image to Docker Hub)
 	docker push ${IMAGE_NAME}
 endef
-
-# Default goal
-.DEFAULT_GOAL := help
 
 ##@ Common:
 
