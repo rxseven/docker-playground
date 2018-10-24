@@ -264,6 +264,15 @@ reset: ## Reset the development environment and clean up unused data
 	-@rm -rf -v tmp/*
 	@$(call log-success,Done)
 
+.PHONY: erase
+erase: ## Clean up build artifacts and temporary files
+	@$(call log-start,Erasing data...)
+	@$(call log-step,[Step 1/2] Remove build artifacts)
+	-@rm -rf -v build coverage
+	@$(call log-step,[Step 2/2] Remove temporary files)
+	-@rm -rf -v tmp/*
+	@$(call log-success,Done)
+
 ##@ Release & Deployment
 
 .PHONY: version
