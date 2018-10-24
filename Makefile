@@ -164,6 +164,10 @@ install: ## Install a package and any packages that it depends on
 		echo "You did not enter the package name, please try again"; \
 	fi;
 
+.PHONY: format
+format: ## Format code automatically
+	@$(call log-start,TODO...)
+
 .PHONY: analyze
 analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-start,Analyzing and debugging code...)
@@ -194,7 +198,7 @@ preview: ## Preview the production build locally
 	-f docker-compose.production.yml \
 	up --build
 
-##@ Testing and Linting
+##@ Testing and Linting:
 
 .PHONY: test
 test: ## Run tests in watch mode
@@ -209,6 +213,18 @@ test: ## Run tests in watch mode
 	--name playground-test \
 	--rm \
 	app
+
+.PHONY: lint
+lint: ## Run JavaScript linting
+	@$(call log-start,TODO...)
+
+.PHONY: stylelint
+stylelint: ## Run stylesheet linting
+	@$(call log-start,TODO...)
+
+.PHONY: typecheck
+typecheck: ## Run static type checking
+	@$(call log-start,TODO...)
 
 ##@ Cleanup:
 
@@ -277,7 +293,7 @@ reset: ## Reset the development environment and clean up unused data
 	-@rm -rf -v tmp/*
 	@$(call log-success,Done)
 
-##@ Release & Deployment
+##@ Release:
 
 .PHONY: version
 version: ## Set the next release version
