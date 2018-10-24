@@ -149,8 +149,9 @@ build: ## Create an optimized production build
 	@$(call log-success,Done)
 
 .PHONY: install
-install: ## Install a package (by passing "package" argument as part of the command)
-	@if [ "$$package" != "" ]; then \
+install: ## Install a package and any packages that it depends on
+	@read -p "Enter package name: " package; \
+	if [ "$$package" != "" ]; then \
 		$(call log-step,[Step 1/5] Build the development image (if needed)) \
 		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
 		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
