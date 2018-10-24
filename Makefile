@@ -369,13 +369,6 @@ help: ## Print usage
 yo: ## Yo
 	@$(call log-step,yo-text-here)
 
-.PHONY: try-aws
-try-aws: ## Try AWS
-	@$(call log-start,Trying to update Dockerrun.aws.json...)
-	@cat Dockerrun.aws.json
-	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
-	@cat Dockerrun.aws.json
-
 .PHONY: try-env
 try-env: ## Try ENV
 	@$(call log-start,Trying to log ENV from .env...)
