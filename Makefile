@@ -176,6 +176,20 @@ build: ## Create an optimized production build
 	@ls ${DIRECTORY_BUILD}
 	@$(call log-success,Done)
 
+.PHONY: analyze
+analyze: build ## Analyze and debug code bloat through source maps
+	@$(call log-start,Analyzing and debugging code...)
+	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
+	@$(call log-step,[Step 2/5] Analyze the bundle size)
+	@docker-compose run --name playground-analyze app analyze
+	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
+	@docker cp playground-analyze:${CONTAINER_TEMP}/. ${HOST_TEMP}
+	@$(call log-step,[Step 4/5] Remove the container)
+	@docker container rm playground-analyze
+	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
+	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${TREEMAP}
+	@$(call log-success,Done)
+
 .PHONY: preview
 preview: ## Preview the production build locally
 	@$(call log-start,Running the production build...)
