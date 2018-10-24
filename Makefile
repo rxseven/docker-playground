@@ -165,7 +165,7 @@ test: ## Run tests in watch mode
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
 	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
-	@rm -rf -v ${DIRECTORY_BUILD}
+	-@rm -rf -v ${DIRECTORY_BUILD}
 	@$(call log-step,[Step 2/6] Download base images (if needed))
 	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
