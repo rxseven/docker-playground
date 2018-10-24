@@ -223,7 +223,7 @@ refresh: ## Refresh (soft clean) the development environment
 .PHONY: clean
 clean: ## Clean up the development environment (including volumes)
 	@$(call log-start,Cleaning up the development environment...)
-	@$(call log-step,[Step 1/3] Remove containers for the app and reverse proxy services)
+	@$(call log-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services)
 	@$(call log-step,[Step 2/3] Remove the default network)
 	@$(call log-step,[Step 3/3] Remove volumes)
 	@docker-compose down -v
