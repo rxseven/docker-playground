@@ -218,9 +218,12 @@ refresh: ## Refresh the development environment (remove containers and networks)
 	@docker network ls
 	@$(call log-success,Done)
 
-.PHONY: clean-all
-clean-all: ## Stop containers, remove containers, networks, and volumes
-	@$(call log-start,Cleaning up containers$(,) networks$(,) and volumes...)
+.PHONY: clean
+clean: ## Clean up the development environment (including volumes)
+	@$(call log-start,Cleaning up the development environment...)
+	@$(call log-step,[Step 1/3] Remove containers for the app and reverse proxy services)
+	@$(call log-step,[Step 2/3] Remove the default network)
+	@$(call log-step,[Step 3/3] Remove volumes)
 	@docker-compose down -v
 	@$(call log-sum,[sum] Containers (including exited state))
 	@docker container ls -a
