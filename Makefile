@@ -209,7 +209,7 @@ preview: ## Preview the production build locally
 ##@ Cleanup:
 
 .PHONY: refresh
-refresh: ## Stop containers, remove containers and networks
+refresh: ## Refresh the development environment (remove containers and networks)
 	@$(call log-start,Cleaning up containers and networks...)
 	@docker-compose down
 	@$(call log-sum,[sum] Containers (including exited state))
