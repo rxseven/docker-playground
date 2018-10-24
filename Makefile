@@ -107,20 +107,6 @@ define script-deploy
 	docker push ${IMAGE_NAME}
 endef
 
-##@ Common:
-
-.PHONY: setup
-setup: ## Setup the development environment and install dependencies
-	@$(call log-start,Setting up the development environment...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
-	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
-	@docker pull ${IMAGE_BASE_PROXY}
-	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call script-host,${APP_HOST_LOCAL})
-	@$(call script-host,${APP_HOST_BUILD})
-	@$(call log-success,Done)
-
 ##@ Development:
 
 .PHONY: start
@@ -161,6 +147,20 @@ build: ## Create an optimized production build
 	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIRECTORY_BUILD}) directory)
 	@ls ${DIRECTORY_BUILD}
 	@$(call log-success,Done)
+
+.PHONY: install
+install: ## Install a package (by passing "package" argument as part of the command)
+	@if [ "$$package" != "" ]; then \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
+		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
+		docker-compose run --name playground-installing --rm app add $$package; \
+		$(call log-success,Done) \
+	else \
+		echo "You did not enter the package name, please try again"; \
+	fi;
 
 .PHONY: analyze
 analyze: build ## Analyze and debug code bloat through source maps
