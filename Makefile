@@ -126,20 +126,22 @@ setup: ## Setup the development environment and install required dependencies
 ##@ Development:
 
 .PHONY: start
-start: ## Build, (re)create, start, and attach to containers for a service
+start: ## Start the development environment and attach to containers for a service
 	@$(call log-start,Starting the development environment...)
-	@$(call log-step,[Step 1/3] Download base images and build the development image (if needed))
-	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
-	@$(call log-step,[Step 3/3] Start the development server)
+	@$(call log-step,[Step 1/4] Download base images (if needed))
+	@$(call log-step,[Step 2/4] Build the development image (if needed))
+	@$(call log-step,[Step 3/4] Create and start the development and reverse proxy containers)
+	@$(call log-step,[Step 4/4] Start the development and reverse proxy servers)
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up
 
 .PHONY: restart
-restart: ## Build images before starting the development and reverse proxy containers
+restart: ## Rebuild and restart the development environment
 	@$(call log-start,Restarting the development environment...)
 	@$(call log-step,[Step 1/3] Rebuild the development image)
 	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
-	@$(call log-step,[Step 3/3] Start the development server)
+	@$(call log-step,[Step 3/3] Start the development and reverse proxy servers)
+	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
 .PHONY: shell
