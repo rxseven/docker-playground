@@ -164,11 +164,10 @@ test: ## Run tests in watch mode
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
-	@$(call log-step,[Step 1/6] Remove an existing build (if necessary))
+	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
 	@rm -rf -v ${DIRECTORY_BUILD}
 	@$(call log-step,[Step 2/6] Download base images (if needed))
-	@$(call log-step,[Step 3/6] Rebuild the development image)
-	@docker-compose build app
+	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
