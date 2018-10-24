@@ -1,0 +1,24 @@
+define script-install
+	$(call log-step,[Step 1/5] Build the development image (if needed)) \
+	$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
+	$(call log-step,[Step 3/5] Install $(1) package in the persistent storage (volume)) \
+	$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+	$(call log-step,[Step 5/5] Remove the container) \
+	docker-compose run --name playground-installing --rm app add $(1) \
+	$(call log-success,Done)
+endef
+
+.PHONY: install
+install: ## Install a package (by passing "package" argument as part of the command)
+	@if [ "$$package" != "" ]; then \
+		$(call script-install,$$package) \
+	else \
+		read -p "Enter package name: " package; \
+		if [ "$$package" != "" ]; then \
+			$(call script-install,$$package) \
+		else \
+			echo "You did not enter the package name, please try again"; \
+		fi; \
+	fi;
+
+--------------------------------------------------------------------------------
