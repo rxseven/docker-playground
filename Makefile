@@ -149,20 +149,6 @@ shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
 	@docker container exec -it playground-local sh
 
-.PHONY: test
-test: ## Run tests in watch mode
-	@$(call log-start,Running tests...)
-	@$(call log-step,[Step 1/3] Download base images (if needed))
-	@$(call log-step,[Step 2/3] Build the development image (if needed))
-	@$(call log-step,[Step 3/3] Create and start a container for running tests in watch mode)
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.override.yml \
-	-f docker-compose.test.yml run \
-	--name playground-test \
-	--rm \
-	app
-
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
@@ -207,6 +193,22 @@ preview: ## Preview the production build locally
 	-f docker-compose.yml \
 	-f docker-compose.production.yml \
 	up --build
+
+##@ Testing and Linting
+
+.PHONY: test
+test: ## Run tests in watch mode
+	@$(call log-start,Running tests...)
+	@$(call log-step,[Step 1/3] Download base images (if needed))
+	@$(call log-step,[Step 2/3] Build the development image (if needed))
+	@$(call log-step,[Step 3/3] Create and start a container for running tests in watch mode)
+	@docker-compose \
+	-f docker-compose.yml \
+	-f docker-compose.override.yml \
+	-f docker-compose.test.yml run \
+	--name playground-test \
+	--rm \
+	app
 
 ##@ Cleanup:
 
