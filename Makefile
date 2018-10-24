@@ -441,27 +441,3 @@ help: ## Print usage
 .PHONY: yo
 yo: ## Yo
 	@$(call log-step,yo-text-here)
-
-.PHONY: try-env
-try-env: ## Try ENV
-	@$(call log-start,Trying to log ENV from .env...)
-	@echo "RELEASE_DATE = ${RELEASE_DATE}"
-	@echo "RELEASE_VERSION = ${RELEASE_VERSION}"
-	@echo "APP_NAME = ${APP_NAME}"
-	@echo "APP_DOMAIN = ${APP_DOMAIN}"
-	@echo "APP_TLD = ${APP_TLD}"
-	@echo "APP_URL_PROTOCAL = ${APP_URL_PROTOCAL}"
-	@echo "APP_HOST_LOCAL = ${APP_HOST_LOCAL}"
-	@echo "APP_HOST_BUILD = ${APP_HOST_BUILD}"
-	@echo "APP_URL_LOCAL = ${APP_URL_LOCAL}"
-	@echo "APP_URL_BUILD = ${APP_URL_BUILD}"
-	@echo "IMAGE_BASE_NGINX = ${IMAGE_BASE_NGINX}"
-	@echo "IMAGE_BASE_NODE = ${IMAGE_BASE_NODE}"
-	@echo "IMAGE_BASE_PROXY = ${IMAGE_BASE_PROXY}"
-	@echo "IMAGE_NAME = ${IMAGE_NAME}"
-	@echo "IMAGE_REPO = ${IMAGE_REPO}"
-	@echo "IMAGE_USERNAME = ${IMAGE_USERNAME}"
-	@echo "WORKDIR = ${WORKDIR}"
-	@echo "CONFIG_FILE_CI = ${CONFIG_FILE_CI}"
-	@echo "CONFIG_FILE_NPM = ${CONFIG_FILE_NPM}"
-	@echo "CONFIG_FILE_AWS = ${CONFIG_FILE_AWS}"
