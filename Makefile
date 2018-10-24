@@ -358,6 +358,20 @@ info: ## Show project information
 	@$(call log-start,Show project information)
 	@echo "Release date : ${RELEASE_DATE}"
 
+##@ Common:
+
+.PHONY: setup
+setup: ## Setup the development environment and install dependencies
+	@$(call log-start,Setting up the development environment...)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
+	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${IMAGE_BASE_PROXY}
+	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
+	@$(call script-host,${APP_HOST_LOCAL})
+	@$(call script-host,${APP_HOST_BUILD})
+	@$(call log-success,Done)
+
 .PHONY: help
 help: ## Print usage
 	@awk 'BEGIN {FS = ":.*##"; \
