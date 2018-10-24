@@ -178,6 +178,25 @@ LABEL maintainer="Theerawat Pongsupawat <rxseven.com@gmail.com>"
 
 --------------------------------------------------------------------------------
 
+.PHONY: www
+www:
+	@if [ ! -d "tmp" ]; then \
+		echo "does not exist"; \
+	fi;
+	@$(call log-success,Done)
+
+
+--------------------------------------------------------------------------------
+
+.PHONY: try-aws
+try-aws: ## Try AWS
+	@$(call log-start,Trying to update Dockerrun.aws.json...)
+	@cat Dockerrun.aws.json
+	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
+	@cat Dockerrun.aws.json
+
+--------------------------------------------------------------------------------
+
 .PHONY: ci-check
 ci-check: ## Check CI
 	@sed -i.backup 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
