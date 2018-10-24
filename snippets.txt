@@ -1,3 +1,42 @@
+# V1 - works
+
+.PHONY: install
+install: ## Install a package (by passing "package" argument as part of the command)
+	@if [ "$$package" != "" ]; then \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
+		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
+		docker-compose run --name playground-installing --rm app add $$package; \
+		$(call log-success,Done) \
+	else \
+		echo "You did not enter the package name, please try again"; \
+	fi;
+
+--------------------------------------------------------------------------------
+
+# V2 - better
+
+.PHONY: install
+install: ## Install a package and any packages that it depends on
+	@read -p "Enter package name: " package; \
+	if [ "$$package" != "" ]; then \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
+		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
+		docker-compose run --name playground-installing --rm app add $$package; \
+		$(call log-success,Done) \
+	else \
+		echo "You did not enter the package name, please try again"; \
+	fi;
+
+--------------------------------------------------------------------------------
+
+# V3 - does not work
+
 define script-install
 	$(call log-step,[Step 1/5] Build the development image (if needed)) \
 	$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
