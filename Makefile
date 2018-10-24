@@ -221,7 +221,7 @@ refresh: ## Refresh (soft clean) the development environment
 	@$(call log-success,Done)
 
 .PHONY: clean
-clean: ## Clean up the development environment (including volumes)
+clean: ## Clean up the development environment (including persistent data)
 	@$(call log-start,Cleaning up the development environment...)
 	@$(call log-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services)
 	@$(call log-step,[Step 2/3] Remove the default network)
