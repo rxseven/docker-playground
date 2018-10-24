@@ -215,3 +215,9 @@ deploy: ## Deploy
 yo: ## Yo
 	@echo "Running tests and creating code coverage reports..."
 	@printf "\e[32;1mRunning tests and creating code coverage reports...\e[0m \n"
+
+--------------------------------------------------------------------------------
+
+.PHONY: yo
+yo: ## Yo
+	@$(call log-step,yo-text-here)
