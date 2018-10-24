@@ -209,8 +209,10 @@ preview: ## Preview the production build locally
 ##@ Cleanup:
 
 .PHONY: refresh
-refresh: ## Refresh the development environment (remove containers and networks)
-	@$(call log-start,Cleaning up containers and networks...)
+refresh: ## Refresh (soft clean) the development environment
+	@$(call log-start,Refreshing the development environment...)
+	@$(call log-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services)
+	@$(call log-step,[Step 2/2] Remove the default network)
 	@docker-compose down
 	@$(call log-sum,[sum] Containers (including exited state))
 	@docker container ls -a
