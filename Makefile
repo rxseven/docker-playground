@@ -210,6 +210,15 @@ preview: ## Preview the production build locally
 
 ##@ Cleanup:
 
+.PHONY: erase
+erase: ## Clean up build artifacts and temporary files
+	@$(call log-start,Erasing data...)
+	@$(call log-step,[Step 1/2] Remove build artifacts)
+	-@rm -rf -v build coverage
+	@$(call log-step,[Step 2/2] Remove temporary files)
+	-@rm -rf -v tmp/*
+	@$(call log-success,Done)
+
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
 	@$(call log-start,Refreshing the development environment...)
@@ -263,15 +272,6 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-step,[Step 8/9] Remove build artifacts)
 	-@rm -rf -v build coverage
 	@$(call log-step,[Step 9/9] Remove temporary files)
-	-@rm -rf -v tmp/*
-	@$(call log-success,Done)
-
-.PHONY: erase
-erase: ## Clean up build artifacts and temporary files
-	@$(call log-start,Erasing data...)
-	@$(call log-step,[Step 1/2] Remove build artifacts)
-	-@rm -rf -v build coverage
-	@$(call log-step,[Step 2/2] Remove temporary files)
 	-@rm -rf -v tmp/*
 	@$(call log-success,Done)
 
