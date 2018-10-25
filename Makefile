@@ -38,15 +38,6 @@ set-env = sed -i.backup 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
 
-# Test script
-define script-test
-	# Run a container for testing, run tests, and generate code coverage reports
-	$(call log-step,[Step 1/3] Build an image based on the development environment)
-	$(call log-step,[Step 2/3] Create and start a container for running tests)
-	$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
-	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
-endef
-
 # Creating LCOV data script
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
@@ -336,7 +327,10 @@ ci-setup: ## Setup the CI environment and install required dependencies
 .PHONY: ci-test
 ci-test: ## Run tests and generate code coverage reports
 	@$(call log-start,Running tests...)
-	@$(script-test)
+	@$(call log-step,[Step 1/3] Build an image based on the development environment)
+	@$(call log-step,[Step 2/3] Create and start a container for running tests)
+	@$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
+	@docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 	@$(call log-success,Done)
 
 .PHONY: ci-coverage
