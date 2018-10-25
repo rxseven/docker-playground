@@ -221,3 +221,21 @@ yo: ## Yo
 .PHONY: yo
 yo: ## Yo
 	@$(call log-step,yo-text-here)
+
+--------------------------------------------------------------------------------
+
+.PHONY: yo
+yo: ## yo
+	@echo "Available modes:"
+	@echo "- Watch mode    : press enter"
+	@echo "- Code coverage : coverage"
+	@echo "- Silent        : sum"
+	@echo "- Details       : details"
+	@$(newline)
+	@read -p "Enter test mode: " mode; \
+	if [ "$$mode" == "coverage" ]; then \
+		$(call log-sum,[sum] LCOV data is created in ${DIRECTORY_ROOT}${DIRECTORY_COVERAGE} directory) \
+		ls ${DIRECTORY_COVERAGE}; \
+	else \
+		echo "else"; \
+	fi;
