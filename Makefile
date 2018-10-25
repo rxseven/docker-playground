@@ -40,6 +40,10 @@ script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
 
 # Test script
 define script-test
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running tests) \
+	$(call log-step,[Step 3/4] Run tests) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
 	docker-compose \
 	-f docker-compose.yml \
 	-f docker-compose.override.yml \
