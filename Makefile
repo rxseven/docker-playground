@@ -62,6 +62,15 @@ define script-lint
 	docker-compose run --name playground-linting --rm app lint$(1)
 endef
 
+# Static type checking script
+define script-typecheck
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running static type checking) \
+	$(call log-step,[Step 3/4] Run static type checking) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	docker-compose run --name playground-typechecking --rm app type$(1)
+endef
+
 # Creating LCOV data script
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
@@ -250,7 +259,22 @@ lint: ## Run code linting
 
 .PHONY: typecheck
 typecheck: ## Run static type checking
-	@$(call log-start,TODO...)
+	@echo "Available options:"
+	@echo "- Default           : press enter"
+	@echo "- Check             : check"
+	@echo "- Focus check       : focus"
+	@echo "- Install libdef    : install"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "check" ]; then \
+		$(call script-typecheck,:check); \
+	elif [ "$$option" == "focus" ]; then \
+		$(call script-typecheck,:check:focus); \
+	elif [ "$$option" == "install" ]; then \
+		$(call script-typecheck,:install); \
+	else \
+		$(call script-typecheck); \
+	fi;
 
 ##@ Cleanup:
 
