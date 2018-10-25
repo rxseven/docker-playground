@@ -53,6 +53,15 @@ define script-test
 	app test$(1)
 endef
 
+# Linting script
+define script-lint
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running JavaScript linting) \
+	$(call log-step,[Step 3/4] Run linting) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	docker-compose run --name playground-linting --rm app lint$(1)
+endef
+
 # Creating LCOV data script
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
@@ -224,8 +233,20 @@ test: ## Run tests
 	fi;
 
 .PHONY: lint
-lint: ## Run JavaScript linting
-	@$(call log-start,TODO...)
+lint: ## Run code linting
+	@echo "Available options:"
+	@echo "- JavaScript        : press enter"
+	@echo "- JavaScript (fix)  : fix"
+	@echo "- Stylesheet        : stylesheet"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "stylesheet" ]; then \
+		$(call script-lint,:stylesheet); \
+	elif [ "$$option" == "fix" ]; then \
+		$(call script-lint,:script:fix); \
+	else \
+		$(call script-lint,:script); \
+	fi;
 
 .PHONY: stylelint
 stylelint: ## Run stylesheet linting
