@@ -9,12 +9,13 @@ FROM ${IMAGE_BASE_NODE} as app
 
 # Specify build and environment variables
 ARG BUILD_ENV
+ARG LABEL_INTERMEDIATE
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
 ENV NPM_CONFIG_LOGLEVEL=warn
 
 # Add metadata to an image
-LABEL stage=intermediate
+LABEL stage=${LABEL_INTERMEDIATE}
 
 # Specify the working directory
 WORKDIR ${WORKDIR}
@@ -34,17 +35,21 @@ RUN yarn build
 FROM ${IMAGE_BASE_NGINX}
 
 # Specify build and environment variables
+ARG AUTHOR_EMAIL
+ARG AUTHOR_NAME
 ARG BUILD_ENV
 ARG BUILD_RELEASE_DATE
 ARG BUILD_RELEASE_VERSION
+ARG LABEL_DESCRIPTION
+ARG LABEL_LICENSE
 ARG PORT_EXPOSE
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
 
 # Add metadata to an image
-LABEL description="Docker playground image"
-LABEL license="GNU Affero General Public License v3.0"
-LABEL maintainer="Theerawat Pongsupawat <rxseven.com@gmail.com>"
+LABEL description=${LABEL_DESCRIPTION}
+LABEL license=${LABEL_LICENSE}
+LABEL maintainer="${AUTHOR_NAME} <${AUTHOR_EMAIL}>"
 LABEL release-date=${BUILD_RELEASE_DATE}
 LABEL version=${BUILD_RELEASE_VERSION}
 
