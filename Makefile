@@ -56,7 +56,7 @@ endef
 # Linting script
 define script-lint
 	$(call log-step,[Step 1/4] Build the development image (if needed)) \
-	$(call log-step,[Step 2/4] Create and start a container for running JavaScript linting) \
+	$(call log-step,[Step 2/4] Create and start a container for running code linting) \
 	$(call log-step,[Step 3/4] Run linting) \
 	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
 	docker-compose run --name playground-linting --rm app lint$(1)
