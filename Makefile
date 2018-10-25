@@ -210,7 +210,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 preview: ## Preview the production build locally
 	@$(call log-start,Running the production build...)
 	@$(call log-step,[Step 1/6] Remove intermediate and unused images (when necessary))
-	-@docker image prune --filter label=stage=intermediate --force
+	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
 	@$(call log-step,[Step 2/6] Download base images (if needed))
 	@$(call log-step,[Step 3/6] Create an optimized production build)
 	@$(call log-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
@@ -472,6 +472,8 @@ info: ## Display system-wide information
 	@echo "Repository                     : ${IMAGE_REPO}"
 	@echo "Tag                            : ${RELEASE_VERSION}"
 	@echo "Name                           : ${IMAGE_NAME}"
+	@echo "Description                    : ${IMAGE_DESCRIPTION}"
+	@echo "Intermediate image             : ${IMAGE_LABEL_INTERMEDIATE}"
 	@echo "Temporary path                 : ${CONTAINER_TEMP}"
 	@echo "Working directory              : ${WORKDIR}"
 	@$(newline)
@@ -495,6 +497,7 @@ info: ## Display system-wide information
 	@$(newline)
 	@$(call txt-headline,Miscellaneous)
 	@echo "Default browser                : ${BROWSER_DEFAULT}"
+	@echo "License                        : ${LICENSE}"
 	@$(newline)
 	@$(call txt-headline,Maintainer)
 	@echo "Name                           : ${AUTHOR_NAME}"
