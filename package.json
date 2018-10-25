@@ -71,6 +71,10 @@
     "test:details": "node scripts/test.js --env=jsdom --verbose --config jest.config.json",
     "test:staged": "cross-env CI=true node scripts/test.js --config jest.config.json",
     "test:sum": "node scripts/test.js --env=jsdom --silent --config jest.config.json",
+    "type": "flow",
+    "type:check": "flow check",
+    "type:check:focus": "flow focus-check",
+    "type:install": "flow-typed install",
     "start:https": "HTTPS=true yarn start"
   },
   "browserslist": [
@@ -87,6 +91,8 @@
   "devDependencies": {
     "coveralls": "^3.0.2",
     "cross-env": "5.2.0",
+    "flow-bin": "^0.83.0",
+    "flow-typed": "^2.5.1",
     "husky": "0.14.3",
     "replace": "^1.0.0",
     "stylelint": "^9.6.0",
