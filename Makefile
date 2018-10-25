@@ -248,10 +248,6 @@ lint: ## Run code linting
 		$(call script-lint,:script); \
 	fi;
 
-.PHONY: stylelint
-stylelint: ## Run stylesheet linting
-	@$(call log-start,TODO...)
-
 .PHONY: typecheck
 typecheck: ## Run static type checking
 	@$(call log-start,TODO...)
