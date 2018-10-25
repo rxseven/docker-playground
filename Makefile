@@ -222,6 +222,19 @@ preview: ## Preview the production build locally
 	-f docker-compose.production.yml \
 	up --build
 
+.PHONY: status
+status: ## Show system status
+	@$(call log-sum,[status] Images (including intermediates))
+	@docker image ls -a
+	@$(call log-sum,[status] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[status] Networks)
+	@docker network ls
+	@$(call log-sum,[status] Volumes)
+	@docker volume ls
+	@$(call log-sum,[status] Working copy)
+	@git status
+
 ##@ Testing and Linting:
 
 .PHONY: test
