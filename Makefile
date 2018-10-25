@@ -38,6 +38,17 @@ set-env = sed -i.backup 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
 
+# Test script
+define script-test
+	docker-compose \
+	-f docker-compose.yml \
+	-f docker-compose.override.yml \
+	-f docker-compose.test.yml run \
+	--name playground-test \
+	--rm \
+	app test$(1)
+endef
+
 # Creating LCOV data script
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
@@ -192,18 +203,21 @@ preview: ## Preview the production build locally
 ##@ Testing and Linting:
 
 .PHONY: test
-test: ## Run tests in watch mode
-	@$(call log-start,Running tests...)
-	@$(call log-step,[Step 1/3] Download base images (if needed))
-	@$(call log-step,[Step 2/3] Build the development image (if needed))
-	@$(call log-step,[Step 3/3] Create and start a container for running tests in watch mode)
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.override.yml \
-	-f docker-compose.test.yml run \
-	--name playground-test \
-	--rm \
-	app
+test: ## Run tests
+	@echo "Available modes:"
+	@echo "- Watch mode    : press enter"
+	@echo "- Code coverage : coverage"
+	@echo "- Silent        : sum"
+	@echo "- Details       : details"
+	@$(newline)
+	@read -p "Enter test mode: " mode; \
+	if [ "$$mode" == "coverage" ]; then \
+		$(call script-test,:coverage); \
+		$(call log-sum,[sum] LCOV data is created in ${DIRECTORY_ROOT}${DIRECTORY_COVERAGE} directory) \
+		ls ${DIRECTORY_COVERAGE}; \
+	else \
+		$(call script-test); \
+	fi;
 
 .PHONY: lint
 lint: ## Run JavaScript linting
