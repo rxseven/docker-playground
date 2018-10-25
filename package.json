@@ -59,6 +59,8 @@
     "analyze": "source-map-explorer --html build/static/js/main.* > /tmp/treemap.html",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "lint:script": "eslint src/**/*.js",
+    "lint:script:fix": "eslint --fix src/**/*.js",
     "precommit": "yarn test:staged",
     "test": "node scripts/test.js --config jest.config.json",
     "test:coverage": "yarn test --coverage --no-cache --silent",
@@ -69,9 +71,6 @@
     "test:staged": "cross-env CI=true node scripts/test.js --config jest.config.json",
     "test:sum": "node scripts/test.js --env=jsdom --silent --config jest.config.json",
     "start:https": "HTTPS=true yarn start"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": [
     ">0.2%",

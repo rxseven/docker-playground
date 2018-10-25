@@ -1,0 +1,6 @@
+/build
+/config
+/coverage
+/scripts
+/src/registerServiceWorker.js
+/tmp
