@@ -66,6 +66,7 @@
     "test:coverage:ci:legacy": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "test:coverage:ci:travis": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "test:staged": "cross-env CI=true node scripts/test.js --config jest.config.json",
+    "test:sum": "node scripts/test.js --env=jsdom --silent --config jest.config.json",
     "start:https": "HTTPS=true yarn start"
   },
   "eslintConfig": {
