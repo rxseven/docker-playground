@@ -160,6 +160,23 @@ restart: ## Rebuild and restart the development environment
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
+.PHONY: open
+open: ## Open the app in the default browser
+	@echo "Available options:"
+	@echo "- Development            : press enter"
+	@echo "- Local production build : build"
+	@echo "- Staging                : unavailable"
+	@echo "- Live / Production      : live"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "build" ]; then \
+		$(call script-browser,${APP_URL_BUILD}); \
+	elif [ "$$option" == "live" ]; then \
+		$(call script-browser,${APP_URL_LIVE}); \
+	else \
+		$(call script-browser,${APP_URL_LOCAL}); \
+	fi;
+
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
