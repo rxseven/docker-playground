@@ -156,7 +156,7 @@ restart: ## Rebuild and restart the development environment
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
-	@docker container exec -it ${IMAGE_REPO}-${CONTAINER_SUFFIX_LOCAL} sh
+	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
 
 .PHONY: build
 build: ## Create an optimized production build

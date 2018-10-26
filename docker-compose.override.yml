@@ -2,9 +2,9 @@ version: "3.7"
 
 services:
   proxy:
-    container_name: "${IMAGE_REPO}-${CONTAINER_SUFFIX_LOCAL}-${CONTAINER_SUFFIX_PROXY}"
+    container_name: "${IMAGE_REPO}-${SUFFIX_LOCAL}-${CONTAINER_SUFFIX_PROXY}"
   app:
-    container_name: "${IMAGE_REPO}-${CONTAINER_SUFFIX_LOCAL}"
+    container_name: "${IMAGE_REPO}-${SUFFIX_LOCAL}"
     environment:
       NODE_ENV: development
       VIRTUAL_HOST: ${APP_DOMAIN}.${HOST_TLD}
