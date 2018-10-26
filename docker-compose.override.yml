@@ -9,7 +9,7 @@ services:
       NODE_ENV: development
       VIRTUAL_HOST: ${APP_DOMAIN}.${HOST_TLD}
       VIRTUAL_PORT: ${PORT_EXPOSE_APP}
-    image: "${ENV_DEVELOPMENT}/${IMAGE_REPO}"
+    image: "${ENV_LOCAL}/${IMAGE_REPO}"
     volumes:
       - type: bind
         source: .
