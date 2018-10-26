@@ -342,7 +342,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-sum,[sum] Volumes)
 	@docker volume ls
 	@$(call log-step,[Step 4/9] Remove the development image)
-	-@docker image rm ${IMAGE_LOCAL}/${IMAGE_REPO}
+	-@docker image rm ${ENV_DEVELOPMENT}/${IMAGE_REPO}
 	
 	@$(call log-step,[Step 5/9] Remove the production image)
 	-@docker image rm ${IMAGE_NAME}
