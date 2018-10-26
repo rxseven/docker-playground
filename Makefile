@@ -75,7 +75,7 @@ endef
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
 	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp ${CONTAINER_CI_NAME}:${CONTAINER_WORKDIR}/${DIRECTORY_COVERAGE} ${DIRECTORY_ROOT}
+	docker cp ${CONTAINER_CI_NAME}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIRECTORY_ROOT}
 
 	# Replace container's working directory path with the CI's
 	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
@@ -249,8 +249,8 @@ test: ## Run tests
 	@read -p "Enter test mode: " mode; \
 	if [ "$$mode" == "coverage" ]; then \
 		$(call script-test,:coverage); \
-		$(call log-sum,[sum] LCOV data is created in ${DIRECTORY_ROOT}${DIRECTORY_COVERAGE} directory) \
-		ls ${DIRECTORY_COVERAGE}; \
+		$(call log-sum,[sum] LCOV data is created in ${DIRECTORY_ROOT}${DIR_COVERAGE} directory) \
+		ls ${DIR_COVERAGE}; \
 	else \
 		$(call script-test); \
 	fi;
@@ -296,7 +296,7 @@ typecheck: ## Run static type checking
 erase: ## Clean up build artifacts and temporary files
 	@$(call log-start,Erasing data...)
 	@$(call log-step,[Step 1/2] Remove build artifacts)
-	-@rm -rf -v ${DIR_BUILD} ${DIRECTORY_COVERAGE}
+	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
 	@$(call log-step,[Step 2/2] Remove temporary files)
 	-@rm -rf -v ${DIRECTORY_TEMP}/*
 	@$(call log-success,Done)
@@ -353,7 +353,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-sum,[sum] Images (including intermediates))
 	@docker image ls -a
 	@$(call log-step,[Step 8/9] Remove build artifacts)
-	-@rm -rf -v ${DIR_BUILD} ${DIRECTORY_COVERAGE}
+	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
 	@$(call log-step,[Step 9/9] Remove temporary files)
 	-@rm -rf -v ${DIRECTORY_TEMP}/*
 	@$(call log-success,Done)
@@ -483,7 +483,7 @@ info: ## Display system-wide information
 	@$(newline)
 	@$(call txt-headline,Files & Directories)
 	@echo "Optimized production build     : ${DIR_BUILD}"
-	@echo "Code coverage                  : ${DIRECTORY_COVERAGE}"
+	@echo "Code coverage                  : ${DIR_COVERAGE}"
 	@echo "Temporary                      : ${DIRECTORY_TEMP}"
 	@echo "Treemap                        : ${FILE_TREEMAP}"
 	@$(newline)
