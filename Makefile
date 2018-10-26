@@ -204,7 +204,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-step,[Step 4/5] Remove the container)
 	@docker container rm ${CONTAINER_NAME}
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
-	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${TREEMAP}
+	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${FILE_TREEMAP}
 	@$(call log-success,Done)
 
 .PHONY: preview
@@ -485,7 +485,7 @@ info: ## Display system-wide information
 	@echo "Optimized production build     : ${DIRECTORY_BUILD}"
 	@echo "Code coverage                  : ${DIRECTORY_COVERAGE}"
 	@echo "Temporary                      : ${DIRECTORY_TEMP}"
-	@echo "Treemap                        : ${TREEMAP}"
+	@echo "Treemap                        : ${FILE_TREEMAP}"
 	@$(newline)
 	@$(call txt-headline,Ports)
 	@echo "Development server             : ${PORT_EXPOSE_APP}"
