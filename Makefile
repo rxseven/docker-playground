@@ -121,7 +121,7 @@ define script-deploy
 	# Build a production image for deployment
 	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	$(call log-step,[Step 1/3] Build the image)
-	docker-compose -f docker-compose.yml -f docker-compose.production.yml build app
+	docker-compose -f docker-compose.yml -f docker-compose.production.yml build ${SERVICE_APP}
 
 	# Login to Docker Hub
 	$(call log-step,[Step 2/3] Login to Docker Hub)
@@ -403,7 +403,7 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(call log-step,[Step 1/3] Build an image based on the development environment)
 	@$(call log-step,[Step 2/3] Create and start a container for running tests)
 	@$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
-	@docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
+	@docker-compose -f docker-compose.yml -f docker-compose.ci.yml up ${SERVICE_APP}
 	@$(call log-success,Done)
 
 .PHONY: ci-coverage
