@@ -38,6 +38,13 @@ set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
+# Opening browser script
+define script-browser
+	$(call log-info,Opening $(1) in the default browser...) \
+	$(call log-success,Done) \
+	open -a ${BROWSER_DEFAULT} $(1)
+endef
+
 # Test script
 define script-test
 	$(call log-step,[Step 1/4] Build the development image (if needed)) \
@@ -204,7 +211,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-step,[Step 4/5] Remove the container)
 	@docker container rm ${CONTAINER_NAME}
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
-	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${FILE_TREEMAP}
+	@$(call script-browser,${HOST_TEMP}/${FILE_TREEMAP})
 	@$(call log-success,Done)
 
 .PHONY: preview
