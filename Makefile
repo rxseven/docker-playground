@@ -48,7 +48,7 @@ define script-test
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
 	-f ${COMPOSE_TEST} run \
-	--name ${IMAGE_REPO}-${CONTAINER_SUFFIX_TEST} \
+	--name ${IMAGE_REPO}-${SUFFIX_TEST} \
 	--rm \
 	${SERVICE_APP} test$(1)
 endef
