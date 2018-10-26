@@ -7,6 +7,9 @@ SHELL := /bin/bash
 blank :=
 space := $(blank) $(blank)
 
+# Date and time
+CURRENT_DATE = $$(date +'%d.%m.%Y')
+
 # ANSI Colors
 ANSI_COLOR_BLACK=30
 ANSI_COLOR_BLUE=34
@@ -387,17 +390,19 @@ reset: ## Reset the development environment and clean up unused data
 
 .PHONY: version
 version: ## Set the next release version
-	@$(call log-start,Set the next release version)
+	@$(call log-start,Setting the next release version...)
+	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
-		echo "Your next release will be v$$VERSION"; \
-		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_ENV}); \
+		printf "The next release will be $(call txt-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
+		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
+		$(call log-success,Done) \
 	else \
-		echo "You did not enter a version number, please try again"; \
+		echo "You did not enter the value, please try again"; \
+		$(call log-danger,Skipped) \
 	fi;
-	@$(call log-success,Done)
 
 .PHONY: release
 release: ## Release new features
