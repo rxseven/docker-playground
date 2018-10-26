@@ -366,9 +366,9 @@ version: ## Set the next release version
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
 		echo "Your next release will be v$$VERSION"; \
-		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_FILE_ENV}); \
-		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_FILE_ENV}); \
-		rm ${CONFIG_FILE_ENV}.${EXT_BACKUP}; \
+		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_ENV}); \
+		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
+		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
 	else \
 		echo "You did not enter a version number, please try again"; \
 	fi;
@@ -479,7 +479,7 @@ info: ## Display system-wide information
 	@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
 	@echo "NPM & Yarn                     : ${CONFIG_FILE_NPM}"
 	@echo "Travis CI                      : ${CONFIG_CI}"
-	@echo "Environment variables          : ${CONFIG_FILE_ENV}"
+	@echo "Environment variables          : ${CONFIG_ENV}"
 	@$(newline)
 	@$(call txt-headline,Files & Directories)
 	@echo "Optimized production build     : ${DIR_BUILD}"
