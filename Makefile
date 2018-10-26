@@ -22,6 +22,7 @@ ANSI_COLOR_WHITE=37
 
 # Logger
 logger = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
+log-danger = $(call logger,${ANSI_COLOR_RED},$(1));
 log-info = $(call logger,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call logger,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
