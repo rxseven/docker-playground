@@ -298,7 +298,7 @@ erase: ## Clean up build artifacts and temporary files
 	@$(call log-step,[Step 1/2] Remove build artifacts)
 	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
 	@$(call log-step,[Step 2/2] Remove temporary files)
-	-@rm -rf -v ${DIRECTORY_TEMP}/*
+	-@rm -rf -v ${DIR_TEMP}/*
 	@$(call log-success,Done)
 
 .PHONY: refresh
@@ -355,7 +355,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-step,[Step 8/9] Remove build artifacts)
 	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
 	@$(call log-step,[Step 9/9] Remove temporary files)
-	-@rm -rf -v ${DIRECTORY_TEMP}/*
+	-@rm -rf -v ${DIR_TEMP}/*
 	@$(call log-success,Done)
 
 ##@ Release:
@@ -484,7 +484,7 @@ info: ## Display system-wide information
 	@$(call txt-headline,Files & Directories)
 	@echo "Optimized production build     : ${DIR_BUILD}"
 	@echo "Code coverage                  : ${DIR_COVERAGE}"
-	@echo "Temporary                      : ${DIRECTORY_TEMP}"
+	@echo "Temporary                      : ${DIR_TEMP}"
 	@echo "Treemap                        : ${FILE_TREEMAP}"
 	@$(newline)
 	@$(call txt-headline,Ports)
