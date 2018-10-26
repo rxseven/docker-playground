@@ -14,7 +14,7 @@ services:
         read_only: true
       - type: bind
         source: ${PROXY_CONFIG_HOST}/${PROXY_SSL}
-        target: ${PROXY_CONFIG_CONTAINER}}/${PROXY_SSL}
+        target: ${PROXY_CONTAINER}}/${PROXY_SSL}
   app:
     build:
       args:
