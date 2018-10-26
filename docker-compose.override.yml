@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   proxy:
-    container_name: "${IMAGE_REPO}-${SUFFIX_LOCAL}-${CONTAINER_SUFFIX_PROXY}"
+    container_name: "${IMAGE_REPO}-${SUFFIX_LOCAL}-${SUFFIX_PROXY=proxy}"
   app:
     container_name: "${IMAGE_REPO}-${SUFFIX_LOCAL}"
     environment:
