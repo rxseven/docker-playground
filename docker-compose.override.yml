@@ -7,7 +7,7 @@ services:
     container_name: "${IMAGE_REPO}-${CONTAINER_SUFFIX_LOCAL}"
     environment:
       NODE_ENV: development
-      VIRTUAL_HOST: ${APP_DOMAIN}.${APP_TLD}
+      VIRTUAL_HOST: ${APP_DOMAIN}.${HOST_TLD}
       VIRTUAL_PORT: ${PORT_EXPOSE_APP}
     image: "${IMAGE_LOCAL}/${IMAGE_REPO}"
     volumes:

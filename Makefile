@@ -448,7 +448,7 @@ info: ## Display system-wide information
 	@$(newline)
 	@$(call txt-headline,Domain name & URLs)
 	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
-	@echo "Top level domain (TLD)         : ${APP_TLD}"
+	@echo "Top level domain (TLD)         : ${HOST_TLD}"
 	@echo "Domain name                    : ${APP_DOMAIN}"
 	@echo "Development URL                : ${APP_URL_LOCAL}"
 	@echo "Production build URL           : ${APP_URL_BUILD}"
