@@ -75,7 +75,7 @@ endef
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
 	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp ${CONTAINER_CI_NAME}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
+	docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 
 	# Replace container's working directory path with the CI's
 	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)

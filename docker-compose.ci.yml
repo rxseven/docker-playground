@@ -3,7 +3,7 @@ version: "3.7"
 services:
   app:
     command: test:coverage
-    container_name: ${CONTAINER_CI_NAME}
+    container_name: ${CONTAINER_NAME_CI}
     environment:
       CI: "true"
       NODE_ENV: test
