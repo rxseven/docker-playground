@@ -473,7 +473,7 @@ info: ## Display system-wide information
 	@echo "Description                    : ${IMAGE_DESCRIPTION}"
 	@echo "Intermediate image             : ${IMAGE_LABEL_INTERMEDIATE}"
 	@echo "Temporary path                 : ${CONTAINER_TEMP}"
-	@echo "Working directory              : ${WORKDIR}"
+	@echo "Working directory              : ${CONTAINER_WORKDIR}"
 	@$(newline)
 	@$(call txt-headline,Configuration files)
 	@echo "Amazon Web Services (AWS)      : ${CONFIG_FILE_AWS}"
