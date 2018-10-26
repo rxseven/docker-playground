@@ -59,7 +59,7 @@ define script-lint
 	$(call log-step,[Step 2/4] Create and start a container for running code linting) \
 	$(call log-step,[Step 3/4] Run linting) \
 	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
-	docker-compose run --name playground-linting --rm app lint$(1)
+	docker-compose run --rm ${SERVICE_APP} lint$(1)
 endef
 
 # Static type checking script
@@ -68,7 +68,7 @@ define script-typecheck
 	$(call log-step,[Step 2/4] Create and start a container for running static type checking) \
 	$(call log-step,[Step 3/4] Run static type checking) \
 	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
-	docker-compose run --name playground-typechecking --rm app type$(1)
+	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
 # Creating LCOV data script
@@ -168,7 +168,7 @@ build: ## Create an optimized production build
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
-	@docker-compose run --rm app build
+	@docker-compose run --rm ${SERVICE_APP} build
 	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIRECTORY_BUILD}) directory)
 	@ls ${DIRECTORY_BUILD}
 	@$(call log-success,Done)
@@ -182,7 +182,7 @@ install: ## Install a package and any packages that it depends on
 		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
 		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
 		$(call log-step,[Step 5/5] Remove the container) \
-		docker-compose run --name playground-installing --rm app add $$package; \
+		docker-compose run --rm ${SERVICE_APP} add $$package; \
 		$(call log-success,Done) \
 	else \
 		echo "You did not enter the package name, please try again"; \
@@ -193,15 +193,16 @@ format: ## Format code automatically
 	@$(call log-start,TODO...)
 
 .PHONY: analyze
+analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
 analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-start,Analyzing and debugging code...)
 	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
 	@$(call log-step,[Step 2/5] Analyze the bundle size)
-	@docker-compose run --name playground-analyze app analyze
+	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
 	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
-	@docker cp playground-analyze:${CONTAINER_TEMP}/. ${HOST_TEMP}
+	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
 	@$(call log-step,[Step 4/5] Remove the container)
-	@docker container rm playground-analyze
+	@docker container rm ${CONTAINER_NAME}
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
 	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${TREEMAP}
 	@$(call log-success,Done)
@@ -430,10 +431,6 @@ ci-clean: ## Remove unused data from the CI server
 	@$(call log-start,Removing unused data...)
 	@docker system prune --all --volumes --force
 	@$(call log-success,Done)
-
-.PHONY: ci-check
-ci-check: ## Check CI (won't work on Travis CI)
-	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 
 ##@ Miscellaneous:
 
