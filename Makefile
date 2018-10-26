@@ -358,7 +358,7 @@ reset: ## Reset the development environment and clean up unused data
 	-@rm -rf -v ${DIR_TEMP}/*
 	@$(call log-success,Done)
 
-##@ Release:
+##@ Operations:
 
 .PHONY: version
 version: ## Set the next release version
