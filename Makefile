@@ -495,7 +495,7 @@ info: ## Display system-wide information
 	@$(newline)
 	@$(call txt-headline,Miscellaneous)
 	@echo "Default browser                : ${BROWSER_DEFAULT}"
-	@echo "License                        : ${LICENSE}"
+	@echo "License                        : ${IMAGE_LICENSE}"
 	@$(newline)
 	@$(call txt-headline,Maintainer)
 	@echo "Name                           : ${AUTHOR_NAME}"
