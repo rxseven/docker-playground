@@ -23,5 +23,5 @@ services:
         WORKDIR: ${CONTAINER_WORKDIR}
       context: .
       dockerfile: Dockerfile
-    container_name: "${IMAGE_REPO}"
+    container_name: ${IMAGE_REPO}
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"
