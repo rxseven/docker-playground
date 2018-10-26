@@ -14,7 +14,7 @@ services:
         read_only: true
       - type: bind
         source: ${CONFIG_PROXY}/certs
-        target: /etc/nginx/certs
+        target: ${PROXY_CONTAINER}}/certs
   app:
     build:
       args:
