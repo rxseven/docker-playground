@@ -162,15 +162,15 @@ shell: ## Attach an interactive shell to the development container
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
 	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
-	-@rm -rf -v ${DIRECTORY_BUILD}
+	-@rm -rf -v ${DIR_BUILD}
 	@$(call log-step,[Step 2/6] Download base images (if needed))
 	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
-	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIRECTORY_BUILD}) directory)
-	@ls ${DIRECTORY_BUILD}
+	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
+	@ls ${DIR_BUILD}
 	@$(call log-success,Done)
 
 .PHONY: install
@@ -296,7 +296,7 @@ typecheck: ## Run static type checking
 erase: ## Clean up build artifacts and temporary files
 	@$(call log-start,Erasing data...)
 	@$(call log-step,[Step 1/2] Remove build artifacts)
-	-@rm -rf -v ${DIRECTORY_BUILD} ${DIRECTORY_COVERAGE}
+	-@rm -rf -v ${DIR_BUILD} ${DIRECTORY_COVERAGE}
 	@$(call log-step,[Step 2/2] Remove temporary files)
 	-@rm -rf -v ${DIRECTORY_TEMP}/*
 	@$(call log-success,Done)
@@ -353,7 +353,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-sum,[sum] Images (including intermediates))
 	@docker image ls -a
 	@$(call log-step,[Step 8/9] Remove build artifacts)
-	-@rm -rf -v ${DIRECTORY_BUILD} ${DIRECTORY_COVERAGE}
+	-@rm -rf -v ${DIR_BUILD} ${DIRECTORY_COVERAGE}
 	@$(call log-step,[Step 9/9] Remove temporary files)
 	-@rm -rf -v ${DIRECTORY_TEMP}/*
 	@$(call log-success,Done)
@@ -482,7 +482,7 @@ info: ## Display system-wide information
 	@echo "Environment variables          : ${CONFIG_FILE_ENV}"
 	@$(newline)
 	@$(call txt-headline,Files & Directories)
-	@echo "Optimized production build     : ${DIRECTORY_BUILD}"
+	@echo "Optimized production build     : ${DIR_BUILD}"
 	@echo "Code coverage                  : ${DIRECTORY_COVERAGE}"
 	@echo "Temporary                      : ${DIRECTORY_TEMP}"
 	@echo "Treemap                        : ${FILE_TREEMAP}"
