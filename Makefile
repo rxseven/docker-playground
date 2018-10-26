@@ -478,7 +478,7 @@ info: ## Display system-wide information
 	@$(call txt-headline,Configuration files)
 	@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
 	@echo "NPM & Yarn                     : ${CONFIG_FILE_NPM}"
-	@echo "Travis CI                      : ${CONFIG_FILE_CI}"
+	@echo "Travis CI                      : ${CONFIG_CI}"
 	@echo "Environment variables          : ${CONFIG_FILE_ENV}"
 	@$(newline)
 	@$(call txt-headline,Files & Directories)
