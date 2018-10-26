@@ -32,8 +32,8 @@ txt-bold = \e[1m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 
 # Set configuration values
-set-json = sed -i.backup 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
-set-env = sed -i.backup 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
+set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
+set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
@@ -100,8 +100,8 @@ define script-release
 	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
 	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 	
-	# Remove .backup files after performing text transformations
-	rm *.backup
+	# Remove backup files after performing text transformations
+	rm *.${EXT_BACKUP}
 endef
 
 # Predeploy script
@@ -368,7 +368,7 @@ version: ## Set the next release version
 		echo "Your next release will be v$$VERSION"; \
 		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_FILE_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_FILE_ENV}); \
-		rm ${CONFIG_FILE_ENV}.backup; \
+		rm ${CONFIG_FILE_ENV}.${EXT_BACKUP}; \
 	else \
 		echo "You did not enter a version number, please try again"; \
 	fi;
