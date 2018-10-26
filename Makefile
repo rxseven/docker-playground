@@ -75,7 +75,7 @@ endef
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
 	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp ${CONTAINER_CI_NAME}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIRECTORY_ROOT}
+	docker cp ${CONTAINER_CI_NAME}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 
 	# Replace container's working directory path with the CI's
 	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
@@ -249,7 +249,7 @@ test: ## Run tests
 	@read -p "Enter test mode: " mode; \
 	if [ "$$mode" == "coverage" ]; then \
 		$(call script-test,:coverage); \
-		$(call log-sum,[sum] LCOV data is created in ${DIRECTORY_ROOT}${DIR_COVERAGE} directory) \
+		$(call log-sum,[sum] LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
 		ls ${DIR_COVERAGE}; \
 	else \
 		$(call script-test); \
