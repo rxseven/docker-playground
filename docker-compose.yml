@@ -13,7 +13,7 @@ services:
         target: /tmp/docker.sock
         read_only: true
       - type: bind
-        source: ${CONFIG_PROXY}/certs
+        source: ${PROXY_CONFIG_HOST}/certs
         target: ${PROXY_CONFIG_CONTAINER}}/certs
   app:
     build:

@@ -38,7 +38,7 @@ FROM ${BASE_NGINX}
 ARG BUILD_ENV
 ARG BUILD_RELEASE_DATE
 ARG BUILD_RELEASE_VERSION
-ARG CONFIG_PROXY
+ARG PROXY_CONFIG_HOST
 ARG LABEL_AUTHOR_EMAIL
 ARG LABEL_AUTHOR_NAME
 ARG LABEL_DESCRIPTION
@@ -55,7 +55,7 @@ LABEL release-date=${BUILD_RELEASE_DATE}
 LABEL version=${BUILD_RELEASE_VERSION}
 
 # Customize web server configuration
-COPY ${CONFIG_PROXY}/conf.d/default.conf ${PROXY_CONFIG_CONTAINER}}/conf.d/default.conf
+COPY ${PROXY_CONFIG_HOST}/conf.d/default.conf ${PROXY_CONFIG_CONTAINER}}/conf.d/default.conf
 
 # Copy the optimized production build from the build stage for hosting SPA
 COPY --from=app ${WORKDIR}/build /usr/share/nginx/html
