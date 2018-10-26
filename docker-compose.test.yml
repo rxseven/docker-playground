@@ -3,6 +3,6 @@ version: "3.7"
 services:
   app:
     command: test
-    container_name: "${IMAGE_REPO}-${CONTAINER_SUFFIX_TEST}"
+    container_name: "${IMAGE_REPO}-${SUFFIX_TEST}"
     environment:
       NODE_ENV: test
