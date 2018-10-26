@@ -1,13 +1,11 @@
 # Dependencies
 include .env
 
-# Escape
+# Variables
+SHELL := /bin/bash
 , := ,
 blank :=
 space := $(blank) $(blank)
-
-# Variables
-SHELL := /bin/bash
 
 # ANSI Colors
 ANSI_COLOR_BLACK=30
@@ -19,6 +17,9 @@ ANSI_COLOR_RED=31
 ANSI_COLOR_YELLOW=33
 ANSI_COLOR_WHITE=37
 
+# Default goal
+.DEFAULT_GOAL := help
+
 # Logger
 logger = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-info = $(call logger,${ANSI_COLOR_WHITE},$(1));
@@ -28,6 +29,7 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 txt-bold = \e[1m$(1)\e[0m
+txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 
 # Set configuration values
 set-json = sed -i.backup 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
@@ -38,11 +40,35 @@ script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
 
 # Test script
 define script-test
-	# Run a container for testing, run tests, and generate code coverage reports
-	$(call log-step,[Step 1/3] Build an image based on the development environment)
-	$(call log-step,[Step 2/3] Create and start a container for running tests)
-	$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
-	docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running tests) \
+	$(call log-step,[Step 3/4] Run tests) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	docker-compose \
+	-f docker-compose.yml \
+	-f docker-compose.override.yml \
+	-f docker-compose.test.yml run \
+	--name playground-test \
+	--rm \
+	app test$(1)
+endef
+
+# Linting script
+define script-lint
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running code linting) \
+	$(call log-step,[Step 3/4] Run linting) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	docker-compose run --name playground-linting --rm app lint$(1)
+endef
+
+# Static type checking script
+define script-typecheck
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running static type checking) \
+	$(call log-step,[Step 3/4] Run static type checking) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	docker-compose run --name playground-typechecking --rm app type$(1)
 endef
 
 # Creating LCOV data script
@@ -106,40 +132,25 @@ define script-deploy
 	docker push ${IMAGE_NAME}
 endef
 
-# Default goal
-.DEFAULT_GOAL := help
-
-##@ Common:
-
-.PHONY: setup
-setup: ## Setup the development environment and install required dependencies
-	@$(call log-start,Setting up the project...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
-	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
-	@docker pull ${IMAGE_BASE_PROXY}
-	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call script-host,${APP_HOST_LOCAL})
-	@$(call script-host,${APP_HOST_BUILD})
-	@$(call log-success,Done)
-
 ##@ Development:
 
 .PHONY: start
-start: ## Build, (re)create, start, and attach to containers for a service
+start: ## Start the development environment and attach to containers for a service
 	@$(call log-start,Starting the development environment...)
-	@$(call log-step,[Step 1/3] Download base images and build the development image (if needed))
-	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
-	@$(call log-step,[Step 3/3] Start the development server)
+	@$(call log-step,[Step 1/4] Download base images (if needed))
+	@$(call log-step,[Step 2/4] Build the development image (if needed))
+	@$(call log-step,[Step 3/4] Create and start the development and reverse proxy containers)
+	@$(call log-step,[Step 4/4] Start the development and reverse proxy servers)
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up
 
 .PHONY: restart
-restart: ## Build images before starting the development and reverse proxy containers
+restart: ## Rebuild and restart the development environment
 	@$(call log-start,Restarting the development environment...)
 	@$(call log-step,[Step 1/3] Rebuild the development image)
 	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
-	@$(call log-step,[Step 3/3] Start the development server)
+	@$(call log-step,[Step 3/3] Start the development and reverse proxy servers)
+	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
 .PHONY: shell
@@ -147,35 +158,59 @@ shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
 	@docker container exec -it playground-local sh
 
-.PHONY: test
-test: ## Run tests in watch mode
-	@$(call log-start,Starting the testing container based on the development image...)
-	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.override.yml \
-	-f docker-compose.test.yml run \
-	--name playground-test \
-	--rm \
-	app
-
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
-	@$(call log-step,[Step 1/6] Remove the existing build)
-	@rm -rf build
+	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
+	-@rm -rf -v ${DIRECTORY_BUILD}
 	@$(call log-step,[Step 2/6] Download base images (if needed))
-	@$(call log-step,[Step 3/6] Build the development image (if needed))
+	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm app build
+	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIRECTORY_BUILD}) directory)
+	@ls ${DIRECTORY_BUILD}
+	@$(call log-success,Done)
+
+.PHONY: install
+install: ## Install a package and any packages that it depends on
+	@read -p "Enter package name: " package; \
+	if [ "$$package" != "" ]; then \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
+		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
+		docker-compose run --name playground-installing --rm app add $$package; \
+		$(call log-success,Done) \
+	else \
+		echo "You did not enter the package name, please try again"; \
+	fi;
+
+.PHONY: format
+format: ## Format code automatically
+	@$(call log-start,TODO...)
+
+.PHONY: analyze
+analyze: build ## Analyze and debug code bloat through source maps
+	@$(call log-start,Analyzing and debugging code...)
+	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
+	@$(call log-step,[Step 2/5] Analyze the bundle size)
+	@docker-compose run --name playground-analyze app analyze
+	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
+	@docker cp playground-analyze:${CONTAINER_TEMP}/. ${HOST_TEMP}
+	@$(call log-step,[Step 4/5] Remove the container)
+	@docker container rm playground-analyze
+	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
+	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${TREEMAP}
 	@$(call log-success,Done)
 
 .PHONY: preview
-preview: ## Preview the production build
+preview: ## Preview the production build locally
 	@$(call log-start,Running the production build...)
 	@$(call log-step,[Step 1/6] Remove intermediate and unused images (when necessary))
-	-@docker image prune --filter label=stage=intermediate --force
+	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
 	@$(call log-step,[Step 2/6] Download base images (if needed))
 	@$(call log-step,[Step 3/6] Create an optimized production build)
 	@$(call log-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
@@ -187,11 +222,89 @@ preview: ## Preview the production build
 	-f docker-compose.production.yml \
 	up --build
 
+.PHONY: status
+status: ## Show system status
+	@$(call log-sum,[status] Images (including intermediates))
+	@docker image ls -a
+	@$(call log-sum,[status] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[status] Networks)
+	@docker network ls
+	@$(call log-sum,[status] Volumes)
+	@docker volume ls
+	@$(call log-sum,[status] Working copy)
+	@git status
+
+##@ Testing and Linting:
+
+.PHONY: test
+test: ## Run tests
+	@echo "Available modes:"
+	@echo "- Watch mode    : press enter"
+	@echo "- Code coverage : coverage"
+	@echo "- Silent        : sum"
+	@echo "- Details       : details"
+	@$(newline)
+	@read -p "Enter test mode: " mode; \
+	if [ "$$mode" == "coverage" ]; then \
+		$(call script-test,:coverage); \
+		$(call log-sum,[sum] LCOV data is created in ${DIRECTORY_ROOT}${DIRECTORY_COVERAGE} directory) \
+		ls ${DIRECTORY_COVERAGE}; \
+	else \
+		$(call script-test); \
+	fi;
+
+.PHONY: lint
+lint: ## Run code linting
+	@echo "Available options:"
+	@echo "- JavaScript        : press enter"
+	@echo "- JavaScript (fix)  : fix"
+	@echo "- Stylesheet        : stylesheet"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "stylesheet" ]; then \
+		$(call script-lint,:stylesheet); \
+	elif [ "$$option" == "fix" ]; then \
+		$(call script-lint,:script:fix); \
+	else \
+		$(call script-lint,:script); \
+	fi;
+
+.PHONY: typecheck
+typecheck: ## Run static type checking
+	@echo "Available options:"
+	@echo "- Default           : press enter"
+	@echo "- Check             : check"
+	@echo "- Focus check       : focus"
+	@echo "- Install libdef    : install"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "check" ]; then \
+		$(call script-typecheck,:check); \
+	elif [ "$$option" == "focus" ]; then \
+		$(call script-typecheck,:check:focus); \
+	elif [ "$$option" == "install" ]; then \
+		$(call script-typecheck,:install); \
+	else \
+		$(call script-typecheck); \
+	fi;
+
 ##@ Cleanup:
 
-.PHONY: clean
-clean: ## Stop containers, remove containers and networks
-	@$(call log-start,Cleaning up containers and networks...)
+.PHONY: erase
+erase: ## Clean up build artifacts and temporary files
+	@$(call log-start,Erasing data...)
+	@$(call log-step,[Step 1/2] Remove build artifacts)
+	-@rm -rf -v build coverage
+	@$(call log-step,[Step 2/2] Remove temporary files)
+	-@rm -rf -v tmp/*
+	@$(call log-success,Done)
+
+.PHONY: refresh
+refresh: ## Refresh (soft clean) the development environment
+	@$(call log-start,Refreshing the development environment...)
+	@$(call log-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services)
+	@$(call log-step,[Step 2/2] Remove the default network)
 	@docker-compose down
 	@$(call log-sum,[sum] Containers (including exited state))
 	@docker container ls -a
@@ -199,9 +312,12 @@ clean: ## Stop containers, remove containers and networks
 	@docker network ls
 	@$(call log-success,Done)
 
-.PHONY: clean-all
-clean-all: ## Stop containers, remove containers, networks, and volumes
-	@$(call log-start,Cleaning up containers$(,) networks$(,) and volumes...)
+.PHONY: clean
+clean: ## Clean up the development environment (including persistent data)
+	@$(call log-start,Cleaning up the development environment...)
+	@$(call log-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services)
+	@$(call log-step,[Step 2/3] Remove the default network)
+	@$(call log-step,[Step 3/3] Remove volumes)
 	@docker-compose down -v
 	@$(call log-sum,[sum] Containers (including exited state))
 	@docker container ls -a
@@ -212,9 +328,11 @@ clean-all: ## Stop containers, remove containers, networks, and volumes
 	@$(call log-success,Done)
 
 .PHONY: reset
-reset: ## Remove containers, networks, volumes, and the development image
-	@$(call log-start,Removing unused data...)
-	@$(call log-step,[Step 1/6] Remove containers$(,) networks$(,) and volumes...)
+reset: ## Reset the development environment and clean up unused data
+	@$(call log-start,Resetting the development environment...)
+	@$(call log-step,[Step 1/9] Stop and remove containers for the app and reverse proxy services)
+	@$(call log-step,[Step 2/9] Remove the default network)
+	@$(call log-step,[Step 3/9] Remove volumes)
 	-@docker-compose down -v
 	@$(call log-sum,[sum] Containers (including exited state))
 	@docker container ls -a
@@ -222,21 +340,23 @@ reset: ## Remove containers, networks, volumes, and the development image
 	@docker network ls
 	@$(call log-sum,[sum] Volumes)
 	@docker volume ls
-	@$(call log-step,[Step 2/6] Remove the development image)
+	@$(call log-step,[Step 4/9] Remove the development image)
 	-@docker image rm local/playground:development
-	@$(call log-step,[Step 3/6] Remove the production image)
+	@$(call log-step,[Step 5/9] Remove the production image)
 	-@docker image rm ${IMAGE_NAME}
-	@$(call log-step,[Step 4/6] Remove the intermediate images)
+	@$(call log-step,[Step 6/9] Remove the intermediate images)
 	-@docker image prune --filter label=stage=intermediate --force
-	@$(call log-step,[Step 5/6] Remove all unused images (optional))
+	@$(call log-step,[Step 7/9] Remove unused images (optional))
 	-@docker image prune
 	@$(call log-sum,[sum] Images (including intermediates))
 	@docker image ls -a
-	@$(call log-step,[Step 6/6] Remove the build artifacts)
-	@rm -rf -v build coverage
+	@$(call log-step,[Step 8/9] Remove build artifacts)
+	-@rm -rf -v build coverage
+	@$(call log-step,[Step 9/9] Remove temporary files)
+	-@rm -rf -v tmp/*
 	@$(call log-success,Done)
 
-##@ Release & Deployment
+##@ Release:
 
 .PHONY: version
 version: ## Set the next release version
@@ -279,7 +399,10 @@ ci-setup: ## Setup the CI environment and install required dependencies
 .PHONY: ci-test
 ci-test: ## Run tests and generate code coverage reports
 	@$(call log-start,Running tests...)
-	@$(script-test)
+	@$(call log-step,[Step 1/3] Build an image based on the development environment)
+	@$(call log-step,[Step 2/3] Create and start a container for running tests)
+	@$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
+	@docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
 	@$(call log-success,Done)
 
 .PHONY: ci-coverage
@@ -315,9 +438,83 @@ ci-check: ## Check CI (won't work on Travis CI)
 ##@ Miscellaneous:
 
 .PHONY: info
-info: ## Show project information
-	@$(call log-start,Show project information)
-	@echo "Release date : ${RELEASE_DATE}"
+info: ## Display system-wide information
+	@$(call txt-headline,Releases)
+	@echo "Date                           : ${RELEASE_DATE}"
+	@echo "Version                        : ${RELEASE_VERSION}"
+	@$(newline)
+	@$(call txt-headline,App)
+	@echo "Name                           : ${APP_NAME}"
+	@echo "Repository                     : ${APP_REPO}"
+	@echo "Live URL                       : ${APP_URL_LIVE}"
+	@$(newline)
+	@$(call txt-headline,Domain name & URLs)
+	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
+	@echo "Top level domain (TLD)         : ${APP_TLD}"
+	@echo "Domain name                    : ${APP_DOMAIN}"
+	@echo "Development URL                : ${APP_URL_LOCAL}"
+	@echo "Production build URL           : ${APP_URL_BUILD}"
+	@$(newline)
+	@$(call txt-headline,Host machine)
+	@echo "Hosts file                     : ${HOST_CONFIG}"
+	@echo "Working directory              : $$PWD"
+	@echo "Temporary path                 : ${HOST_TEMP}"
+	@echo "IP address                     : ${HOST_IP}"
+	@$(newline)
+	@$(call txt-headline,Base images)
+	@echo "NGINX                          : ${IMAGE_BASE_NGINX}"
+	@echo "Node.js                        : ${IMAGE_BASE_NODE}"
+	@echo "Proxy                          : ${IMAGE_BASE_PROXY}"
+	@$(newline)
+	@$(call txt-headline,Image & Container)
+	@echo "Cloud-based registry service   : ${IMAGE_REGISTRY}"
+	@echo "Username                       : ${IMAGE_USERNAME}"
+	@echo "Repository                     : ${IMAGE_REPO}"
+	@echo "Tag                            : ${RELEASE_VERSION}"
+	@echo "Name                           : ${IMAGE_NAME}"
+	@echo "Description                    : ${IMAGE_DESCRIPTION}"
+	@echo "Intermediate image             : ${IMAGE_LABEL_INTERMEDIATE}"
+	@echo "Temporary path                 : ${CONTAINER_TEMP}"
+	@echo "Working directory              : ${WORKDIR}"
+	@$(newline)
+	@$(call txt-headline,Configuration files)
+	@echo "Amazon Web Services (AWS)      : ${CONFIG_FILE_AWS}"
+	@echo "NPM & Yarn                     : ${CONFIG_FILE_NPM}"
+	@echo "Travis CI                      : ${CONFIG_FILE_CI}"
+	@echo "Environment variables          : ${CONFIG_FILE_ENV}"
+	@$(newline)
+	@$(call txt-headline,Files & Directories)
+	@echo "Optimized production build     : ${DIRECTORY_BUILD}"
+	@echo "Code coverage                  : ${DIRECTORY_COVERAGE}"
+	@echo "Temporary                      : ${DIRECTORY_TEMP}"
+	@echo "Treemap                        : ${TREEMAP}"
+	@$(newline)
+	@$(call txt-headline,Ports)
+	@echo "Development server             : ${PORT_EXPOSE_APP}"
+	@echo "Reverse proxy server           : ${PORT_EXPOSE_PROXY}"
+	@echo "Unsecured HTTP port mapping    : ${PORT_MAPPING_DEFAULT}"
+	@echo "SSL port mapping               : ${PORT_MAPPING_SSL}"
+	@$(newline)
+	@$(call txt-headline,Miscellaneous)
+	@echo "Default browser                : ${BROWSER_DEFAULT}"
+	@echo "License                        : ${LICENSE}"
+	@$(newline)
+	@$(call txt-headline,Maintainer)
+	@echo "Name                           : ${AUTHOR_NAME}"
+	@echo "Email                          : ${AUTHOR_EMAIL}"
+	@$(newline)
+
+.PHONY: setup
+setup: ## Setup the development environment and install dependencies
+	@$(call log-start,Setting up the development environment...)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
+	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${IMAGE_BASE_PROXY}
+	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
+	@$(call script-host,${APP_HOST_LOCAL})
+	@$(call script-host,${APP_HOST_BUILD})
+	@$(call log-success,Done)
 
 .PHONY: help
 help: ## Print usage
@@ -325,38 +522,3 @@ help: ## Print usage
 	printf "\nUsage: make \033[${ANSI_COLOR_CYAN}m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ \
 	{ printf "  \033[${ANSI_COLOR_CYAN}m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
 	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
-
-.PHONY: yo
-yo: ## Yo
-	@$(call log-step,yo-text-here)
-
-.PHONY: try-aws
-try-aws: ## Try AWS
-	@$(call log-start,Trying to update Dockerrun.aws.json...)
-	@cat Dockerrun.aws.json
-	@sed -ie 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
-	@cat Dockerrun.aws.json
-
-.PHONY: try-env
-try-env: ## Try ENV
-	@$(call log-start,Trying to log ENV from .env...)
-	@echo "RELEASE_DATE = ${RELEASE_DATE}"
-	@echo "RELEASE_VERSION = ${RELEASE_VERSION}"
-	@echo "APP_NAME = ${APP_NAME}"
-	@echo "APP_DOMAIN = ${APP_DOMAIN}"
-	@echo "APP_TLD = ${APP_TLD}"
-	@echo "APP_URL_PROTOCAL = ${APP_URL_PROTOCAL}"
-	@echo "APP_HOST_LOCAL = ${APP_HOST_LOCAL}"
-	@echo "APP_HOST_BUILD = ${APP_HOST_BUILD}"
-	@echo "APP_URL_LOCAL = ${APP_URL_LOCAL}"
-	@echo "APP_URL_BUILD = ${APP_URL_BUILD}"
-	@echo "IMAGE_BASE_NGINX = ${IMAGE_BASE_NGINX}"
-	@echo "IMAGE_BASE_NODE = ${IMAGE_BASE_NODE}"
-	@echo "IMAGE_BASE_PROXY = ${IMAGE_BASE_PROXY}"
-	@echo "IMAGE_NAME = ${IMAGE_NAME}"
-	@echo "IMAGE_REPO = ${IMAGE_REPO}"
-	@echo "IMAGE_USERNAME = ${IMAGE_USERNAME}"
-	@echo "WORKDIR = ${WORKDIR}"
-	@echo "CONFIG_FILE_CI = ${CONFIG_FILE_CI}"
-	@echo "CONFIG_FILE_NPM = ${CONFIG_FILE_NPM}"
-	@echo "CONFIG_FILE_AWS = ${CONFIG_FILE_AWS}"

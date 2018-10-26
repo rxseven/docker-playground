@@ -1,6 +1,6 @@
 {
   "name": "docker-playground",
-  "version": "0.0.19",
+  "version": "0.0.20",
   "private": true,
   "dependencies": {
     "@babel/core": "7.1.0",
@@ -46,6 +46,7 @@
     "react-router-dom": "^4.3.1",
     "resolve": "1.8.1",
     "sass-loader": "7.1.0",
+    "source-map-explorer": "1.5.0",
     "style-loader": "0.23.0",
     "terser-webpack-plugin": "1.1.0",
     "url-loader": "1.1.1",
@@ -55,19 +56,26 @@
     "workbox-webpack-plugin": "3.6.2"
   },
   "scripts": {
+    "analyze": "source-map-explorer --html build/static/js/main.* > /tmp/treemap.html",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "lint:script": "eslint src/**/*.js",
+    "lint:script:fix": "eslint --fix src/**/*.js",
+    "lint:stylesheet": "stylelint \"src/**/*.scss\"",
     "precommit": "yarn test:staged",
     "test": "node scripts/test.js --config jest.config.json",
     "test:coverage": "yarn test --coverage --no-cache --silent",
     "test:coverage:ci": "cat /usr/src/app/coverage/lcov.info | /usr/src/app/node node_modules/.bin/coveralls",
     "test:coverage:ci:legacy": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
     "test:coverage:ci:travis": "cat ./coverage/lcov.info | node node_modules/.bin/coveralls",
+    "test:details": "node scripts/test.js --env=jsdom --verbose --config jest.config.json",
     "test:staged": "cross-env CI=true node scripts/test.js --config jest.config.json",
+    "test:sum": "node scripts/test.js --env=jsdom --silent --config jest.config.json",
+    "type": "flow",
+    "type:check": "flow check",
+    "type:check:focus": "flow focus-check",
+    "type:install": "flow-typed install",
     "start:https": "HTTPS=true yarn start"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": [
     ">0.2%",
@@ -83,7 +91,13 @@
   "devDependencies": {
     "coveralls": "^3.0.2",
     "cross-env": "5.2.0",
+    "flow-bin": "^0.83.0",
+    "flow-typed": "^2.5.1",
     "husky": "0.14.3",
-    "replace": "^1.0.0"
+    "replace": "^1.0.0",
+    "stylelint": "^9.6.0",
+    "stylelint-config-css-modules": "^1.3.0",
+    "stylelint-config-recommended-scss": "^3.2.0",
+    "stylelint-scss": "^3.3.2"
   }
 }
