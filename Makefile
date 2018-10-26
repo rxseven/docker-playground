@@ -97,8 +97,8 @@ define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
 	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS})
 	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_AWS})
-	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
-	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+	$(call log-step,[Step 2/2] Configure ${CONFIG_NPM} for AWS Node.js deployment)
+	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_NPM})
 	
 	# Remove backup files after performing text transformations
 	rm *.${EXT_BACKUP}
@@ -477,7 +477,7 @@ info: ## Display system-wide information
 	@$(newline)
 	@$(call txt-headline,Configuration files)
 	@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
-	@echo "NPM & Yarn                     : ${CONFIG_FILE_NPM}"
+	@echo "NPM & Yarn                     : ${CONFIG_NPM}"
 	@echo "Travis CI                      : ${CONFIG_CI}"
 	@echo "Environment variables          : ${CONFIG_ENV}"
 	@$(newline)
