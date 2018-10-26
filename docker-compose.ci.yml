@@ -7,4 +7,4 @@ services:
     environment:
       CI: "true"
       NODE_ENV: test
-    image: "app:ci"
+    image: "${ENV_CI}/${IMAGE_REPO}:${RELEASE_VERSION}"
