@@ -36,7 +36,7 @@ set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
-script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
+script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # Test script
 define script-test
@@ -454,7 +454,7 @@ info: ## Display system-wide information
 	@echo "Production build URL           : ${APP_URL_BUILD}"
 	@$(newline)
 	@$(call txt-headline,Host machine)
-	@echo "Hosts file                     : ${HOST_CONFIG}"
+	@echo "Hosts file                     : ${HOST_DNS}"
 	@echo "Working directory              : $$PWD"
 	@echo "Temporary path                 : ${HOST_TEMP}"
 	@echo "IP address                     : ${HOST_IP}"
