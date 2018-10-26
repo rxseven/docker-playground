@@ -32,11 +32,11 @@ txt-bold = \e[1m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 
 # Set configuration values
-set-json = sed -i.backup 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
-set-env = sed -i.backup 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
+set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
+set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
-script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_CONFIG}
+script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # Test script
 define script-test
@@ -48,7 +48,7 @@ define script-test
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
 	-f ${COMPOSE_TEST} run \
-	--name ${IMAGE_REPO}-test \
+	--name ${IMAGE_REPO}-${SUFFIX_TEST} \
 	--rm \
 	${SERVICE_APP} test$(1)
 endef
@@ -75,7 +75,7 @@ endef
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
 	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp app-ci:${CONTAINER_WORKDIR}/${DIRECTORY_COVERAGE} ${DIRECTORY_ROOT}
+	docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 
 	# Replace container's working directory path with the CI's
 	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
@@ -94,14 +94,14 @@ endef
 
 # Release script
 define script-release
-	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
-	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
-	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
-	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
+	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
+	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS})
+	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_AWS})
+	$(call log-step,[Step 2/2] Configure ${CONFIG_NPM} for AWS Node.js deployment)
+	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_NPM})
 	
-	# Remove .backup files after performing text transformations
-	rm *.backup
+	# Remove backup files after performing text transformations
+	rm *.${EXT_BACKUP}
 endef
 
 # Predeploy script
@@ -113,7 +113,7 @@ define script-predeploy
 	# Build a deployment configuration
 	$(call log-start,Building a deployment configuration...)
 	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
-	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
+	zip ${BUILD_ZIP} ${CONFIG_AWS}
 endef
 
 # Deployment script
@@ -156,21 +156,21 @@ restart: ## Rebuild and restart the development environment
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
-	@docker container exec -it ${IMAGE_REPO}-${CONTAINER_SUFFIX_LOCAL} sh
+	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
 
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
 	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
-	-@rm -rf -v ${DIRECTORY_BUILD}
+	-@rm -rf -v ${DIR_BUILD}
 	@$(call log-step,[Step 2/6] Download base images (if needed))
 	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
-	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIRECTORY_BUILD}) directory)
-	@ls ${DIRECTORY_BUILD}
+	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
+	@ls ${DIR_BUILD}
 	@$(call log-success,Done)
 
 .PHONY: install
@@ -204,7 +204,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-step,[Step 4/5] Remove the container)
 	@docker container rm ${CONTAINER_NAME}
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
-	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${TREEMAP}
+	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${FILE_TREEMAP}
 	@$(call log-success,Done)
 
 .PHONY: preview
@@ -249,8 +249,8 @@ test: ## Run tests
 	@read -p "Enter test mode: " mode; \
 	if [ "$$mode" == "coverage" ]; then \
 		$(call script-test,:coverage); \
-		$(call log-sum,[sum] LCOV data is created in ${DIRECTORY_ROOT}${DIRECTORY_COVERAGE} directory) \
-		ls ${DIRECTORY_COVERAGE}; \
+		$(call log-sum,[sum] LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
+		ls ${DIR_COVERAGE}; \
 	else \
 		$(call script-test); \
 	fi;
@@ -296,9 +296,9 @@ typecheck: ## Run static type checking
 erase: ## Clean up build artifacts and temporary files
 	@$(call log-start,Erasing data...)
 	@$(call log-step,[Step 1/2] Remove build artifacts)
-	-@rm -rf -v ${DIRECTORY_BUILD} ${DIRECTORY_COVERAGE}
+	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
 	@$(call log-step,[Step 2/2] Remove temporary files)
-	-@rm -rf -v ${DIRECTORY_TEMP}/*
+	-@rm -rf -v ${DIR_TEMP}/*
 	@$(call log-success,Done)
 
 .PHONY: refresh
@@ -342,7 +342,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-sum,[sum] Volumes)
 	@docker volume ls
 	@$(call log-step,[Step 4/9] Remove the development image)
-	-@docker image rm ${IMAGE_LOCAL}/${IMAGE_REPO}
+	-@docker image rm ${ENV_LOCAL}/${IMAGE_REPO}
 	
 	@$(call log-step,[Step 5/9] Remove the production image)
 	-@docker image rm ${IMAGE_NAME}
@@ -353,9 +353,9 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-sum,[sum] Images (including intermediates))
 	@docker image ls -a
 	@$(call log-step,[Step 8/9] Remove build artifacts)
-	-@rm -rf -v ${DIRECTORY_BUILD} ${DIRECTORY_COVERAGE}
+	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
 	@$(call log-step,[Step 9/9] Remove temporary files)
-	-@rm -rf -v ${DIRECTORY_TEMP}/*
+	-@rm -rf -v ${DIR_TEMP}/*
 	@$(call log-success,Done)
 
 ##@ Release:
@@ -366,9 +366,9 @@ version: ## Set the next release version
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
 		echo "Your next release will be v$$VERSION"; \
-		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_FILE_ENV}); \
-		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_FILE_ENV}); \
-		rm ${CONFIG_FILE_ENV}.backup; \
+		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_ENV}); \
+		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
+		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
 	else \
 		echo "You did not enter a version number, please try again"; \
 	fi;
@@ -448,13 +448,13 @@ info: ## Display system-wide information
 	@$(newline)
 	@$(call txt-headline,Domain name & URLs)
 	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
-	@echo "Top level domain (TLD)         : ${APP_TLD}"
+	@echo "Top level domain (TLD)         : ${HOST_TLD}"
 	@echo "Domain name                    : ${APP_DOMAIN}"
 	@echo "Development URL                : ${APP_URL_LOCAL}"
 	@echo "Production build URL           : ${APP_URL_BUILD}"
 	@$(newline)
 	@$(call txt-headline,Host machine)
-	@echo "Hosts file                     : ${HOST_CONFIG}"
+	@echo "Hosts file                     : ${HOST_DNS}"
 	@echo "Working directory              : $$PWD"
 	@echo "Temporary path                 : ${HOST_TEMP}"
 	@echo "IP address                     : ${HOST_IP}"
@@ -473,19 +473,19 @@ info: ## Display system-wide information
 	@echo "Description                    : ${IMAGE_DESCRIPTION}"
 	@echo "Intermediate image             : ${IMAGE_LABEL_INTERMEDIATE}"
 	@echo "Temporary path                 : ${CONTAINER_TEMP}"
-	@echo "Working directory              : ${WORKDIR}"
+	@echo "Working directory              : ${CONTAINER_WORKDIR}"
 	@$(newline)
 	@$(call txt-headline,Configuration files)
-	@echo "Amazon Web Services (AWS)      : ${CONFIG_FILE_AWS}"
-	@echo "NPM & Yarn                     : ${CONFIG_FILE_NPM}"
-	@echo "Travis CI                      : ${CONFIG_FILE_CI}"
-	@echo "Environment variables          : ${CONFIG_FILE_ENV}"
+	@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
+	@echo "NPM & Yarn                     : ${CONFIG_NPM}"
+	@echo "Travis CI                      : ${CONFIG_CI}"
+	@echo "Environment variables          : ${CONFIG_ENV}"
 	@$(newline)
 	@$(call txt-headline,Files & Directories)
-	@echo "Optimized production build     : ${DIRECTORY_BUILD}"
-	@echo "Code coverage                  : ${DIRECTORY_COVERAGE}"
-	@echo "Temporary                      : ${DIRECTORY_TEMP}"
-	@echo "Treemap                        : ${TREEMAP}"
+	@echo "Optimized production build     : ${DIR_BUILD}"
+	@echo "Code coverage                  : ${DIR_COVERAGE}"
+	@echo "Temporary                      : ${DIR_TEMP}"
+	@echo "Treemap                        : ${FILE_TREEMAP}"
 	@$(newline)
 	@$(call txt-headline,Ports)
 	@echo "Development server             : ${PORT_EXPOSE_APP}"
@@ -495,7 +495,7 @@ info: ## Display system-wide information
 	@$(newline)
 	@$(call txt-headline,Miscellaneous)
 	@echo "Default browser                : ${BROWSER_DEFAULT}"
-	@echo "License                        : ${LICENSE}"
+	@echo "License                        : ${IMAGE_LICENSE}"
 	@$(newline)
 	@$(call txt-headline,Maintainer)
 	@echo "Name                           : ${AUTHOR_NAME}"
@@ -510,8 +510,8 @@ setup: ## Setup the development environment and install dependencies
 	@docker pull ${IMAGE_BASE_NODE}
 	@docker pull ${IMAGE_BASE_PROXY}
 	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call script-host,${APP_HOST_LOCAL})
-	@$(call script-host,${APP_HOST_BUILD})
+	@$(call script-host,${APP_DOMAIN_LOCAL})
+	@$(call script-host,${APP_DOMAIN_BUILD})
 	@$(call log-success,Done)
 
 .PHONY: help

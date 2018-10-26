@@ -13,7 +13,6 @@ env:
   global:
     - BINARY_PATH=/usr/local/bin
     - BUILD_ZIP=build.zip
-    - CONTAINER_WORKDIR=/usr/src/app
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
     - LCOV_DATA=./coverage/lcov.info

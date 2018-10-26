@@ -1,11 +1,11 @@
 # Specify global variables
+ARG BASE_NGINX
+ARG BASE_NODE
 ARG BUILD_ENV=production
-ARG IMAGE_BASE_NGINX
-ARG IMAGE_BASE_NODE
 
 # Build stage
 # Initialize a new build stage and set the base image for production build
-FROM ${IMAGE_BASE_NODE} as app
+FROM ${BASE_NODE} as app
 
 # Specify build and environment variables
 ARG BUILD_ENV
@@ -32,32 +32,36 @@ RUN yarn build
 
 # Serve stage
 # Initialize a new build stage and set the base image for production build
-FROM ${IMAGE_BASE_NGINX}
+FROM ${BASE_NGINX}
 
 # Specify build and environment variables
-ARG AUTHOR_EMAIL
-ARG AUTHOR_NAME
 ARG BUILD_ENV
 ARG BUILD_RELEASE_DATE
 ARG BUILD_RELEASE_VERSION
+ARG DIR_BUILD
+ARG LABEL_AUTHOR_EMAIL
+ARG LABEL_AUTHOR_NAME
 ARG LABEL_DESCRIPTION
 ARG LABEL_LICENSE
 ARG PORT_EXPOSE
+ARG PROXY_CONFIG
+ARG PROXY_CONTAINER
+ARG PROXY_HOST
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
 
 # Add metadata to an image
 LABEL description=${LABEL_DESCRIPTION}
 LABEL license=${LABEL_LICENSE}
-LABEL maintainer="${AUTHOR_NAME} <${AUTHOR_EMAIL}>"
+LABEL maintainer="${LABEL_AUTHOR_NAME} <${LABEL_AUTHOR_EMAIL}>"
 LABEL release-date=${BUILD_RELEASE_DATE}
 LABEL version=${BUILD_RELEASE_VERSION}
 
 # Customize web server configuration
-COPY ./config/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf
+COPY ${PROXY_HOST}/${PROXY_CONFIG} ${PROXY_CONTAINER}/${PROXY_CONFIG}
 
 # Copy the optimized production build from the build stage for hosting SPA
-COPY --from=app ${WORKDIR}/build /usr/share/nginx/html
+COPY --from=app ${WORKDIR}/${DIR_BUILD} /usr/share/nginx/html
 
 # Specify network ports
 EXPOSE ${PORT_EXPOSE}

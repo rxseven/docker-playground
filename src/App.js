@@ -21,7 +21,7 @@ const App = () => (
           <Route component={NotFound} />
         </Switch>
       </main>
-      <footer>Footer - v0.0.21 | Docker Playground</footer>
+      <footer>Footer - v0.0.22 | Docker Playground</footer>
     </React.Fragment>
   </Router>
 );

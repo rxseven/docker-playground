@@ -1,10 +1,10 @@
 # Specify global variables
+ARG BASE_NODE
 ARG BUILD_ENV=development
-ARG IMAGE_BASE_NODE
 
 # Development stage
 # Initialize a new build stage and set the base image
-FROM ${IMAGE_BASE_NODE} as development
+FROM ${BASE_NODE} as development
 
 # Specify build and environment variables
 ARG BUILD_ENV

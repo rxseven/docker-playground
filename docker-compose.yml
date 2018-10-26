@@ -13,15 +13,15 @@ services:
         target: /tmp/docker.sock
         read_only: true
       - type: bind
-        source: ./config/nginx/certs
-        target: /etc/nginx/certs
+        source: ${PROXY_HOST}/${PROXY_SSL}
+        target: ${PROXY_CONTAINER}/${PROXY_SSL}
   app:
     build:
       args:
-        IMAGE_BASE_NODE: ${IMAGE_BASE_NODE}
+        BASE_NODE: ${IMAGE_BASE_NODE}
         PORT_EXPOSE: ${PORT_EXPOSE_APP}
-        WORKDIR: ${WORKDIR}
+        WORKDIR: ${CONTAINER_WORKDIR}
       context: .
       dockerfile: Dockerfile
-    container_name: "${IMAGE_REPO}"
+    container_name: ${IMAGE_REPO}
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"
