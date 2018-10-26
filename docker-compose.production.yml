@@ -15,6 +15,8 @@ services:
         LABEL_LICENSE: ${IMAGE_LICENSE}
         LABEL_INTERMEDIATE: ${IMAGE_LABEL_INTERMEDIATE}
         PORT_EXPOSE: ${PORT_EXPOSE_PROXY}
+        PROXY_CONFIG: ${PROXY_CONFIG}
+        PROXY_CONTAINER: ${PROXY_CONTAINER}
         PROXY_HOST: ${PROXY_HOST}
       dockerfile: Dockerfile.production
     environment:
