@@ -48,7 +48,7 @@ define script-test
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
 	-f ${COMPOSE_TEST} run \
-	--name ${IMAGE_REPO}-test \
+	--name ${IMAGE_REPO}-${CONTAINER_SUFFIX_TEST} \
 	--rm \
 	${SERVICE_APP} test$(1)
 endef
@@ -75,7 +75,7 @@ endef
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
 	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp app-ci:${CONTAINER_WORKDIR}/${DIRECTORY_COVERAGE} ${DIRECTORY_ROOT}
+	docker cp ${CONTAINER_CI_NAME}:${CONTAINER_WORKDIR}/${DIRECTORY_COVERAGE} ${DIRECTORY_ROOT}
 
 	# Replace container's working directory path with the CI's
 	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
