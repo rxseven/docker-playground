@@ -20,7 +20,7 @@ services:
       args:
         IMAGE_BASE_NODE: ${IMAGE_BASE_NODE}
         PORT_EXPOSE: ${PORT_EXPOSE_APP}
-        WORKDIR: ${WORKDIR}
+        WORKDIR: ${CONTAINER_WORKDIR}
       context: .
       dockerfile: Dockerfile
     container_name: "${IMAGE_REPO}"

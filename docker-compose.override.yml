@@ -13,10 +13,10 @@ services:
     volumes:
       - type: bind
         source: .
-        target: ${WORKDIR}
+        target: ${CONTAINER_WORKDIR}
       - type: volume
         source: ${DIR_DEPENDENCIES}
-        target: "${WORKDIR}/${DIR_DEPENDENCIES}"
+        target: "${CONTAINER_WORKDIR}/${DIR_DEPENDENCIES}"
 
 volumes:
   node_modules:
