@@ -94,9 +94,9 @@ endef
 
 # Release script
 define script-release
-	$(call log-step,[Step 1/2] Configure ${CONFIG_FILE_AWS} for AWS Elastic Beanstalk deployment)
-	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_FILE_AWS})
-	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_FILE_AWS})
+	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
+	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS})
+	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_AWS})
 	$(call log-step,[Step 2/2] Configure ${CONFIG_FILE_NPM} for AWS Node.js deployment)
 	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_FILE_NPM})
 	
@@ -113,7 +113,7 @@ define script-predeploy
 	# Build a deployment configuration
 	$(call log-start,Building a deployment configuration...)
 	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
-	zip ${BUILD_ZIP} ${CONFIG_FILE_AWS}
+	zip ${BUILD_ZIP} ${CONFIG_AWS}
 endef
 
 # Deployment script
@@ -476,7 +476,7 @@ info: ## Display system-wide information
 	@echo "Working directory              : ${CONTAINER_WORKDIR}"
 	@$(newline)
 	@$(call txt-headline,Configuration files)
-	@echo "Amazon Web Services (AWS)      : ${CONFIG_FILE_AWS}"
+	@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
 	@echo "NPM & Yarn                     : ${CONFIG_FILE_NPM}"
 	@echo "Travis CI                      : ${CONFIG_FILE_CI}"
 	@echo "Environment variables          : ${CONFIG_FILE_ENV}"
