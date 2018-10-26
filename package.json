@@ -1,6 +1,6 @@
 {
   "name": "docker-playground",
-  "version": "0.0.20",
+  "version": "0.0.21",
   "private": true,
   "dependencies": {
     "@babel/core": "7.1.0",

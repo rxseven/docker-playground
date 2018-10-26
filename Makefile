@@ -45,12 +45,12 @@ define script-test
 	$(call log-step,[Step 3/4] Run tests) \
 	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
 	docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.override.yml \
-	-f docker-compose.test.yml run \
-	--name playground-test \
+	-f ${COMPOSE_BASE} \
+	-f ${COMPOSE_DEVELOPMENT} \
+	-f ${COMPOSE_TEST} run \
+	--name ${IMAGE_REPO}-test \
 	--rm \
-	app test$(1)
+	${SERVICE_APP} test$(1)
 endef
 
 # Linting script
@@ -59,7 +59,7 @@ define script-lint
 	$(call log-step,[Step 2/4] Create and start a container for running code linting) \
 	$(call log-step,[Step 3/4] Run linting) \
 	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
-	docker-compose run --name playground-linting --rm app lint$(1)
+	docker-compose run --rm ${SERVICE_APP} lint$(1)
 endef
 
 # Static type checking script
@@ -68,14 +68,14 @@ define script-typecheck
 	$(call log-step,[Step 2/4] Create and start a container for running static type checking) \
 	$(call log-step,[Step 3/4] Run static type checking) \
 	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
-	docker-compose run --name playground-typechecking --rm app type$(1)
+	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
 # Creating LCOV data script
 define script-coverage
 	# Copy LCOV data from the container's file system to the CI's
 	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp app-ci:${CONTAINER_WORKDIR}/coverage ./
+	docker cp app-ci:${CONTAINER_WORKDIR}/${DIRECTORY_COVERAGE} ${DIRECTORY_ROOT}
 
 	# Replace container's working directory path with the CI's
 	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
@@ -121,7 +121,7 @@ define script-deploy
 	# Build a production image for deployment
 	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	$(call log-step,[Step 1/3] Build the image)
-	docker-compose -f docker-compose.yml -f docker-compose.production.yml build app
+	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
 
 	# Login to Docker Hub
 	$(call log-step,[Step 2/3] Login to Docker Hub)
@@ -156,7 +156,7 @@ restart: ## Rebuild and restart the development environment
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
-	@docker container exec -it playground-local sh
+	@docker container exec -it ${IMAGE_REPO}-${CONTAINER_SUFFIX_LOCAL} sh
 
 .PHONY: build
 build: ## Create an optimized production build
@@ -168,7 +168,7 @@ build: ## Create an optimized production build
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
-	@docker-compose run --rm app build
+	@docker-compose run --rm ${SERVICE_APP} build
 	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIRECTORY_BUILD}) directory)
 	@ls ${DIRECTORY_BUILD}
 	@$(call log-success,Done)
@@ -182,7 +182,7 @@ install: ## Install a package and any packages that it depends on
 		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
 		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
 		$(call log-step,[Step 5/5] Remove the container) \
-		docker-compose run --name playground-installing --rm app add $$package; \
+		docker-compose run --rm ${SERVICE_APP} add $$package; \
 		$(call log-success,Done) \
 	else \
 		echo "You did not enter the package name, please try again"; \
@@ -193,15 +193,16 @@ format: ## Format code automatically
 	@$(call log-start,TODO...)
 
 .PHONY: analyze
+analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
 analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-start,Analyzing and debugging code...)
 	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
 	@$(call log-step,[Step 2/5] Analyze the bundle size)
-	@docker-compose run --name playground-analyze app analyze
+	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
 	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
-	@docker cp playground-analyze:${CONTAINER_TEMP}/. ${HOST_TEMP}
+	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
 	@$(call log-step,[Step 4/5] Remove the container)
-	@docker container rm playground-analyze
+	@docker container rm ${CONTAINER_NAME}
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
 	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${TREEMAP}
 	@$(call log-success,Done)
@@ -218,8 +219,8 @@ preview: ## Preview the production build locally
 	@$(call log-step,[Step 6/6] Start the web (for serving the app) and reverse proxy servers)
 	@$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
 	@docker-compose \
-	-f docker-compose.yml \
-	-f docker-compose.production.yml \
+	-f ${COMPOSE_BASE} \
+	-f ${COMPOSE_PRODUCTION} \
 	up --build
 
 .PHONY: status
@@ -295,9 +296,9 @@ typecheck: ## Run static type checking
 erase: ## Clean up build artifacts and temporary files
 	@$(call log-start,Erasing data...)
 	@$(call log-step,[Step 1/2] Remove build artifacts)
-	-@rm -rf -v build coverage
+	-@rm -rf -v ${DIRECTORY_BUILD} ${DIRECTORY_COVERAGE}
 	@$(call log-step,[Step 2/2] Remove temporary files)
-	-@rm -rf -v tmp/*
+	-@rm -rf -v ${DIRECTORY_TEMP}/*
 	@$(call log-success,Done)
 
 .PHONY: refresh
@@ -341,19 +342,20 @@ reset: ## Reset the development environment and clean up unused data
 	@$(call log-sum,[sum] Volumes)
 	@docker volume ls
 	@$(call log-step,[Step 4/9] Remove the development image)
-	-@docker image rm local/playground:development
+	-@docker image rm ${IMAGE_LOCAL}/${IMAGE_REPO}
+	
 	@$(call log-step,[Step 5/9] Remove the production image)
 	-@docker image rm ${IMAGE_NAME}
 	@$(call log-step,[Step 6/9] Remove the intermediate images)
-	-@docker image prune --filter label=stage=intermediate --force
+	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
 	@$(call log-step,[Step 7/9] Remove unused images (optional))
 	-@docker image prune
 	@$(call log-sum,[sum] Images (including intermediates))
 	@docker image ls -a
 	@$(call log-step,[Step 8/9] Remove build artifacts)
-	-@rm -rf -v build coverage
+	-@rm -rf -v ${DIRECTORY_BUILD} ${DIRECTORY_COVERAGE}
 	@$(call log-step,[Step 9/9] Remove temporary files)
-	-@rm -rf -v tmp/*
+	-@rm -rf -v ${DIRECTORY_TEMP}/*
 	@$(call log-success,Done)
 
 ##@ Release:
@@ -402,7 +404,7 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(call log-step,[Step 1/3] Build an image based on the development environment)
 	@$(call log-step,[Step 2/3] Create and start a container for running tests)
 	@$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
-	@docker-compose -f docker-compose.yml -f docker-compose.ci.yml up app
+	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} up ${SERVICE_APP}
 	@$(call log-success,Done)
 
 .PHONY: ci-coverage
@@ -430,10 +432,6 @@ ci-clean: ## Remove unused data from the CI server
 	@$(call log-start,Removing unused data...)
 	@docker system prune --all --volumes --force
 	@$(call log-success,Done)
-
-.PHONY: ci-check
-ci-check: ## Check CI (won't work on Travis CI)
-	@sed -i '' 's|\(.*"Name"\): "\(.*\)",.*|\1: '"\"${IMAGE_NAME}\",|" ${CONFIG_FILE_AWS}
 
 ##@ Miscellaneous:
 
