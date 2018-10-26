@@ -511,7 +511,7 @@ setup: ## Setup the development environment and install dependencies
 	@docker pull ${IMAGE_BASE_PROXY}
 	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
 	@$(call script-host,${APP_HOST_LOCAL})
-	@$(call script-host,${APP_HOST_BUILD})
+	@$(call script-host,${APP_DOMAIN_BUILD})
 	@$(call log-success,Done)
 
 .PHONY: help
