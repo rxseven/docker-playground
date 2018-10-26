@@ -164,23 +164,6 @@ restart: ## Rebuild and restart the development environment
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
-.PHONY: open
-open: ## Open the app in the default browser
-	@echo "Available options:"
-	@echo "- Development            : press enter"
-	@echo "- Local production build : build"
-	@echo "- Staging                : unavailable"
-	@echo "- Live / Production      : live"
-	@$(newline)
-	@read -p "Enter the option: " option; \
-	if [ "$$option" == "build" ]; then \
-		$(call script-browser,${APP_URL_BUILD}); \
-	elif [ "$$option" == "live" ]; then \
-		$(call script-browser,${APP_URL_LIVE}); \
-	else \
-		$(call script-browser,${APP_URL_LOCAL}); \
-	fi;
-
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
@@ -251,18 +234,17 @@ preview: ## Preview the production build locally
 	-f ${COMPOSE_PRODUCTION} \
 	up --build
 
-.PHONY: status
-status: ## Show system status
-	@$(call log-sum,[status] Images (including intermediates))
-	@docker image ls -a
-	@$(call log-sum,[status] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[status] Networks)
-	@docker network ls
-	@$(call log-sum,[status] Volumes)
-	@docker volume ls
-	@$(call log-sum,[status] Working copy)
-	@git status
+.PHONY: setup
+setup: ## Setup the development environment and install dependencies
+	@$(call log-start,Setting up the development environment...)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
+	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${IMAGE_BASE_PROXY}
+	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
+	@$(call script-host,${APP_DOMAIN_LOCAL})
+	@$(call script-host,${APP_DOMAIN_BUILD})
+	@$(call log-success,Done)
 
 ##@ Testing and Linting:
 
@@ -532,17 +514,35 @@ info: ## Display system-wide information
 	@echo "Email                          : ${AUTHOR_EMAIL}"
 	@$(newline)
 
-.PHONY: setup
-setup: ## Setup the development environment and install dependencies
-	@$(call log-start,Setting up the development environment...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
-	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
-	@docker pull ${IMAGE_BASE_PROXY}
-	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call script-host,${APP_DOMAIN_LOCAL})
-	@$(call script-host,${APP_DOMAIN_BUILD})
-	@$(call log-success,Done)
+.PHONY: status
+status: ## Show system status
+	@$(call log-sum,[status] Images (including intermediates))
+	@docker image ls -a
+	@$(call log-sum,[status] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[status] Networks)
+	@docker network ls
+	@$(call log-sum,[status] Volumes)
+	@docker volume ls
+	@$(call log-sum,[status] Working copy)
+	@git status
+
+.PHONY: open
+open: ## Open the app in the default browser
+	@echo "Available options:"
+	@echo "- Development            : press enter"
+	@echo "- Local production build : build"
+	@echo "- Staging                : unavailable"
+	@echo "- Live / Production      : live"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "build" ]; then \
+		$(call script-browser,${APP_URL_BUILD}); \
+	elif [ "$$option" == "live" ]; then \
+		$(call script-browser,${APP_URL_LIVE}); \
+	else \
+		$(call script-browser,${APP_URL_LOCAL}); \
+	fi;
 
 .PHONY: help
 help: ## Print usage
