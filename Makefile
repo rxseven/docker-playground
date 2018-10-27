@@ -94,16 +94,6 @@ define script-coverage
 	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 endef
 
-# Dependencies installation script
-define script-update
-	# Update Docker Compose
-	$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
-	sudo rm ${BINARY_PATH}/docker-compose
-	curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-	chmod +x docker-compose
-	sudo mv docker-compose ${BINARY_PATH}
-endef
-
 # Release script
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
@@ -488,7 +478,11 @@ release: ## Release new features
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
 	@$(call log-start,Installing additional dependencies...)
-	@$(script-update)
+	@$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
+	@sudo rm ${BINARY_PATH}/docker-compose
+	@curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+	@chmod +x docker-compose
+	@sudo mv docker-compose ${BINARY_PATH}
 	@$(call log-success,Done)
 
 .PHONY: ci-setup
