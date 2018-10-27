@@ -34,6 +34,7 @@ txt-sum = $(call txt-template,${ANSI_COLOR_CYAN},$(1));
 txt-bold = \e[1m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
+txt-done = $(call txt-success,Done)
 newline = echo ""
 
 # Set configuration values
@@ -46,7 +47,7 @@ function-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 # Preview
 define function-preview
 	$(call txt-info,Opening $(1) in the default browser...) \
-	$(call txt-success,Done) \
+	$(txt-done) \
 	open -a ${BROWSER_DEFAULT} $(1)
 endef
 
@@ -129,7 +130,7 @@ format: ## Format code automatically
 	@$(call txt-step,[Step 3/4] Format code)
 	@$(call txt-step,[Step 4/4] Remove the container)
 	@docker-compose run --rm ${SERVICE_APP} format
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: analyze
 analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
@@ -144,7 +145,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@docker container rm ${CONTAINER_NAME}
 	@$(call txt-step,[Step 5/5] Open the treemap visualization in the browser)
 	@$(call function-preview,${HOST_TEMP}/${FILE_TREEMAP})
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: build
 build: ## Create an optimized production build
@@ -159,7 +160,7 @@ build: ## Create an optimized production build
 	@docker-compose run --rm ${SERVICE_APP} build
 	@$(call txt-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
 	@ls ${DIR_BUILD}
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: preview
 preview: ## Preview the production build locally
@@ -188,7 +189,7 @@ install: ## Install a package and any packages that it depends on
 		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
 		$(call txt-step,[Step 5/5] Remove the container) \
 		docker-compose run --rm ${SERVICE_APP} add $$package; \
-		$(call txt-success,Done) \
+		$(txt-done) \
 	else \
 		echo "You did not enter the package name, please try again"; \
 	fi;
@@ -204,7 +205,7 @@ uninstall: ## Uninstall a package
 		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
 		$(call txt-step,[Step 5/5] Remove the container) \
 		docker-compose run --rm ${SERVICE_APP} remove $$package; \
-		$(call txt-success,Done) \
+		$(txt-done) \
 	else \
 		echo "You did not enter the package name, please try again"; \
 	fi;
@@ -218,7 +219,7 @@ update: ## Install and update all the dependencies listed within package.json
 	@$(call txt-step,[Step 4/5] Update yarn.lock (if necessary))
 	@$(call txt-step,[Step 5/5] Remove the container)
 	@docker-compose run --rm ${SERVICE_APP} install
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies
@@ -230,7 +231,7 @@ setup: ## Setup the development environment and install dependencies
 	@$(call txt-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
 	@$(call function-host,${APP_DOMAIN_LOCAL})
 	@$(call function-host,${APP_DOMAIN_BUILD})
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 ##@ Testing and Linting:
 
@@ -304,7 +305,7 @@ erase: ## Clean up build artifacts and temporary files
 			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 			$(call txt-step,[Step 2/2] Remove temporary files) \
 			rm -rf -v ${DIR_TEMP}/*; \
-			$(call txt-success,Done) \
+			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
 			echo "Skipped"; \
@@ -331,7 +332,7 @@ refresh: ## Refresh (soft clean) the development environment
 			docker container ls -a; \
 			$(call txt-sum,[sum] Networks) \
 			docker network ls; \
-			$(call txt-success,Done) \
+			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
 			echo "Skipped"; \
@@ -364,7 +365,7 @@ clean: ## Clean up the development environment (including persistent data)
 			docker network ls; \
 			$(call txt-sum,[sum] Volumes) \
 			docker volume ls; \
-			$(call txt-success,Done) \
+			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
 			echo "Skipped"; \
@@ -417,7 +418,7 @@ reset: ## Reset the development environment and clean up unused data
 			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 			$(call txt-step,[Step 9/9] Remove temporary files) \
 			rm -rf -v ${DIR_TEMP}/*; \
-			$(call txt-success,Done) \
+			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
 			echo "Skipped"; \
@@ -442,7 +443,7 @@ version: ## Set the next release version
 		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
-		$(call txt-success,Done) \
+		$(txt-done) \
 	else \
 		echo "Skipped"; \
 	fi;
@@ -451,7 +452,7 @@ version: ## Set the next release version
 release: ## Release new features
 	@$(call txt-start,Release new features)
 	@$(function-release)
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 ##@ Continuous Integration:
 
@@ -463,7 +464,7 @@ ci-update: ## Install additional dependencies required for running on the CI env
 	@curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
 	@chmod +x docker-compose
 	@sudo mv docker-compose ${BINARY_PATH}
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: ci-setup
 ci-setup: ## Setup the CI environment and install required dependencies
@@ -473,7 +474,7 @@ ci-setup: ## Setup the CI environment and install required dependencies
 	@docker pull ${IMAGE_BASE_NODE}
 	@$(call txt-step,[Step 2/2] List downloaded Docker images)
 	@docker image ls
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: ci-test
 ci-test: ## Run tests and generate code coverage reports
@@ -482,7 +483,7 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(call txt-step,[Step 2/3] Create and start a container for running tests)
 	@$(call txt-step,[Step 3/3] Run tests and generate code coverage reports)
 	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} up ${SERVICE_APP}
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage reports (LCOV format)
@@ -491,7 +492,7 @@ ci-coverage: ## Create code coverage reports (LCOV format)
 	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 	@$(call txt-step,[Step 2/2] Fix source paths in the LCOV file)
 	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
@@ -507,7 +508,7 @@ ci-deploy: ## Create deployment configuration and build a production image
 	@echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 	@$(call txt-step,[Step 3/3] Push the image to Docker Hub)
 	@docker push ${IMAGE_NAME}
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: ci-coveralls
 ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
@@ -515,13 +516,13 @@ ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
 	@$(call txt-step,[Step 1/2] Collect LCOV data from /coverage/lcov.info)
 	@$(call txt-step,[Step 2/2] Send the data to coveralls.io)
 	@cat ${LCOV_DATA} | coveralls
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 .PHONY: ci-clean
 ci-clean: ## Remove unused data from the CI server
 	@$(call txt-start,Removing unused data...)
 	@docker system prune --all --volumes --force
-	@$(call txt-success,Done)
+	@$(txt-done)
 
 ##@ Miscellaneous:
 
