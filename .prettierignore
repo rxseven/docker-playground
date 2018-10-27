@@ -1,0 +1,8 @@
+./vscode
+/build
+/config
+/coverage
+/scripts
+/tmp
+package.json
+README.md

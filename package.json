@@ -59,6 +59,7 @@
     "analyze": "source-map-explorer --html build/static/js/main.* > /tmp/treemap.html",
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
+    "format": "prettier-eslint --write src/**/*.{js,json,jsx,scss}",
     "lint:script": "eslint src/**/*.js",
     "lint:script:fix": "eslint --fix src/**/*.js",
     "lint:stylesheet": "stylelint \"src/**/*.scss\"",
