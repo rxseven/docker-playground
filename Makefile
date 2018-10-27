@@ -38,6 +38,7 @@ txt-done = $(call txt-success,Done)
 txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-note = $(call txt-underline,Note)
+txt-warning = $(call txt-underline,Warning)
 newline = echo ""
 
 # Set configuration values
@@ -437,7 +438,7 @@ version: ## Set the next release version
 	@$(call txt-start,Setting the next release version...)
 	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@$(newline)
-	@printf "$(call txt-underline,Warning): You $(call txt-bold,must) reset the development environment built with the configuration from v${RELEASE_VERSION} before tagging a new release version, otherwise you will not be able to remove the outdate environment once you have tagged a new version. To do that, cancel this command by hitting $(call txt-bold,enter/return) key and run $(call txt-bold,reset) command\n"
+	@printf "$(txt-warning): You $(call txt-bold,must) reset the development environment built with the configuration from v${RELEASE_VERSION} before tagging a new release version, otherwise you will not be able to remove the outdate environment once you have tagged a new version. To do that, cancel this command by hitting $(call txt-bold,enter/return) key and run $(call txt-bold,reset) command\n"
 	@$(newline)
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
