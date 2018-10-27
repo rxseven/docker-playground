@@ -66,7 +66,7 @@ define function-test
 endef
 
 # Linting script
-define script-lint
+define function-lint
 	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
 	$(call txt-step,[Step 2/4] Create and start a container for running code linting) \
 	$(call txt-step,[Step 3/4] Run linting) \
@@ -260,11 +260,11 @@ lint: ## Run code linting
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [ "$$option" == "stylesheet" ]; then \
-		$(call script-lint,:stylesheet); \
+		$(call function-lint,:stylesheet); \
 	elif [ "$$option" == "fix" ]; then \
-		$(call script-lint,:script:fix); \
+		$(call function-lint,:script:fix); \
 	else \
-		$(call script-lint,:script); \
+		$(call function-lint,:script); \
 	fi;
 
 .PHONY: typecheck
