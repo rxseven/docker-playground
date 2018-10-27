@@ -168,6 +168,17 @@ uninstall: ## Uninstall a package
 		echo "You did not enter the package name, please try again"; \
 	fi;
 
+.PHONY: update
+update: ## Install and update all the dependencies listed within package.json
+	@$(call log-start,Updating dependencies...)
+	@$(call log-step,[Step 1/5] Build the development image (if needed))
+	@$(call log-step,[Step 2/5] Create and start a container for formatting code)
+	@$(call log-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
+	@$(call log-step,[Step 4/5] Update yarn.lock (if necessary))
+	@$(call log-step,[Step 5/5] Remove the container)
+	@docker-compose run --rm ${SERVICE_APP} install
+	@$(call log-success,Done)
+
 .PHONY: format
 format: ## Format code automatically
 	@$(call log-start,Formatting code...)
