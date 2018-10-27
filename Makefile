@@ -31,10 +31,10 @@ txt-start = $(call txt-template,${ANSI_COLOR_MAGENTA},$(1));
 txt-step = $(call txt-template,${ANSI_COLOR_YELLOW},$(1));
 txt-success = $(call txt-template,${ANSI_COLOR_GREEN},$(1));
 txt-sum = $(call txt-template,${ANSI_COLOR_CYAN},$(1));
-newline = echo ""
 txt-bold = \e[1m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
+newline = echo ""
 
 # Set configuration values
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
