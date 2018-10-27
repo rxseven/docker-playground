@@ -26,7 +26,7 @@ ANSI_COLOR_WHITE=37
 # Logger
 txt-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-danger = $(call txt-template,${ANSI_COLOR_RED},$(1));
-log-info = $(call txt-template,${ANSI_COLOR_WHITE},$(1));
+txt-info = $(call txt-template,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call txt-template,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call txt-template,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call txt-template,${ANSI_COLOR_GREEN},$(1));
@@ -45,7 +45,7 @@ script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # Opening browser script
 define script-browser
-	$(call log-info,Opening $(1) in the default browser...) \
+	$(call txt-info,Opening $(1) in the default browser...) \
 	$(call log-success,Done) \
 	open -a ${BROWSER_DEFAULT} $(1)
 endef
@@ -104,7 +104,7 @@ start: ## Start the development environment and attach to containers for a servi
 	@$(call log-step,[Step 2/4] Build the development image (if needed))
 	@$(call log-step,[Step 3/4] Create and start the development and reverse proxy containers)
 	@$(call log-step,[Step 4/4] Start the development and reverse proxy servers)
-	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
+	@$(call txt-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up
 
 .PHONY: restart
@@ -113,7 +113,7 @@ restart: ## Rebuild and restart the development environment
 	@$(call log-step,[Step 1/3] Rebuild the development image)
 	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
 	@$(call log-step,[Step 3/3] Start the development and reverse proxy servers)
-	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
+	@$(call txt-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
 .PHONY: shell
@@ -157,7 +157,7 @@ build: ## Create an optimized production build
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
-	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
+	@$(call txt-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
 	@ls ${DIR_BUILD}
 	@$(call log-success,Done)
 
@@ -171,7 +171,7 @@ preview: ## Preview the production build locally
 	@$(call log-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
 	@$(call log-step,[Step 5/6] Create and start the app and reverse proxy containers)
 	@$(call log-step,[Step 6/6] Start the web (for serving the app) and reverse proxy servers)
-	@$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
+	@$(call txt-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
 	@docker-compose \
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_PRODUCTION} \
