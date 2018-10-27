@@ -30,7 +30,7 @@ txt-info = $(call txt-template,${ANSI_COLOR_WHITE},$(1));
 txt-start = $(call txt-template,${ANSI_COLOR_MAGENTA},$(1));
 txt-step = $(call txt-template,${ANSI_COLOR_YELLOW},$(1));
 txt-success = $(call txt-template,${ANSI_COLOR_GREEN},$(1));
-log-sum = $(call txt-template,${ANSI_COLOR_CYAN},$(1));
+txt-sum = $(call txt-template,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 txt-bold = \e[1m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
@@ -245,7 +245,7 @@ test: ## Run tests
 	@read -p "Enter test mode: " mode; \
 	if [ "$$mode" == "coverage" ]; then \
 		$(call script-test,:coverage); \
-		$(call log-sum,[sum] LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
+		$(call txt-sum,[sum] LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
 		ls ${DIR_COVERAGE}; \
 	else \
 		$(call script-test); \
@@ -327,9 +327,9 @@ refresh: ## Refresh (soft clean) the development environment
 			$(call txt-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services) \
 			$(call txt-step,[Step 2/2] Remove the default network) \
 			docker-compose down; \
-			$(call log-sum,[sum] Containers (including exited state)) \
+			$(call txt-sum,[sum] Containers (including exited state)) \
 			docker container ls -a; \
-			$(call log-sum,[sum] Networks) \
+			$(call txt-sum,[sum] Networks) \
 			docker network ls; \
 			$(call txt-success,Done) \
 		;; \
@@ -358,11 +358,11 @@ clean: ## Clean up the development environment (including persistent data)
 			$(call txt-step,[Step 2/3] Remove the default network) \
 			$(call txt-step,[Step 3/3] Remove volumes) \
 			docker-compose down -v; \
-			$(call log-sum,[sum] Containers (including exited state)) \
+			$(call txt-sum,[sum] Containers (including exited state)) \
 			docker container ls -a; \
-			$(call log-sum,[sum] Networks) \
+			$(call txt-sum,[sum] Networks) \
 			docker network ls; \
-			$(call log-sum,[sum] Volumes) \
+			$(call txt-sum,[sum] Volumes) \
 			docker volume ls; \
 			$(call txt-success,Done) \
 		;; \
@@ -397,11 +397,11 @@ reset: ## Reset the development environment and clean up unused data
 			$(call txt-step,[Step 2/9] Remove the default network) \
 			$(call txt-step,[Step 3/9] Remove volumes) \
 			docker-compose down -v; \
-			$(call log-sum,[sum] Containers (including exited state)) \
+			$(call txt-sum,[sum] Containers (including exited state)) \
 			docker container ls -a; \
-			$(call log-sum,[sum] Networks) \
+			$(call txt-sum,[sum] Networks) \
 			docker network ls; \
-			$(call log-sum,[sum] Volumes) \
+			$(call txt-sum,[sum] Volumes) \
 			docker volume ls; \
 			$(call txt-step,[Step 4/9] Remove the development image) \
 			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
@@ -411,7 +411,7 @@ reset: ## Reset the development environment and clean up unused data
 			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
 			$(call txt-step,[Step 7/9] Remove unused images (optional)) \
 			docker image prune; \
-			$(call log-sum,[sum] Images (including intermediates)) \
+			$(call txt-sum,[sum] Images (including intermediates)) \
 			docker image ls -a; \
 			$(call txt-step,[Step 8/9] Remove build artifacts) \
 			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
@@ -594,15 +594,15 @@ info: ## Display system-wide information
 
 .PHONY: status
 status: ## Show system status
-	@$(call log-sum,[status] Images (including intermediates))
+	@$(call txt-sum,[status] Images (including intermediates))
 	@docker image ls -a
-	@$(call log-sum,[status] Containers (including exited state))
+	@$(call txt-sum,[status] Containers (including exited state))
 	@docker container ls -a
-	@$(call log-sum,[status] Networks)
+	@$(call txt-sum,[status] Networks)
 	@docker network ls
-	@$(call log-sum,[status] Volumes)
+	@$(call txt-sum,[status] Volumes)
 	@docker volume ls
-	@$(call log-sum,[status] Working copy)
+	@$(call txt-sum,[status] Working copy)
 	@git status
 
 .PHONY: open
