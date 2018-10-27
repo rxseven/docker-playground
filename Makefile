@@ -189,6 +189,7 @@ build: ## Create an optimized production build
 install: ## Install a package and any packages that it depends on
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
+		$(call log-start,Installing npm package...) \
 		$(call log-step,[Step 1/5] Build the development image (if needed)) \
 		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
 		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
