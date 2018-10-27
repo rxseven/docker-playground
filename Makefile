@@ -7,6 +7,9 @@ SHELL := /bin/bash
 blank :=
 space := $(blank) $(blank)
 
+# Date and time
+CURRENT_DATE = $$(date +'%d.%m.%Y')
+
 # ANSI Colors
 ANSI_COLOR_BLACK=30
 ANSI_COLOR_BLUE=34
@@ -22,6 +25,7 @@ ANSI_COLOR_WHITE=37
 
 # Logger
 logger = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
+log-danger = $(call logger,${ANSI_COLOR_RED},$(1));
 log-info = $(call logger,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call logger,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call logger,${ANSI_COLOR_YELLOW},$(1));
@@ -29,6 +33,7 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 txt-bold = \e[1m$(1)\e[0m
+txt-underline = \e[4m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 
 # Set configuration values
@@ -37,6 +42,13 @@ set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
 script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
+
+# Opening browser script
+define script-browser
+	$(call log-info,Opening $(1) in the default browser...) \
+	$(call log-success,Done) \
+	open -a ${BROWSER_DEFAULT} $(1)
+endef
 
 # Test script
 define script-test
@@ -71,27 +83,6 @@ define script-typecheck
 	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
-# Creating LCOV data script
-define script-coverage
-	# Copy LCOV data from the container's file system to the CI's
-	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
-
-	# Replace container's working directory path with the CI's
-	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
-	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
-endef
-
-# Dependencies installation script
-define script-update
-	# Update Docker Compose
-	$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
-	sudo rm ${BINARY_PATH}/docker-compose
-	curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
-	chmod +x docker-compose
-	sudo mv docker-compose ${BINARY_PATH}
-endef
-
 # Release script
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
@@ -102,34 +93,6 @@ define script-release
 	
 	# Remove backup files after performing text transformations
 	rm *.${EXT_BACKUP}
-endef
-
-# Predeploy script
-define script-predeploy
-	# Configure a deployment configuration
-	$(call log-start,Configuring a deployment configuration...)
-	$(script-release)
-
-	# Build a deployment configuration
-	$(call log-start,Building a deployment configuration...)
-	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
-	zip ${BUILD_ZIP} ${CONFIG_AWS}
-endef
-
-# Deployment script
-define script-deploy
-	# Build a production image for deployment
-	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
-	$(call log-step,[Step 1/3] Build the image)
-	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
-
-	# Login to Docker Hub
-	$(call log-step,[Step 2/3] Login to Docker Hub)
-	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-
-	# Push the production image to Docker Hub
-	$(call log-step,[Step 3/3] Push the image to Docker Hub)
-	docker push ${IMAGE_NAME}
 endef
 
 ##@ Development:
@@ -177,12 +140,29 @@ build: ## Create an optimized production build
 install: ## Install a package and any packages that it depends on
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
+		$(call log-start,Installing npm package...) \
 		$(call log-step,[Step 1/5] Build the development image (if needed)) \
 		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
 		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
 		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
 		$(call log-step,[Step 5/5] Remove the container) \
 		docker-compose run --rm ${SERVICE_APP} add $$package; \
+		$(call log-success,Done) \
+	else \
+		echo "You did not enter the package name, please try again"; \
+	fi;
+
+.PHONY: uninstall
+uninstall: ## Uninstall a package
+	@read -p "Enter package name: " package; \
+	if [ "$$package" != "" ]; then \
+		$(call log-start,Uninstalling npm package...) \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
+		$(call log-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
+		docker-compose run --rm ${SERVICE_APP} remove $$package; \
 		$(call log-success,Done) \
 	else \
 		echo "You did not enter the package name, please try again"; \
@@ -204,7 +184,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-step,[Step 4/5] Remove the container)
 	@docker container rm ${CONTAINER_NAME}
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
-	@open -a ${BROWSER_DEFAULT} ${HOST_TEMP}/${FILE_TREEMAP}
+	@$(call script-browser,${HOST_TEMP}/${FILE_TREEMAP})
 	@$(call log-success,Done)
 
 .PHONY: preview
@@ -223,18 +203,17 @@ preview: ## Preview the production build locally
 	-f ${COMPOSE_PRODUCTION} \
 	up --build
 
-.PHONY: status
-status: ## Show system status
-	@$(call log-sum,[status] Images (including intermediates))
-	@docker image ls -a
-	@$(call log-sum,[status] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[status] Networks)
-	@docker network ls
-	@$(call log-sum,[status] Volumes)
-	@docker volume ls
-	@$(call log-sum,[status] Working copy)
-	@git status
+.PHONY: setup
+setup: ## Setup the development environment and install dependencies
+	@$(call log-start,Setting up the development environment...)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
+	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${IMAGE_BASE_PROXY}
+	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
+	@$(call script-host,${APP_DOMAIN_LOCAL})
+	@$(call script-host,${APP_DOMAIN_BUILD})
+	@$(call log-success,Done)
 
 ##@ Testing and Linting:
 
@@ -294,85 +273,160 @@ typecheck: ## Run static type checking
 
 .PHONY: erase
 erase: ## Clean up build artifacts and temporary files
-	@$(call log-start,Erasing data...)
-	@$(call log-step,[Step 1/2] Remove build artifacts)
-	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
-	@$(call log-step,[Step 2/2] Remove temporary files)
-	-@rm -rf -v ${DIR_TEMP}/*
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Remove all build artifacts"
+	@echo "- Remove all temporary files"
+	@$(newline)
+	@printf "$(call txt-underline,Note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@$(newline)
+	@read -p "Remove build artifacts and temporary files? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-start,Removing data...) \
+			$(call log-step,[Step 1/2] Remove build artifacts) \
+			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			$(call log-step,[Step 2/2] Remove temporary files) \
+			rm -rf -v ${DIR_TEMP}/*; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
-	@$(call log-start,Refreshing the development environment...)
-	@$(call log-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services)
-	@$(call log-step,[Step 2/2] Remove the default network)
-	@docker-compose down
-	@$(call log-sum,[sum] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[sum] Networks)
-	@docker network ls
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop and remove containers for the app and reverse proxy services"
+	@echo "- Remove the default network"
+	@$(newline)
+	@read -p "Refresh the development environment? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-start,Refreshing the development environment...) \
+			$(call log-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services) \
+			$(call log-step,[Step 2/2] Remove the default network) \
+			docker-compose down; \
+			$(call log-sum,[sum] Containers (including exited state)) \
+			docker container ls -a; \
+			$(call log-sum,[sum] Networks) \
+			docker network ls; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
 .PHONY: clean
 clean: ## Clean up the development environment (including persistent data)
-	@$(call log-start,Cleaning up the development environment...)
-	@$(call log-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services)
-	@$(call log-step,[Step 2/3] Remove the default network)
-	@$(call log-step,[Step 3/3] Remove volumes)
-	@docker-compose down -v
-	@$(call log-sum,[sum] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[sum] Networks)
-	@docker network ls
-	@$(call log-sum,[sum] Volumes)
-	@docker volume ls
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop and remove containers for the app and reverse proxy  \services"
+	@echo "- Remove the default network"
+	@echo "- Remove volumes"
+	@$(newline)
+	@printf "$(call txt-underline,Note): You are about to permanently remove persistent data. $(call txt-bold,This operation cannot be undone.)\n"
+	@$(newline)
+	@read -p "Clean up the development environment? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-start,Cleaning up the development environment...) \
+			$(call log-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services) \
+			$(call log-step,[Step 2/3] Remove the default network) \
+			$(call log-step,[Step 3/3] Remove volumes) \
+			docker-compose down -v; \
+			$(call log-sum,[sum] Containers (including exited state)) \
+			docker container ls -a; \
+			$(call log-sum,[sum] Networks) \
+			docker network ls; \
+			$(call log-sum,[sum] Volumes) \
+			docker volume ls; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
-	@$(call log-start,Resetting the development environment...)
-	@$(call log-step,[Step 1/9] Stop and remove containers for the app and reverse proxy services)
-	@$(call log-step,[Step 2/9] Remove the default network)
-	@$(call log-step,[Step 3/9] Remove volumes)
-	-@docker-compose down -v
-	@$(call log-sum,[sum] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[sum] Networks)
-	@docker network ls
-	@$(call log-sum,[sum] Volumes)
-	@docker volume ls
-	@$(call log-step,[Step 4/9] Remove the development image)
-	-@docker image rm ${ENV_LOCAL}/${IMAGE_REPO}
-	
-	@$(call log-step,[Step 5/9] Remove the production image)
-	-@docker image rm ${IMAGE_NAME}
-	@$(call log-step,[Step 6/9] Remove the intermediate images)
-	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
-	@$(call log-step,[Step 7/9] Remove unused images (optional))
-	-@docker image prune
-	@$(call log-sum,[sum] Images (including intermediates))
-	@docker image ls -a
-	@$(call log-step,[Step 8/9] Remove build artifacts)
-	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
-	@$(call log-step,[Step 9/9] Remove temporary files)
-	-@rm -rf -v ${DIR_TEMP}/*
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop and remove containers for the app and reverse proxy services"
+	@echo "- Remove the default network"
+	@echo "- Remove volumes"
+	@echo "- Remove the development image"
+	@echo "- Remove the production image"
+	@echo "- Remove the intermediate images"
+	@echo "- Remove unused images (optional)"
+	@echo "- Remove build artifacts"
+	@echo "- Remove temporary files"
+	@$(newline)
+	@printf "$(call txt-underline,Note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@$(newline)
+	@read -p "Reset the development environment and clean up unused data? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-start,Resetting the development environment...) \
+			$(call log-step,[Step 1/9] Stop and remove containers for the app and reverse proxy services) \
+			$(call log-step,[Step 2/9] Remove the default network) \
+			$(call log-step,[Step 3/9] Remove volumes) \
+			docker-compose down -v; \
+			$(call log-sum,[sum] Containers (including exited state)) \
+			docker container ls -a; \
+			$(call log-sum,[sum] Networks) \
+			docker network ls; \
+			$(call log-sum,[sum] Volumes) \
+			docker volume ls; \
+			$(call log-step,[Step 4/9] Remove the development image) \
+			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
+			$(call log-step,[Step 5/9] Remove the production image) \
+			docker image rm ${IMAGE_NAME}; \
+			$(call log-step,[Step 6/9] Remove the intermediate images) \
+			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			$(call log-step,[Step 7/9] Remove unused images (optional)) \
+			docker image prune; \
+			$(call log-sum,[sum] Images (including intermediates)) \
+			docker image ls -a; \
+			$(call log-step,[Step 8/9] Remove build artifacts) \
+			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			$(call log-step,[Step 9/9] Remove temporary files) \
+			rm -rf -v ${DIR_TEMP}/*; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
-##@ Release:
+##@ Operations:
 
 .PHONY: version
 version: ## Set the next release version
-	@$(call log-start,Set the next release version)
+	@$(call log-start,Setting the next release version...)
+	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
-		echo "Your next release will be v$$VERSION"; \
-		$(call set-env,RELEASE_DATE,$$(date +'%d.%m.%Y'),${CONFIG_ENV}); \
+		printf "The next release will be $(call txt-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
+		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
+		$(call log-success,Done) \
 	else \
-		echo "You did not enter a version number, please try again"; \
+		echo "You did not enter the value, please try again"; \
+		$(call log-danger,Skipped) \
 	fi;
-	@$(call log-success,Done)
 
 .PHONY: release
 release: ## Release new features
@@ -385,7 +439,11 @@ release: ## Release new features
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
 	@$(call log-start,Installing additional dependencies...)
-	@$(script-update)
+	@$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
+	@sudo rm ${BINARY_PATH}/docker-compose
+	@curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+	@chmod +x docker-compose
+	@sudo mv docker-compose ${BINARY_PATH}
 	@$(call log-success,Done)
 
 .PHONY: ci-setup
@@ -410,13 +468,26 @@ ci-test: ## Run tests and generate code coverage reports
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage reports (LCOV format)
 	@$(call log-start,Creating code coverage reports...)
-	@$(script-coverage)
+	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
+	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
+	@$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
+	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 	@$(call log-success,Done)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@${script-predeploy}
-	@${script-deploy}
+	@$(call log-start,Configuring a deployment configuration...)
+	@$(script-release)
+	@$(call log-start,Building a deployment configuration...)
+	@$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
+	@zip ${BUILD_ZIP} ${CONFIG_AWS}
+	@$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
+	@$(call log-step,[Step 1/3] Build the image)
+	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
+	@$(call log-step,[Step 2/3] Login to Docker Hub)
+	@echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+	@$(call log-step,[Step 3/3] Push the image to Docker Hub)
+	@docker push ${IMAGE_NAME}
 	@$(call log-success,Done)
 
 .PHONY: ci-coveralls
@@ -502,17 +573,35 @@ info: ## Display system-wide information
 	@echo "Email                          : ${AUTHOR_EMAIL}"
 	@$(newline)
 
-.PHONY: setup
-setup: ## Setup the development environment and install dependencies
-	@$(call log-start,Setting up the development environment...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
-	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
-	@docker pull ${IMAGE_BASE_PROXY}
-	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call script-host,${APP_DOMAIN_LOCAL})
-	@$(call script-host,${APP_DOMAIN_BUILD})
-	@$(call log-success,Done)
+.PHONY: status
+status: ## Show system status
+	@$(call log-sum,[status] Images (including intermediates))
+	@docker image ls -a
+	@$(call log-sum,[status] Containers (including exited state))
+	@docker container ls -a
+	@$(call log-sum,[status] Networks)
+	@docker network ls
+	@$(call log-sum,[status] Volumes)
+	@docker volume ls
+	@$(call log-sum,[status] Working copy)
+	@git status
+
+.PHONY: open
+open: ## Open the app in the default browser
+	@echo "Available options:"
+	@echo "- Development            : press enter"
+	@echo "- Local production build : build"
+	@echo "- Staging                : unavailable"
+	@echo "- Live / Production      : live"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "build" ]; then \
+		$(call script-browser,${APP_URL_BUILD}); \
+	elif [ "$$option" == "live" ]; then \
+		$(call script-browser,${APP_URL_LIVE}); \
+	else \
+		$(call script-browser,${APP_URL_LOCAL}); \
+	fi;
 
 .PHONY: help
 help: ## Print usage

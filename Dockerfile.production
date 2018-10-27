@@ -9,6 +9,8 @@ FROM ${BASE_NODE} as app
 
 # Specify build and environment variables
 ARG BUILD_ENV
+ARG DEPENDENCY_LIST
+ARG DEPENDENCY_LOCK
 ARG LABEL_INTERMEDIATE
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
@@ -21,7 +23,7 @@ LABEL stage=${LABEL_INTERMEDIATE}
 WORKDIR ${WORKDIR}
 
 # Install and update dependencies
-COPY package.json yarn.lock ./
+COPY ${DEPENDENCY_LIST} ${DEPENDENCY_LOCK} ./
 RUN yarn && yarn cache clean
 
 # Create an optimized production build
