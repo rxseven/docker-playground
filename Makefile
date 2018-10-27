@@ -41,7 +41,7 @@ set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
 # Hosts script
-script-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
+function-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # Opening browser script
 define script-browser
@@ -228,8 +228,8 @@ setup: ## Setup the development environment and install dependencies
 	@docker pull ${IMAGE_BASE_NODE}
 	@docker pull ${IMAGE_BASE_PROXY}
 	@$(call txt-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call script-host,${APP_DOMAIN_LOCAL})
-	@$(call script-host,${APP_DOMAIN_BUILD})
+	@$(call function-host,${APP_DOMAIN_LOCAL})
+	@$(call function-host,${APP_DOMAIN_BUILD})
 	@$(call txt-success,Done)
 
 ##@ Testing and Linting:
