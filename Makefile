@@ -191,7 +191,7 @@ install: ## Install a package and any packages that it depends on
 		docker-compose run --rm ${SERVICE_APP} add $$package; \
 		$(txt-done) \
 	else \
-		echo "You did not enter the package name, please try again"; \
+		echo "Skipped, you did not enter the package name, please try again"; \
 	fi;
 
 .PHONY: uninstall
@@ -207,7 +207,7 @@ uninstall: ## Uninstall a package
 		docker-compose run --rm ${SERVICE_APP} remove $$package; \
 		$(txt-done) \
 	else \
-		echo "You did not enter the package name, please try again"; \
+		echo "Skipped, you did not enter the package name, please try again"; \
 	fi;
 
 .PHONY: update
