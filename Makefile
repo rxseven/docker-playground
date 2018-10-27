@@ -83,17 +83,6 @@ define script-typecheck
 	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
-# Creating LCOV data script
-define script-coverage
-	# Copy LCOV data from the container's file system to the CI's
-	$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
-
-	# Replace container's working directory path with the CI's
-	$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
-	yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
-endef
-
 # Release script
 define script-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
@@ -507,7 +496,10 @@ ci-test: ## Run tests and generate code coverage reports
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage reports (LCOV format)
 	@$(call log-start,Creating code coverage reports...)
-	@$(script-coverage)
+	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
+	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
+	@$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
+	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 	@$(call log-success,Done)
 
 .PHONY: ci-deploy
