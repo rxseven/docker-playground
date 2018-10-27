@@ -121,6 +121,31 @@ shell: ## Attach an interactive shell to the development container
 	@$(call log-start,Attaching an interactive shell to the development container...)
 	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
 
+.PHONY: format
+format: ## Format code automatically
+	@$(call log-start,Formatting code...)
+	@$(call log-step,[Step 1/4] Build the development image (if needed))
+	@$(call log-step,[Step 2/4] Create and start a container for formatting code)
+	@$(call log-step,[Step 3/4] Format code)
+	@$(call log-step,[Step 4/4] Remove the container)
+	@docker-compose run --rm ${SERVICE_APP} format
+	@$(call log-success,Done)
+
+.PHONY: analyze
+analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
+analyze: build ## Analyze and debug code bloat through source maps
+	@$(call log-start,Analyzing and debugging code...)
+	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
+	@$(call log-step,[Step 2/5] Analyze the bundle size)
+	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
+	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
+	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
+	@$(call log-step,[Step 4/5] Remove the container)
+	@docker container rm ${CONTAINER_NAME}
+	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
+	@$(call script-browser,${HOST_TEMP}/${FILE_TREEMAP})
+	@$(call log-success,Done)
+
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
@@ -135,6 +160,22 @@ build: ## Create an optimized production build
 	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
 	@ls ${DIR_BUILD}
 	@$(call log-success,Done)
+
+.PHONY: preview
+preview: ## Preview the production build locally
+	@$(call log-start,Running the production build...)
+	@$(call log-step,[Step 1/6] Remove intermediate and unused images (when necessary))
+	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
+	@$(call log-step,[Step 2/6] Download base images (if needed))
+	@$(call log-step,[Step 3/6] Create an optimized production build)
+	@$(call log-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
+	@$(call log-step,[Step 5/6] Create and start the app and reverse proxy containers)
+	@$(call log-step,[Step 6/6] Start the web (for serving the app) and reverse proxy servers)
+	@$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
+	@docker-compose \
+	-f ${COMPOSE_BASE} \
+	-f ${COMPOSE_PRODUCTION} \
+	up --build
 
 .PHONY: install
 install: ## Install a package and any packages that it depends on
@@ -178,47 +219,6 @@ update: ## Install and update all the dependencies listed within package.json
 	@$(call log-step,[Step 5/5] Remove the container)
 	@docker-compose run --rm ${SERVICE_APP} install
 	@$(call log-success,Done)
-
-.PHONY: format
-format: ## Format code automatically
-	@$(call log-start,Formatting code...)
-	@$(call log-step,[Step 1/4] Build the development image (if needed))
-	@$(call log-step,[Step 2/4] Create and start a container for formatting code)
-	@$(call log-step,[Step 3/4] Format code)
-	@$(call log-step,[Step 4/4] Remove the container)
-	@docker-compose run --rm ${SERVICE_APP} format
-	@$(call log-success,Done)
-
-.PHONY: analyze
-analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
-analyze: build ## Analyze and debug code bloat through source maps
-	@$(call log-start,Analyzing and debugging code...)
-	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
-	@$(call log-step,[Step 2/5] Analyze the bundle size)
-	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
-	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
-	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
-	@$(call log-step,[Step 4/5] Remove the container)
-	@docker container rm ${CONTAINER_NAME}
-	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
-	@$(call script-browser,${HOST_TEMP}/${FILE_TREEMAP})
-	@$(call log-success,Done)
-
-.PHONY: preview
-preview: ## Preview the production build locally
-	@$(call log-start,Running the production build...)
-	@$(call log-step,[Step 1/6] Remove intermediate and unused images (when necessary))
-	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
-	@$(call log-step,[Step 2/6] Download base images (if needed))
-	@$(call log-step,[Step 3/6] Create an optimized production build)
-	@$(call log-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
-	@$(call log-step,[Step 5/6] Create and start the app and reverse proxy containers)
-	@$(call log-step,[Step 6/6] Start the web (for serving the app) and reverse proxy servers)
-	@$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
-	@docker-compose \
-	-f ${COMPOSE_BASE} \
-	-f ${COMPOSE_PRODUCTION} \
-	up --build
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies
