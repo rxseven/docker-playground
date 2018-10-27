@@ -37,6 +37,7 @@ txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-done = $(call txt-success,Done)
 txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
+txt-note = $(call txt-underline,Note)
 newline = echo ""
 
 # Set configuration values
@@ -296,7 +297,7 @@ erase: ## Clean up build artifacts and temporary files
 	@echo "- Remove all build artifacts"
 	@echo "- Remove all temporary files"
 	@$(newline)
-	@printf "$(call txt-underline,Note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Remove build artifacts and temporary files? " confirmation; \
 	case "$$confirmation" in \
@@ -350,7 +351,7 @@ clean: ## Clean up the development environment (including persistent data)
 	@echo "- Remove the default network"
 	@echo "- Remove volumes"
 	@$(newline)
-	@printf "$(call txt-underline,Note): You are about to permanently remove persistent data. $(call txt-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-note): You are about to permanently remove persistent data. $(call txt-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Clean up the development environment? " confirmation; \
 	case "$$confirmation" in \
@@ -389,7 +390,7 @@ reset: ## Reset the development environment and clean up unused data
 	@echo "- Remove build artifacts"
 	@echo "- Remove temporary files"
 	@$(newline)
-	@printf "$(call txt-underline,Note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Reset the development environment and clean up unused data? " confirmation; \
 	case "$$confirmation" in \
