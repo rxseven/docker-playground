@@ -35,6 +35,7 @@ txt-bold = \e[1m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-done = $(call txt-success,Done)
+txt-skipped = echo "Skipped"
 newline = echo ""
 
 # Set configuration values
@@ -308,7 +309,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
-			echo "Skipped"; \
+			$(txt-skipped) \
 		;; \
 		*) \
 			echo "Skipped, please enter y/yes or n/no"; \
@@ -335,7 +336,7 @@ refresh: ## Refresh (soft clean) the development environment
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
-			echo "Skipped"; \
+			$(txt-skipped) \
 		;; \
 		*) \
 			echo "Skipped, please enter y/yes or n/no"; \
@@ -368,7 +369,7 @@ clean: ## Clean up the development environment (including persistent data)
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
-			echo "Skipped"; \
+			$(txt-skipped) \
 		;; \
 		*) \
 			echo "Skipped, please enter y/yes or n/no"; \
@@ -421,7 +422,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
-			echo "Skipped"; \
+			$(txt-skipped) \
 		;; \
 		*) \
 			echo "Skipped, please enter y/yes or n/no"; \
@@ -445,7 +446,7 @@ version: ## Set the next release version
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
 		$(txt-done) \
 	else \
-		echo "Skipped"; \
+		$(txt-skipped); \
 	fi;
 
 .PHONY: release
