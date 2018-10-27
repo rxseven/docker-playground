@@ -200,6 +200,22 @@ install: ## Install a package and any packages that it depends on
 		echo "You did not enter the package name, please try again"; \
 	fi;
 
+.PHONY: uninstall
+uninstall: ## Uninstall a package
+	@read -p "Enter package name: " package; \
+	if [ "$$package" != "" ]; then \
+		$(call log-start,Uninstalling npm package...) \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
+		$(call log-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
+		docker-compose run --rm ${SERVICE_APP} remove $$package; \
+		$(call log-success,Done) \
+	else \
+		echo "You did not enter the package name, please try again"; \
+	fi;
+
 .PHONY: format
 format: ## Format code automatically
 	@$(call log-start,TODO...)
