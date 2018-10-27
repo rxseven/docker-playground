@@ -84,7 +84,7 @@ define function-typecheck
 endef
 
 # Release script
-define script-release
+define function-release
 	$(call txt-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
 	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS})
 	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_AWS})
@@ -450,7 +450,7 @@ version: ## Set the next release version
 .PHONY: release
 release: ## Release new features
 	@$(call txt-start,Release new features)
-	@$(script-release)
+	@$(function-release)
 	@$(call txt-success,Done)
 
 ##@ Continuous Integration:
@@ -496,7 +496,7 @@ ci-coverage: ## Create code coverage reports (LCOV format)
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
 	@$(call txt-start,Configuring a deployment configuration...)
-	@$(script-release)
+	@$(function-release)
 	@$(call txt-start,Building a deployment configuration...)
 	@$(call txt-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
 	@zip ${BUILD_ZIP} ${CONFIG_AWS}
