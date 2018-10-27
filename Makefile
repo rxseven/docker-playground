@@ -51,7 +51,7 @@ define function-browser
 endef
 
 # Test script
-define script-test
+define function-test
 	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
 	$(call txt-step,[Step 2/4] Create and start a container for running tests) \
 	$(call txt-step,[Step 3/4] Run tests) \
@@ -244,11 +244,11 @@ test: ## Run tests
 	@$(newline)
 	@read -p "Enter test mode: " mode; \
 	if [ "$$mode" == "coverage" ]; then \
-		$(call script-test,:coverage); \
+		$(call function-test,:coverage); \
 		$(call txt-sum,[sum] LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
 		ls ${DIR_COVERAGE}; \
 	else \
-		$(call script-test); \
+		$(call function-test); \
 	fi;
 
 .PHONY: lint
