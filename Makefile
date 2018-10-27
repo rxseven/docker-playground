@@ -95,34 +95,6 @@ define script-release
 	rm *.${EXT_BACKUP}
 endef
 
-# Predeploy script
-define script-predeploy
-	# Configure a deployment configuration
-	$(call log-start,Configuring a deployment configuration...)
-	$(script-release)
-
-	# Build a deployment configuration
-	$(call log-start,Building a deployment configuration...)
-	$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
-	zip ${BUILD_ZIP} ${CONFIG_AWS}
-endef
-
-# Deployment script
-define script-deploy
-	# Build a production image for deployment
-	$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
-	$(call log-step,[Step 1/3] Build the image)
-	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
-
-	# Login to Docker Hub
-	$(call log-step,[Step 2/3] Login to Docker Hub)
-	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-
-	# Push the production image to Docker Hub
-	$(call log-step,[Step 3/3] Push the image to Docker Hub)
-	docker push ${IMAGE_NAME}
-endef
-
 ##@ Development:
 
 .PHONY: start
@@ -504,8 +476,18 @@ ci-coverage: ## Create code coverage reports (LCOV format)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@${script-predeploy}
-	@${script-deploy}
+	@$(call log-start,Configuring a deployment configuration...)
+	@$(script-release)
+	@$(call log-start,Building a deployment configuration...)
+	@$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
+	@zip ${BUILD_ZIP} ${CONFIG_AWS}
+	@$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
+	@$(call log-step,[Step 1/3] Build the image)
+	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
+	@$(call log-step,[Step 2/3] Login to Docker Hub)
+	@echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+	@$(call log-step,[Step 3/3] Push the image to Docker Hub)
+	@docker push ${IMAGE_NAME}
 	@$(call log-success,Done)
 
 .PHONY: ci-coveralls
