@@ -391,33 +391,56 @@ clean: ## Clean up the development environment (including persistent data)
 
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
-	@$(call log-start,Resetting the development environment...)
-	@$(call log-step,[Step 1/9] Stop and remove containers for the app and reverse proxy services)
-	@$(call log-step,[Step 2/9] Remove the default network)
-	@$(call log-step,[Step 3/9] Remove volumes)
-	-@docker-compose down -v
-	@$(call log-sum,[sum] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[sum] Networks)
-	@docker network ls
-	@$(call log-sum,[sum] Volumes)
-	@docker volume ls
-	@$(call log-step,[Step 4/9] Remove the development image)
-	-@docker image rm ${ENV_LOCAL}/${IMAGE_REPO}
-	
-	@$(call log-step,[Step 5/9] Remove the production image)
-	-@docker image rm ${IMAGE_NAME}
-	@$(call log-step,[Step 6/9] Remove the intermediate images)
-	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
-	@$(call log-step,[Step 7/9] Remove unused images (optional))
-	-@docker image prune
-	@$(call log-sum,[sum] Images (including intermediates))
-	@docker image ls -a
-	@$(call log-step,[Step 8/9] Remove build artifacts)
-	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
-	@$(call log-step,[Step 9/9] Remove temporary files)
-	-@rm -rf -v ${DIR_TEMP}/*
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop and remove containers for the app and reverse proxy services"
+	@echo "- Remove the default network"
+	@echo "- Remove volumes"
+	@echo "- Remove the development image"
+	@echo "- Remove the production image"
+	@echo "- Remove the intermediate images"
+	@echo "- Remove unused images (optional)"
+	@echo "- Remove build artifacts"
+	@echo "- Remove temporary files"
+	@$(newline)
+	@printf "$(call txt-underline,Note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@$(newline)
+	@read -p "Reset the development environment and clean up unused data? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-start,Resetting the development environment...) \
+			$(call log-step,[Step 1/9] Stop and remove containers for the app and reverse proxy services) \
+			$(call log-step,[Step 2/9] Remove the default network) \
+			$(call log-step,[Step 3/9] Remove volumes) \
+			docker-compose down -v; \
+			$(call log-sum,[sum] Containers (including exited state)) \
+			docker container ls -a; \
+			$(call log-sum,[sum] Networks) \
+			docker network ls; \
+			$(call log-sum,[sum] Volumes) \
+			docker volume ls; \
+			$(call log-step,[Step 4/9] Remove the development image) \
+			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
+			$(call log-step,[Step 5/9] Remove the production image) \
+			docker image rm ${IMAGE_NAME}; \
+			$(call log-step,[Step 6/9] Remove the intermediate images) \
+			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			$(call log-step,[Step 7/9] Remove unused images (optional)) \
+			docker image prune; \
+			$(call log-sum,[sum] Images (including intermediates)) \
+			docker image ls -a; \
+			$(call log-step,[Step 8/9] Remove build artifacts) \
+			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			$(call log-step,[Step 9/9] Remove temporary files) \
+			rm -rf -v ${DIR_TEMP}/*; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
 ##@ Operations:
 
