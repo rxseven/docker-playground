@@ -331,15 +331,30 @@ erase: ## Clean up build artifacts and temporary files
 
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
-	@$(call log-start,Refreshing the development environment...)
-	@$(call log-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services)
-	@$(call log-step,[Step 2/2] Remove the default network)
-	@docker-compose down
-	@$(call log-sum,[sum] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[sum] Networks)
-	@docker network ls
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop and remove containers for the app and reverse proxy services"
+	@echo "- Remove the default network"
+	@$(newline)
+	@read -p "Refresh the development environment? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-start,Refreshing the development environment...) \
+			$(call log-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services) \
+			$(call log-step,[Step 2/2] Remove the default network) \
+			docker-compose down; \
+			$(call log-sum,[sum] Containers (including exited state)) \
+			docker container ls -a; \
+			$(call log-sum,[sum] Networks) \
+			docker network ls; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
 .PHONY: clean
 clean: ## Clean up the development environment (including persistent data)
