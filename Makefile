@@ -75,7 +75,7 @@ define function-lint
 endef
 
 # Static type checking script
-define script-typecheck
+define function-typecheck
 	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
 	$(call txt-step,[Step 2/4] Create and start a container for running static type checking) \
 	$(call txt-step,[Step 3/4] Run static type checking) \
@@ -277,13 +277,13 @@ typecheck: ## Run static type checking
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [ "$$option" == "check" ]; then \
-		$(call script-typecheck,:check); \
+		$(call function-typecheck,:check); \
 	elif [ "$$option" == "focus" ]; then \
-		$(call script-typecheck,:check:focus); \
+		$(call function-typecheck,:check:focus); \
 	elif [ "$$option" == "install" ]; then \
-		$(call script-typecheck,:install); \
+		$(call function-typecheck,:install); \
 	else \
-		$(call script-typecheck); \
+		$(call function-typecheck); \
 	fi;
 
 ##@ Cleanup:
