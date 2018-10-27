@@ -23,7 +23,7 @@ ANSI_COLOR_WHITE=37
 # Default goal
 .DEFAULT_GOAL := help
 
-# Logger
+# Text and string
 txt-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 txt-danger = $(call txt-template,${ANSI_COLOR_RED},$(1));
 txt-info = $(call txt-template,${ANSI_COLOR_WHITE},$(1));
@@ -40,17 +40,17 @@ newline = echo ""
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
-# Hosts script
+# Host names
 function-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
-# Opening browser script
+# Browser
 define function-browser
 	$(call txt-info,Opening $(1) in the default browser...) \
 	$(call txt-success,Done) \
 	open -a ${BROWSER_DEFAULT} $(1)
 endef
 
-# Test script
+# Test
 define function-test
 	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
 	$(call txt-step,[Step 2/4] Create and start a container for running tests) \
@@ -65,7 +65,7 @@ define function-test
 	${SERVICE_APP} test$(1)
 endef
 
-# Linting script
+# Linting
 define function-lint
 	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
 	$(call txt-step,[Step 2/4] Create and start a container for running code linting) \
@@ -74,7 +74,7 @@ define function-lint
 	docker-compose run --rm ${SERVICE_APP} lint$(1)
 endef
 
-# Static type checking script
+# Static type checking
 define function-typecheck
 	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
 	$(call txt-step,[Step 2/4] Create and start a container for running static type checking) \
@@ -83,7 +83,7 @@ define function-typecheck
 	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
-# Release script
+# Release
 define function-release
 	$(call txt-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
 	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS})
