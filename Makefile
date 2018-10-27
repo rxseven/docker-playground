@@ -33,6 +33,7 @@ log-success = $(call logger,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call logger,${ANSI_COLOR_CYAN},$(1));
 newline = echo ""
 txt-bold = \e[1m$(1)\e[0m
+txt-underline = \e[4m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 
 # Set configuration values
@@ -304,12 +305,28 @@ typecheck: ## Run static type checking
 
 .PHONY: erase
 erase: ## Clean up build artifacts and temporary files
-	@$(call log-start,Erasing data...)
-	@$(call log-step,[Step 1/2] Remove build artifacts)
-	-@rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}
-	@$(call log-step,[Step 2/2] Remove temporary files)
-	-@rm -rf -v ${DIR_TEMP}/*
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Remove all build artifacts"
+	@echo "- Remove all temporary files"
+	@$(newline)
+	@printf "$(call txt-underline,Note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@$(newline)
+	@read -p "Remove build artifacts and temporary files? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-step,[Step 1/2] Remove build artifacts) \
+			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			$(call log-step,[Step 2/2] Remove temporary files) \
+			rm -rf -v ${DIR_TEMP}/*; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
