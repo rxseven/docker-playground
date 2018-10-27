@@ -170,7 +170,13 @@ uninstall: ## Uninstall a package
 
 .PHONY: format
 format: ## Format code automatically
-	@$(call log-start,TODO...)
+	@$(call log-start,Formatting code...)
+	@$(call log-step,[Step 1/4] Build the development image (if needed))
+	@$(call log-step,[Step 2/4] Create and start a container for formatting code)
+	@$(call log-step,[Step 3/4] Format code)
+	@$(call log-step,[Step 4/4] Remove the container)
+	@docker-compose run --rm ${SERVICE_APP} format
+	@$(call log-success,Done)
 
 .PHONY: analyze
 analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
