@@ -358,18 +358,36 @@ refresh: ## Refresh (soft clean) the development environment
 
 .PHONY: clean
 clean: ## Clean up the development environment (including persistent data)
-	@$(call log-start,Cleaning up the development environment...)
-	@$(call log-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services)
-	@$(call log-step,[Step 2/3] Remove the default network)
-	@$(call log-step,[Step 3/3] Remove volumes)
-	@docker-compose down -v
-	@$(call log-sum,[sum] Containers (including exited state))
-	@docker container ls -a
-	@$(call log-sum,[sum] Networks)
-	@docker network ls
-	@$(call log-sum,[sum] Volumes)
-	@docker volume ls
-	@$(call log-success,Done)
+	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop and remove containers for the app and reverse proxy  \services"
+	@echo "- Remove the default network"
+	@echo "- Remove volumes"
+	@$(newline)
+	@printf "$(call txt-underline,Note): You are about to permanently remove persistent data. $(call txt-bold,This operation cannot be undone.)\n"
+	@$(newline)
+	@read -p "Clean up the development environment? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call log-start,Cleaning up the development environment...) \
+			$(call log-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services) \
+			$(call log-step,[Step 2/3] Remove the default network) \
+			$(call log-step,[Step 3/3] Remove volumes) \
+			docker-compose down -v; \
+			$(call log-sum,[sum] Containers (including exited state)) \
+			docker container ls -a; \
+			$(call log-sum,[sum] Networks) \
+			docker network ls; \
+			$(call log-sum,[sum] Volumes) \
+			docker volume ls; \
+			$(call log-success,Done) \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
 
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
