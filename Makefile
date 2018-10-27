@@ -146,7 +146,6 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@docker container rm ${CONTAINER_NAME}
 	@$(call txt-step,[Step 5/5] Open the treemap visualization in the browser)
 	@$(call function-preview,${HOST_TEMP}/${FILE_TREEMAP})
-	@$(txt-done)
 
 .PHONY: build
 build: ## Create an optimized production build
