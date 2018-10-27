@@ -61,3 +61,38 @@ install: ## Install a package (by passing "package" argument as part of the comm
 	fi;
 
 --------------------------------------------------------------------------------
+
+# Not working
+
+THIS_FILE := $(lastword $(MAKEFILE_LIST))
+
+.PHONY: version
+version: ## Set the next release version
+	@$(call log-start,Setting the next release version...)
+	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
+	@$(newline)
+	@printf "$(call txt-underline,Warning): You must reset the development environment built with the configuration of v${RELEASE_VERSION} before tagging a new release version\n"
+	@$(newline)
+	@read -p "Reset the development environment? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			@$(MAKE) -f $(THIS_FILE) reset \
+			read -p "Enter a version number: " VERSION; \
+			if [ "$$VERSION" != "" ]; then \
+				printf "The next release will be $(call txt-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
+				$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
+				$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
+				rm ${CONFIG_ENV}.${EXT_BACKUP}; \
+				$(call log-success,Done) \
+			else \
+				echo "You did not enter the value, please try again"; \
+				echo "Skipped"; \
+			fi; \
+		;; \
+		[nN] | [nN][oO]) \
+			echo "Skipped"; \
+		;; \
+		*) \
+			echo "Skipped, please enter y/yes or n/no"; \
+		;; \
+	esac
