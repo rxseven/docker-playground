@@ -598,15 +598,19 @@ info: ## Display system-wide information
 
 .PHONY: status
 status: ## Show system status
-	@$(call txt-sum,[status] Images (including intermediates))
+	@$(call txt-sum,List images (including intermediates))
 	@docker image ls -a
-	@$(call txt-sum,[status] Containers (including exited state))
+	@$(newline)
+	@$(call txt-sum,List containers (including exited state))
 	@docker container ls -a
-	@$(call txt-sum,[status] Networks)
+	@$(newline)
+	@$(call txt-sum,List networks)
 	@docker network ls
-	@$(call txt-sum,[status] Volumes)
+	@$(newline)
+	@$(call txt-sum,List volumes)
 	@docker volume ls
-	@$(call txt-sum,[status] Working copy)
+	@$(newline)
+	@$(call txt-sum,Show the working tree status)
 	@git status
 
 .PHONY: open
