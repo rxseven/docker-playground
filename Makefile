@@ -401,12 +401,16 @@ reset: ## Reset the development environment and clean up unused data
 			$(call txt-step,[Step 2/9] Remove the default network) \
 			$(call txt-step,[Step 3/9] Remove volumes) \
 			docker-compose down -v; \
-			$(call txt-sum,[sum] Containers (including exited state)) \
+			$(newline); \
+			$(call txt-sum,List containers (including exited state)) \
 			docker container ls -a; \
-			$(call txt-sum,[sum] Networks) \
+			$(newline); \
+			$(call txt-sum,List networks) \
 			docker network ls; \
-			$(call txt-sum,[sum] Volumes) \
+			$(newline); \
+			$(call txt-sum,List volumes) \
 			docker volume ls; \
+			$(newline); \
 			$(call txt-step,[Step 4/9] Remove the development image) \
 			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
 			$(call txt-step,[Step 5/9] Remove the production image) \
@@ -415,10 +419,13 @@ reset: ## Reset the development environment and clean up unused data
 			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
 			$(call txt-step,[Step 7/9] Remove unused images (optional)) \
 			docker image prune; \
-			$(call txt-sum,[sum] Images (including intermediates)) \
+			$(newline); \
+			$(call txt-sum,List images (including intermediates)) \
 			docker image ls -a; \
+			$(newline); \
 			$(call txt-step,[Step 8/9] Remove build artifacts) \
 			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			$(newline); \
 			$(call txt-step,[Step 9/9] Remove temporary files) \
 			rm -rf -v ${DIR_TEMP}/*; \
 			$(txt-done) \
