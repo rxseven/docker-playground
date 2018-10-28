@@ -10,6 +10,9 @@ FROM ${BASE_NODE} as development
 ARG BUILD_ENV
 ARG DEPENDENCY_LIST
 ARG DEPENDENCY_LOCK
+ARG PACKAGE_GLIBC_VERSION
+ARG PACKAGE_GLIBC_NAME=glibc-${PACKAGE_GLIBC_VERSION}.apk
+ARG PACKAGE_GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ARG PORT_EXPOSE
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
@@ -18,7 +21,16 @@ ENV PATH /usr/src/app/node_modules/.bin:${PATH}
 # Specify the working directory
 WORKDIR ${WORKDIR}
 
-# Install and update dependencies
+# Install Git
+RUN apk --no-cache add git
+
+# Install GNU C library as a Alpine Linux package
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub \
+    https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
+    wget ${PACKAGE_GLIBC_REPO}/${PACKAGE_GLIBC_VERSION}/${PACKAGE_GLIBC_NAME} && \
+    apk --no-cache add ${PACKAGE_GLIBC_NAME}
+
+# Install and update app dependencies
 COPY ${DEPENDENCY_LIST} ${DEPENDENCY_LOCK} ./
 RUN yarn && yarn cache clean
 
