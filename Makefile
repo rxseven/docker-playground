@@ -122,6 +122,31 @@ restart: ## Rebuild and restart the development environment
 	@$(call txt-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
+.PHONY: up
+up: ## Rebuild image for the development environment
+	@$(call txt-start,This command will perform the following actions:)
+	@echo "- Stop running containers without removing them"
+	@echo "- Rebuild image for the development environment"
+	@$(newline)
+	@read -p "Stop working on the app and rebuild the image? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(call txt-start,Rebuilding image for the the development environment...) \
+			$(call txt-step,[Step 1/3] Stop running containers) \
+			docker-compose stop; \
+			$(call txt-step,[Step 2/3] Download base images (if needed)) \
+			$(call txt-step,[Step 3/3] Rebuild the image) \
+			docker-compose build; \
+			$(txt-done) \
+		;; \
+		[nN] | [nN][oO]) \
+			$(txt-skipped) \
+		;; \
+		*) \
+			$(txt-confirm); \
+		;; \
+	esac
+
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
 	@$(call txt-start,Attaching an interactive shell to the development container...)
