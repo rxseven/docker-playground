@@ -122,6 +122,12 @@ restart: ## Rebuild and restart the development environment
 	@$(call txt-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
+.PHONY: stop
+stop: ## Stop running containers without removing them
+	@$(call txt-start,Stopping running containers...)
+	@docker-compose stop
+	@$(txt-done)
+
 .PHONY: up
 up: ## Rebuild image for the development environment
 	@$(call txt-start,This command will perform the following actions:)
