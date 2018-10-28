@@ -152,30 +152,6 @@ shell: ## Attach an interactive shell to the development container
 	@$(call txt-start,Attaching an interactive shell to the development container...)
 	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
 
-.PHONY: format
-format: ## Format code automatically
-	@$(call txt-start,Formatting code...)
-	@$(call txt-step,[Step 1/4] Build the development image (if needed))
-	@$(call txt-step,[Step 2/4] Create and start a container for formatting code)
-	@$(call txt-step,[Step 3/4] Format code)
-	@$(call txt-step,[Step 4/4] Remove the container)
-	@docker-compose run --rm ${SERVICE_APP} format
-	@$(txt-done)
-
-.PHONY: analyze
-analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
-analyze: build ## Analyze and debug code bloat through source maps
-	@$(call txt-start,Analyzing and debugging code...)
-	@$(call txt-step,[Step 1/5] Create and start a container for analyzing the bundle)
-	@$(call txt-step,[Step 2/5] Analyze the bundle size)
-	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
-	@$(call txt-step,[Step 3/5] Copy the result from the container's file system to the host's)
-	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
-	@$(call txt-step,[Step 4/5] Remove the container)
-	@docker container rm ${CONTAINER_NAME}
-	@$(call txt-step,[Step 5/5] Open the treemap visualization in the browser)
-	@$(call function-preview,${HOST_TEMP}/${FILE_TREEMAP})
-
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call txt-start,Creating an optimized production build...)
@@ -207,48 +183,31 @@ preview: ## Preview the production build locally
 	-f ${COMPOSE_PRODUCTION} \
 	up --build
 
-.PHONY: install
-install: ## Install a package and any packages that it depends on **
-	@read -p "Enter package name: " package; \
-	if [ "$$package" != "" ]; then \
-		$(call txt-start,Installing npm package...) \
-		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
-		$(call txt-step,[Step 2/5] Create and start a container for installing dependencies) \
-		$(call txt-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
-		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
-		$(call txt-step,[Step 5/5] Remove the container) \
-		docker-compose run --rm ${SERVICE_APP} add $$package; \
-		$(txt-done) \
-	else \
-		echo "Skipped, you did not enter the package name, please try again"; \
-	fi;
+##@ Utilities:
 
-.PHONY: uninstall
-uninstall: ## Uninstall a package **
-	@read -p "Enter package name: " package; \
-	if [ "$$package" != "" ]; then \
-		$(call txt-start,Uninstalling npm package...) \
-		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
-		$(call txt-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
-		$(call txt-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
-		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
-		$(call txt-step,[Step 5/5] Remove the container) \
-		docker-compose run --rm ${SERVICE_APP} remove $$package; \
-		$(txt-done) \
-	else \
-		echo "Skipped, you did not enter the package name, please try again"; \
-	fi;
-
-.PHONY: update
-update: ## Install and update all the dependencies listed within package.json
-	@$(call txt-start,Updating dependencies...)
-	@$(call txt-step,[Step 1/5] Build the development image (if needed))
-	@$(call txt-step,[Step 2/5] Create and start a container for formatting code)
-	@$(call txt-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
-	@$(call txt-step,[Step 4/5] Update yarn.lock (if necessary))
-	@$(call txt-step,[Step 5/5] Remove the container)
-	@docker-compose run --rm ${SERVICE_APP} install
+.PHONY: format
+format: ## Format code automatically
+	@$(call txt-start,Formatting code...)
+	@$(call txt-step,[Step 1/4] Build the development image (if needed))
+	@$(call txt-step,[Step 2/4] Create and start a container for formatting code)
+	@$(call txt-step,[Step 3/4] Format code)
+	@$(call txt-step,[Step 4/4] Remove the container)
+	@docker-compose run --rm ${SERVICE_APP} format
 	@$(txt-done)
+
+.PHONY: analyze
+analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
+analyze: build ## Analyze and debug code bloat through source maps
+	@$(call txt-start,Analyzing and debugging code...)
+	@$(call txt-step,[Step 1/5] Create and start a container for analyzing the bundle)
+	@$(call txt-step,[Step 2/5] Analyze the bundle size)
+	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
+	@$(call txt-step,[Step 3/5] Copy the result from the container's file system to the host's)
+	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
+	@$(call txt-step,[Step 4/5] Remove the container)
+	@docker container rm ${CONTAINER_NAME}
+	@$(call txt-step,[Step 5/5] Open the treemap visualization in the browser)
+	@$(call function-preview,${HOST_TEMP}/${FILE_TREEMAP})
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies
@@ -262,7 +221,7 @@ setup: ## Setup the development environment and install dependencies
 	@$(call function-host,${APP_DOMAIN_BUILD})
 	@$(txt-done)
 
-##@ Testing and Linting:
+##@ Testing & Linting:
 
 .PHONY: test
 test: ## Run tests *
@@ -315,6 +274,51 @@ typecheck: ## Run static type checking *
 	else \
 		$(call function-typecheck); \
 	fi;
+
+##@ Packages & Dependencies:
+
+.PHONY: install
+install: ## Install a package and any packages that it depends on **
+	@read -p "Enter package name: " package; \
+	if [ "$$package" != "" ]; then \
+		$(call txt-start,Installing npm package...) \
+		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
+		$(call txt-step,[Step 2/5] Create and start a container for installing dependencies) \
+		$(call txt-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
+		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call txt-step,[Step 5/5] Remove the container) \
+		docker-compose run --rm ${SERVICE_APP} add $$package; \
+		$(txt-done) \
+	else \
+		echo "Skipped, you did not enter the package name, please try again"; \
+	fi;
+
+.PHONY: uninstall
+uninstall: ## Uninstall a package **
+	@read -p "Enter package name: " package; \
+	if [ "$$package" != "" ]; then \
+		$(call txt-start,Uninstalling npm package...) \
+		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
+		$(call txt-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
+		$(call txt-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
+		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call txt-step,[Step 5/5] Remove the container) \
+		docker-compose run --rm ${SERVICE_APP} remove $$package; \
+		$(txt-done) \
+	else \
+		echo "Skipped, you did not enter the package name, please try again"; \
+	fi;
+
+.PHONY: update
+update: ## Install and update all the dependencies listed within package.json
+	@$(call txt-start,Updating dependencies...)
+	@$(call txt-step,[Step 1/5] Build the development image (if needed))
+	@$(call txt-step,[Step 2/5] Create and start a container for formatting code)
+	@$(call txt-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
+	@$(call txt-step,[Step 4/5] Update yarn.lock (if necessary))
+	@$(call txt-step,[Step 5/5] Remove the container)
+	@docker-compose run --rm ${SERVICE_APP} install
+	@$(txt-done)
 
 ##@ Cleanup:
 
