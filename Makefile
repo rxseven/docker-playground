@@ -153,11 +153,6 @@ up: ## Rebuild image for the development environment
 		;; \
 	esac
 
-.PHONY: shell
-shell: ## Attach an interactive shell to the development container
-	@$(call txt-start,Attaching an interactive shell to the development container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
-
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call txt-start,Creating an optimized production build...)
@@ -190,6 +185,28 @@ preview: ## Preview the production build locally
 	up --build
 
 ##@ Utilities:
+
+.PHONY: open
+open: ## Open the app in the default browser *
+	@echo "Available options:"
+	@echo "- Development            : press enter"
+	@echo "- Local production build : build"
+	@echo "- Staging                : unavailable"
+	@echo "- Live / Production      : live"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "build" ]; then \
+		$(call function-preview,${APP_URL_BUILD}); \
+	elif [ "$$option" == "live" ]; then \
+		$(call function-preview,${APP_URL_LIVE}); \
+	else \
+		$(call function-preview,${APP_URL_LOCAL}); \
+	fi;
+
+.PHONY: shell
+shell: ## Attach an interactive shell to the development container
+	@$(call txt-start,Attaching an interactive shell to the development container...)
+	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
 
 .PHONY: format
 format: ## Format code automatically
@@ -657,23 +674,6 @@ status: ## Show system status
 	@$(newline)
 	@$(call txt-sum,Show the working tree status)
 	@git status
-
-.PHONY: open
-open: ## Open the app in the default browser *
-	@echo "Available options:"
-	@echo "- Development            : press enter"
-	@echo "- Local production build : build"
-	@echo "- Staging                : unavailable"
-	@echo "- Live / Production      : live"
-	@$(newline)
-	@read -p "Enter the option: " option; \
-	if [ "$$option" == "build" ]; then \
-		$(call function-preview,${APP_URL_BUILD}); \
-	elif [ "$$option" == "live" ]; then \
-		$(call function-preview,${APP_URL_LIVE}); \
-	else \
-		$(call function-preview,${APP_URL_LOCAL}); \
-	fi;
 
 .PHONY: help
 help: ## Print usage
