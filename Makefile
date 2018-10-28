@@ -183,7 +183,7 @@ preview: ## Preview the production build locally
 	up --build
 
 .PHONY: install
-install: ## Install a package and any packages that it depends on
+install: ## Install a package and any packages that it depends on **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(call txt-start,Installing npm package...) \
@@ -199,7 +199,7 @@ install: ## Install a package and any packages that it depends on
 	fi;
 
 .PHONY: uninstall
-uninstall: ## Uninstall a package
+uninstall: ## Uninstall a package **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(call txt-start,Uninstalling npm package...) \
@@ -240,7 +240,7 @@ setup: ## Setup the development environment and install dependencies
 ##@ Testing and Linting:
 
 .PHONY: test
-test: ## Run tests
+test: ## Run tests *
 	@echo "Available modes:"
 	@echo "- Watch mode    : press enter"
 	@echo "- Code coverage : coverage"
@@ -257,7 +257,7 @@ test: ## Run tests
 	fi;
 
 .PHONY: lint
-lint: ## Run code linting
+lint: ## Run code linting *
 	@echo "Available options:"
 	@echo "- JavaScript        : press enter"
 	@echo "- JavaScript (fix)  : fix"
@@ -273,7 +273,7 @@ lint: ## Run code linting
 	fi;
 
 .PHONY: typecheck
-typecheck: ## Run static type checking
+typecheck: ## Run static type checking *
 	@echo "Available options:"
 	@echo "- Default           : press enter"
 	@echo "- Check             : check"
@@ -402,12 +402,16 @@ reset: ## Reset the development environment and clean up unused data
 			$(call txt-step,[Step 2/9] Remove the default network) \
 			$(call txt-step,[Step 3/9] Remove volumes) \
 			docker-compose down -v; \
-			$(call txt-sum,[sum] Containers (including exited state)) \
+			$(newline); \
+			$(call txt-sum,List containers (including exited state)) \
 			docker container ls -a; \
-			$(call txt-sum,[sum] Networks) \
+			$(newline); \
+			$(call txt-sum,List networks) \
 			docker network ls; \
-			$(call txt-sum,[sum] Volumes) \
+			$(newline); \
+			$(call txt-sum,List volumes) \
 			docker volume ls; \
+			$(newline); \
 			$(call txt-step,[Step 4/9] Remove the development image) \
 			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
 			$(call txt-step,[Step 5/9] Remove the production image) \
@@ -416,10 +420,13 @@ reset: ## Reset the development environment and clean up unused data
 			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
 			$(call txt-step,[Step 7/9] Remove unused images (optional)) \
 			docker image prune; \
-			$(call txt-sum,[sum] Images (including intermediates)) \
+			$(newline); \
+			$(call txt-sum,List images (including intermediates)) \
 			docker image ls -a; \
+			$(newline); \
 			$(call txt-step,[Step 8/9] Remove build artifacts) \
 			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			$(newline); \
 			$(call txt-step,[Step 9/9] Remove temporary files) \
 			rm -rf -v ${DIR_TEMP}/*; \
 			$(txt-done) \
@@ -435,7 +442,7 @@ reset: ## Reset the development environment and clean up unused data
 ##@ Operations:
 
 .PHONY: version
-version: ## Set the next release version
+version: ## Set the next release version **
 	@$(call txt-start,Setting the next release version...)
 	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@$(newline)
@@ -599,19 +606,23 @@ info: ## Display system-wide information
 
 .PHONY: status
 status: ## Show system status
-	@$(call txt-sum,[status] Images (including intermediates))
+	@$(call txt-sum,List images (including intermediates))
 	@docker image ls -a
-	@$(call txt-sum,[status] Containers (including exited state))
+	@$(newline)
+	@$(call txt-sum,List containers (including exited state))
 	@docker container ls -a
-	@$(call txt-sum,[status] Networks)
+	@$(newline)
+	@$(call txt-sum,List networks)
 	@docker network ls
-	@$(call txt-sum,[status] Volumes)
+	@$(newline)
+	@$(call txt-sum,List volumes)
 	@docker volume ls
-	@$(call txt-sum,[status] Working copy)
+	@$(newline)
+	@$(call txt-sum,Show the working tree status)
 	@git status
 
 .PHONY: open
-open: ## Open the app in the default browser
+open: ## Open the app in the default browser *
 	@echo "Available options:"
 	@echo "- Development            : press enter"
 	@echo "- Local production build : build"
@@ -633,3 +644,6 @@ help: ## Print usage
 	printf "\nUsage: make \033[${ANSI_COLOR_CYAN}m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ \
 	{ printf "  \033[${ANSI_COLOR_CYAN}m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
 	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	@$(newline)
+	@printf "*  with options\n"
+	@printf "** requires user input\n\n"
