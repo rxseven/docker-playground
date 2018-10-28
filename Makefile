@@ -32,6 +32,7 @@ txt-step = $(call txt-template,${ANSI_COLOR_YELLOW},$(1));
 txt-success = $(call txt-template,${ANSI_COLOR_GREEN},$(1));
 txt-sum = $(call txt-template,${ANSI_COLOR_CYAN},$(1));
 txt-bold = \e[1m$(1)\e[0m
+txt-italic = \e[3m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-done = $(call txt-success,Done)
