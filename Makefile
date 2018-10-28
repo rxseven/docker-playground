@@ -182,7 +182,7 @@ preview: ## Preview the production build locally
 	up --build
 
 .PHONY: install
-install: ## Install a package and any packages that it depends on
+install: ## Install a package and any packages that it depends on **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(call txt-start,Installing npm package...) \
@@ -198,7 +198,7 @@ install: ## Install a package and any packages that it depends on
 	fi;
 
 .PHONY: uninstall
-uninstall: ## Uninstall a package
+uninstall: ## Uninstall a package **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(call txt-start,Uninstalling npm package...) \
@@ -239,7 +239,7 @@ setup: ## Setup the development environment and install dependencies
 ##@ Testing and Linting:
 
 .PHONY: test
-test: ## Run tests
+test: ## Run tests *
 	@echo "Available modes:"
 	@echo "- Watch mode    : press enter"
 	@echo "- Code coverage : coverage"
@@ -256,7 +256,7 @@ test: ## Run tests
 	fi;
 
 .PHONY: lint
-lint: ## Run code linting
+lint: ## Run code linting *
 	@echo "Available options:"
 	@echo "- JavaScript        : press enter"
 	@echo "- JavaScript (fix)  : fix"
@@ -272,7 +272,7 @@ lint: ## Run code linting
 	fi;
 
 .PHONY: typecheck
-typecheck: ## Run static type checking
+typecheck: ## Run static type checking *
 	@echo "Available options:"
 	@echo "- Default           : press enter"
 	@echo "- Check             : check"
@@ -441,7 +441,7 @@ reset: ## Reset the development environment and clean up unused data
 ##@ Operations:
 
 .PHONY: version
-version: ## Set the next release version
+version: ## Set the next release version **
 	@$(call txt-start,Setting the next release version...)
 	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@$(newline)
@@ -621,7 +621,7 @@ status: ## Show system status
 	@git status
 
 .PHONY: open
-open: ## Open the app in the default browser
+open: ## Open the app in the default browser *
 	@echo "Available options:"
 	@echo "- Development            : press enter"
 	@echo "- Local production build : build"
@@ -643,3 +643,6 @@ help: ## Print usage
 	printf "\nUsage: make \033[${ANSI_COLOR_CYAN}m<target>\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ \
 	{ printf "  \033[${ANSI_COLOR_CYAN}m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
 	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
+	@$(newline)
+	@printf "*  with options\n"
+	@printf "** requires user input\n\n"
