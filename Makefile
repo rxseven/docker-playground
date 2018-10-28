@@ -271,6 +271,8 @@ typecheck: ## Run static type checking *
 		$(call function-typecheck,:check:focus); \
 	elif [ "$$option" == "install" ]; then \
 		$(call function-typecheck,:install); \
+		$(call txt-info,The library definitions (libdef) have been updated$(,) please commit the changes in $(call txt-bold,./${DIR_BUILD}) directory) \
+		$(txt-done) \
 	else \
 		$(call function-typecheck); \
 	fi;
