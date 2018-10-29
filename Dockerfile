@@ -25,8 +25,7 @@ WORKDIR ${WORKDIR}
 RUN apk --no-cache add git
 
 # Install GNU C library as a Alpine Linux package
-RUN apk --no-cache add ca-certificates wget && \
-    wget -q -O /etc/apk/keys/sgerrand.rsa.pub \
+RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub \
     https://alpine-pkgs.sgerrand.com/sgerrand.rsa.pub && \
     wget ${PACKAGE_GLIBC_REPO}/${PACKAGE_GLIBC_VERSION}/${PACKAGE_GLIBC_NAME} && \
     apk --no-cache add ${PACKAGE_GLIBC_NAME}
