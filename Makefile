@@ -101,6 +101,17 @@ define function-release
 	rm *.${EXT_BACKUP}
 endef
 
+# Install and update dependencies
+define function-update
+	$(call txt-start,Updating dependencies...)
+	$(call txt-step,[Step 1/5] Build the development image (if needed))
+	$(call txt-step,[Step 2/5] Create and start a container for updating dependencies)
+	$(call txt-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
+	$(call txt-step,[Step 4/5] Update yarn.lock (if necessary))
+	$(call txt-step,[Step 5/5] Remove the container)
+	docker-compose run --rm ${SERVICE_APP} install
+endef
+
 # Remove build artifacts
 define function-artifacts
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
@@ -391,13 +402,7 @@ uninstall: ## Uninstall a package **
 
 .PHONY: update
 update: ## Install and update all the dependencies listed within package.json
-	@$(call txt-start,Updating dependencies...)
-	@$(call txt-step,[Step 1/5] Build the development image (if needed))
-	@$(call txt-step,[Step 2/5] Create and start a container for formatting code)
-	@$(call txt-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
-	@$(call txt-step,[Step 4/5] Update yarn.lock (if necessary))
-	@$(call txt-step,[Step 5/5] Remove the container)
-	@docker-compose run --rm ${SERVICE_APP} install
+	@$(function-update)
 	@$(txt-done)
 
 ##@ Cleanup:
