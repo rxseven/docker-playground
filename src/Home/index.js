@@ -17,6 +17,7 @@ const Home = () => (
     <p>Line 2 - Content</p>
     <p>Line 3 - Content</p>
     <p>Line 4 - Content</p>
+    <p>Line 5 - Content</p>
   </div>
 );
 
