@@ -479,10 +479,19 @@ reset: ## Reset the development environment and clean up unused data
 			docker image ls -a; \
 			$(newline); \
 			$(call txt-step,[Step 8/9] Remove build artifacts) \
-			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
+				rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+			else \
+				echo "Skipped, no build artifacts found."; \
+			fi; \
 			$(newline); \
 			$(call txt-step,[Step 9/9] Remove temporary files) \
-			rm -rf -v ${DIR_TEMP}/*; \
+			for f in ${DIR_TEMP}/*; do \
+				[ -e "$$f" ] && \
+				rm -rf -v ${DIR_TEMP}/* || \
+				echo "Skipped, no temporary files found."; \
+				break; \
+			done; \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
