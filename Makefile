@@ -392,7 +392,7 @@ erase: ## Clean up build artifacts and temporary files
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
 	@$(call txt-start,This command will perform the following actions:)
-	@echo "- Stop and remove containers for the app and reverse proxy services"
+	@echo "- Stop and remove containers"
 	@echo "- Remove the default network"
 	@$(newline)
 	@read -p "Refresh the development environment? " confirmation; \
@@ -400,7 +400,7 @@ refresh: ## Refresh (soft clean) the development environment
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call txt-start,Refreshing the development environment...) \
-			$(call txt-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services) \
+			$(call txt-step,[Step 1/2] Stop and remove containers) \
 			$(call txt-step,[Step 2/2] Remove the default network) \
 			docker-compose down; \
 			$(newline); \
@@ -452,7 +452,7 @@ clean: ## Clean up the development environment (including persistent data)
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
 	@$(call txt-start,This command will perform the following actions:)
-	@echo "- Stop and remove containers for the app and reverse proxy services"
+	@echo "- Stop and remove containers"
 	@echo "- Remove the default network"
 	@echo "- Remove volumes"
 	@echo "- Remove the development image"
