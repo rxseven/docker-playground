@@ -466,9 +466,9 @@ refresh: ## Refresh (soft clean) the development environment
 .PHONY: clean
 clean: ## Clean up the development environment (including persistent data)
 	@$(call txt-start,This command will perform the following actions:)
-	@echo "- Stop and remove containers for the app and reverse proxy  \services"
+	@echo "- Remove containers"
 	@echo "- Remove the default network"
-	@echo "- Remove volumes"
+	@echo "- Remove volumes attached to containers"
 	@$(newline)
 	@printf "$(txt-note): You are about to permanently remove persistent data. $(call txt-bold,This operation cannot be undone.)\n"
 	@$(newline)
