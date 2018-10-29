@@ -10,13 +10,14 @@ FROM ${BASE_NODE} as development
 ARG BUILD_ENV
 ARG DEPENDENCY_LIST
 ARG DEPENDENCY_LOCK
+ARG MODULES
 ARG PACKAGE_GLIBC_VERSION
 ARG PACKAGE_GLIBC_NAME=glibc-${PACKAGE_GLIBC_VERSION}.apk
 ARG PACKAGE_GLIBC_REPO=https://github.com/sgerrand/alpine-pkg-glibc/releases/download
 ARG PORT_EXPOSE
 ARG WORKDIR
 ENV NODE_ENV=${BUILD_ENV}
-ENV PATH /usr/src/app/node_modules/.bin:${PATH}
+ENV PATH ${MODULES}:${PATH}
 
 # Specify the working directory
 WORKDIR ${WORKDIR}
