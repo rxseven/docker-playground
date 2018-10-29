@@ -718,19 +718,10 @@ info: ## Display system-wide information
 
 .PHONY: status
 status: ## Show system status
-	@$(call txt-sum,List images (including intermediates))
-	@docker image ls -a
+	@$(call txt-start,Listing system status...)
+	@$(sum-docker)
 	@$(newline)
-	@$(call txt-sum,List containers (including exited state))
-	@docker container ls -a
-	@$(newline)
-	@$(call txt-sum,List networks)
-	@docker network ls
-	@$(newline)
-	@$(call txt-sum,List volumes)
-	@docker volume ls
-	@$(newline)
-	@$(call txt-sum,Show the working tree status)
+	@$(call txt-sum,The working tree status)
 	@git status
 
 .PHONY: help
