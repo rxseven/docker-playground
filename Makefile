@@ -382,14 +382,19 @@ refresh: ## Refresh (soft clean) the development environment
 	@read -p "Refresh the development environment? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
+			$(newline); \
 			$(call txt-start,Refreshing the development environment...) \
 			$(call txt-step,[Step 1/2] Stop and remove containers for the app and reverse proxy services) \
 			$(call txt-step,[Step 2/2] Remove the default network) \
 			docker-compose down; \
-			$(call txt-sum,[sum] Containers (including exited state)) \
+			$(newline); \
+			$(call txt-start,Listing the results...) \
+			$(call txt-sum,Containers (including exited state)) \
 			docker container ls -a; \
-			$(call txt-sum,[sum] Networks) \
+			$(newline); \
+			$(call txt-sum,Networks) \
 			docker network ls; \
+			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
