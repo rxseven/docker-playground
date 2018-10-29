@@ -199,6 +199,11 @@ stop: ## Stop running containers without removing them
 	@docker-compose stop
 	@$(txt-done)
 
+.PHONY: run
+run: ## Update dependencies and start the development environment
+	@$(function-update)
+	@$(function-start)
+
 .PHONY: up
 up: ## Rebuild images for the development environment
 	@$(call txt-start,This command will perform the following actions:)
