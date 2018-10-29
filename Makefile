@@ -126,6 +126,17 @@ define sum-artifacts
 	fi;
 endef
 
+# Temporary files summary
+define sum-temporary
+	$(call txt-sum,Temporary files) \
+	for f in ${DIR_TEMP}/*; do \
+		[ -e "$$f" ] && \
+		echo "Opps! there are some files left, please try again." || \
+		echo "All clean"; \
+		break; \
+	done;
+endef
+
 ##@ Development:
 
 .PHONY: start
@@ -393,6 +404,8 @@ erase: ## Clean up build artifacts and temporary files
 			$(call txt-start,Listing the results...) \
 			$(sum-artifacts) \
 			$(newline); \
+			$(sum-temporary) \
+			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
@@ -516,13 +529,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(newline); \
 			$(sum-artifacts) \
 			$(newline); \
-			$(call txt-sum,Temporary files) \
-			for f in ${DIR_TEMP}/*; do \
-				[ -e "$$f" ] && \
-				echo "Opps! there are some files left, please try again." || \
-				echo "All clean"; \
-				break; \
-			done; \
+			$(sum-temporary) \
 			$(newline); \
 			$(txt-done) \
 		;; \
