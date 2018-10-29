@@ -78,6 +78,11 @@
     "type:install": "flow-typed install",
     "start:https": "HTTPS=true yarn start"
   },
+  "lint-staged": {
+    "linters": {
+      "src/**/*.{js,jsx}": ["node scripts/test.js --config jest.config.json --coverage --no-cache --silent", "git add"]
+    }
+  },
   "browserslist": [
     ">0.2%",
     "not dead",
