@@ -438,7 +438,7 @@ erase: ## Clean up build artifacts and temporary files
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
 	@$(call txt-start,This command will perform the following actions:)
-	@echo "- Stop and remove containers"
+	@echo "- Remove containers"
 	@echo "- Remove the default network"
 	@$(newline)
 	@read -p "Refresh the development environment? " confirmation; \
