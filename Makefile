@@ -451,40 +451,28 @@ reset: ## Reset the development environment and clean up unused data
 	@read -p "Reset the development environment and clean up unused data? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
+			$(newline); \
 			$(call txt-start,Resetting the development environment...) \
-			$(call txt-step,[Step 1/9] Stop and remove containers for the app and reverse proxy services) \
-			$(call txt-step,[Step 2/9] Remove the default network) \
-			$(call txt-step,[Step 3/9] Remove volumes) \
+			$(call txt-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes) \
 			docker-compose down -v; \
-			$(newline); \
-			$(call txt-sum,List containers (including exited state)) \
-			docker container ls -a; \
-			$(newline); \
-			$(call txt-sum,List networks) \
-			docker network ls; \
-			$(newline); \
-			$(call txt-sum,List volumes) \
-			docker volume ls; \
-			$(newline); \
-			$(call txt-step,[Step 4/9] Remove the development image) \
+			$(call txt-step,[Step 2/9] Remove the development image) \
 			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
-			$(call txt-step,[Step 5/9] Remove the production image) \
+			$(call txt-step,[Step 3/9] Remove the production image) \
 			docker image rm ${IMAGE_NAME}; \
-			$(call txt-step,[Step 6/9] Remove the intermediate images) \
+			$(call txt-step,[Step 4/9] Remove the intermediate images) \
 			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
-			$(call txt-step,[Step 7/9] Remove unused images (optional)) \
+			$(call txt-step,[Step 5/9] Remove all stopped containers (optional)) \
+			docker container prune; \
+			$(call txt-step,[Step 6/9] Remove unused images (optional)) \
 			docker image prune; \
-			$(newline); \
-			$(call txt-sum,List images (including intermediates)) \
-			docker image ls -a; \
-			$(newline); \
+			$(call txt-step,[Step 7/9] Remove all unused local volumes (optional)) \
+			docker volume prune; \
 			$(call txt-step,[Step 8/9] Remove build artifacts) \
 			if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 				rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 			else \
 				echo "Skipped, no build artifacts found."; \
 			fi; \
-			$(newline); \
 			$(call txt-step,[Step 9/9] Remove temporary files) \
 			for f in ${DIR_TEMP}/*; do \
 				[ -e "$$f" ] && \
@@ -492,6 +480,35 @@ reset: ## Reset the development environment and clean up unused data
 				echo "Skipped, no temporary files found."; \
 				break; \
 			done; \
+			$(newline); \
+			$(call txt-start,Listing the results...) \
+			$(call txt-sum,Containers (including exited state)) \
+			docker container ls -a; \
+			$(newline); \
+			$(call txt-sum,Networks) \
+			docker network ls; \
+			$(newline); \
+			$(call txt-sum,Volumes) \
+			docker volume ls; \
+			$(newline); \
+			$(call txt-sum,Images (including intermediates)) \
+			docker image ls -a; \
+			$(newline); \
+			$(call txt-sum,Build artifacts) \
+			if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
+				echo "Opps! there are some artifacts left, please try again."; \
+			else \
+				echo "All clean"; \
+			fi; \
+			$(newline); \
+			$(call txt-sum,Temporary files) \
+			for f in ${DIR_TEMP}/*; do \
+				[ -e "$$f" ] && \
+				echo "Opps! there are some files left, please try again." || \
+				echo "All clean"; \
+				break; \
+			done; \
+			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
