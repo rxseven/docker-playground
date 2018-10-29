@@ -116,6 +116,16 @@ define sum-docker
 	docker image ls -a;
 endef
 
+# Build artifacts summary
+define sum-artifacts
+	$(call txt-sum,Build artifacts) \
+	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
+		echo "Opps! there are some artifacts left, please try again."; \
+	else \
+		echo "All clean"; \
+	fi;
+endef
+
 ##@ Development:
 
 .PHONY: start
@@ -379,6 +389,10 @@ erase: ## Clean up build artifacts and temporary files
 			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 			$(call txt-step,[Step 2/2] Remove temporary files) \
 			rm -rf -v ${DIR_TEMP}/*; \
+			$(newline); \
+			$(call txt-start,Listing the results...) \
+			$(sum-artifacts) \
+			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
@@ -500,12 +514,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call txt-start,Listing the results...) \
 			$(sum-docker) \
 			$(newline); \
-			$(call txt-sum,Build artifacts) \
-			if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
-				echo "Opps! there are some artifacts left, please try again."; \
-			else \
-				echo "All clean"; \
-			fi; \
+			$(sum-artifacts) \
 			$(newline); \
 			$(call txt-sum,Temporary files) \
 			for f in ${DIR_TEMP}/*; do \
