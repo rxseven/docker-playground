@@ -519,7 +519,6 @@ reset: ## Reset the development environment and clean up unused data
 			docker-compose down -v; \
 			$(call txt-step,[Step 2/9] Remove the development images) \
 			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
-			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}:githooks; \
 			$(call txt-step,[Step 3/9] Remove the production image) \
 			docker image rm ${IMAGE_NAME}; \
 			$(call txt-step,[Step 4/9] Remove the intermediate images) \
