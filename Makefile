@@ -412,17 +412,23 @@ clean: ## Clean up the development environment (including persistent data)
 	@read -p "Clean up the development environment? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
+			$(newline); \
 			$(call txt-start,Cleaning up the development environment...) \
-			$(call txt-step,[Step 1/3] Stop and remove containers for the app and reverse proxy services) \
+			$(call txt-step,[Step 1/3] Stop and remove containers) \
 			$(call txt-step,[Step 2/3] Remove the default network) \
-			$(call txt-step,[Step 3/3] Remove volumes) \
+			$(call txt-step,[Step 3/3] Remove volumes attached to containers) \
 			docker-compose down -v; \
-			$(call txt-sum,[sum] Containers (including exited state)) \
+			$(newline); \
+			$(call txt-start,Listing the results...) \
+			$(call txt-sum,Containers (including exited state)) \
 			docker container ls -a; \
-			$(call txt-sum,[sum] Networks) \
+			$(newline); \
+			$(call txt-sum,Networks) \
 			docker network ls; \
-			$(call txt-sum,[sum] Volumes) \
+			$(newline); \
+			$(call txt-sum,Volumes) \
 			docker volume ls; \
+			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
