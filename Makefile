@@ -358,6 +358,7 @@ erase: ## Clean up build artifacts and temporary files
 	@read -p "Remove build artifacts and temporary files? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
+			$(newline); \
 			$(call txt-start,Removing data...) \
 			$(call txt-step,[Step 1/2] Remove build artifacts) \
 			rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
