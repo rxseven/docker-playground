@@ -19,6 +19,7 @@ const Home = () => (
     <p>Line 4 - Content</p>
     <p>Line 5 - Content</p>
     <p>Line 6 - Content</p>
+    <p>Line 7 - Content</p>
   </div>
 );
 
