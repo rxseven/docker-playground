@@ -184,19 +184,19 @@ stop: ## Stop running containers without removing them
 	@$(txt-done)
 
 .PHONY: up
-up: ## Rebuild image for the development environment
+up: ## Rebuild images for the development environment
 	@$(call txt-start,This command will perform the following actions:)
 	@echo "- Stop running containers without removing them"
-	@echo "- Rebuild image for the development environment"
+	@echo "- Rebuild images for the development environment"
 	@$(newline)
-	@read -p "Stop working on the app and rebuild the image? " confirmation; \
+	@read -p "Stop working on the app and rebuild the images? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
-			$(call txt-start,Rebuilding image for the the development environment...) \
+			$(call txt-start,Rebuilding images for the the development environment...) \
 			$(call txt-step,[Step 1/3] Stop running containers) \
 			docker-compose stop; \
 			$(call txt-step,[Step 2/3] Download base images (if needed)) \
-			$(call txt-step,[Step 3/3] Rebuild the image) \
+			$(call txt-step,[Step 3/3] Rebuild the images) \
 			docker-compose build; \
 			$(txt-done) \
 		;; \
