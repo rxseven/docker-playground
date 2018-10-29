@@ -56,6 +56,18 @@ define function-browser
 	open -a ${BROWSER_DEFAULT} $(1)
 endef
 
+# Preview the production build
+define function-preview
+	$(call txt-start,Running the production build...) \
+	$(call txt-step,[Step 1/5] Download base images (if needed)) \
+	$(call txt-step,[Step 2/5] Create an optimized production build) \
+	$(call txt-step,[Step 3/5] Build the production image tagged $(call txt-bold,${IMAGE_NAME})) \
+	$(call txt-step,[Step 4/5] Create and start the app and reverse proxy containers) \
+	$(call txt-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers) \
+	$(call txt-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
+	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
+endef
+
 # Test
 define function-test
 	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
@@ -246,19 +258,16 @@ build: ## Create an optimized production build
 
 .PHONY: preview
 preview: ## Preview the production build locally
-	@$(call txt-start,Running the production build...)
-	@$(call txt-step,[Step 1/6] Remove intermediate and unused images (when necessary))
-	-@docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force
-	@$(call txt-step,[Step 2/6] Download base images (if needed))
-	@$(call txt-step,[Step 3/6] Create an optimized production build)
-	@$(call txt-step,[Step 4/6] Build the production image tagged $(call txt-bold,${IMAGE_NAME}))
-	@$(call txt-step,[Step 5/6] Create and start the app and reverse proxy containers)
-	@$(call txt-step,[Step 6/6] Start the web (for serving the app) and reverse proxy servers)
-	@$(call txt-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD})
-	@docker-compose \
-	-f ${COMPOSE_BASE} \
-	-f ${COMPOSE_PRODUCTION} \
-	up --build
+	@echo "Available options:"
+	@echo "- Build image & preview  : press enter"
+	@echo "- Rebuild image          : rebuild"
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [ "$$option" == "rebuild" ]; then \
+		$(call function-preview,--build); \
+	else \
+		$(call function-preview); \
+	fi;
 
 ##@ Utilities:
 
