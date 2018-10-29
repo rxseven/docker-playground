@@ -498,13 +498,13 @@ clean: ## Clean up the development environment (including persistent data)
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
 	@$(call txt-start,This command will perform the following actions:)
-	@echo "- Stop and remove containers"
-	@echo "- Remove the default network"
-	@echo "- Remove volumes"
+	@echo "- Remove containers, default network, and volumes attached to containers"
 	@echo "- Remove the development image"
 	@echo "- Remove the production image"
 	@echo "- Remove the intermediate images"
+	@echo "- Remove Remove all stopped containers (optional)"
 	@echo "- Remove unused images (optional)"
+	@echo "- Remove all unused local volumes (optional)"
 	@echo "- Remove build artifacts"
 	@echo "- Remove temporary files"
 	@$(newline)
