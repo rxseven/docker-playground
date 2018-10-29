@@ -110,6 +110,16 @@ define function-artifacts
 	fi;
 endef
 
+# Remove temporary files
+define function-temporary
+	for f in ${DIR_TEMP}/*; do \
+		[ -e "$$f" ] && \
+		rm -rf -v ${DIR_TEMP}/* || \
+		echo "Skipped, no temporary files found."; \
+		break; \
+	done;
+endef
+
 # Docker summary
 define sum-docker
 	$(call txt-sum,Containers (including exited state)) \
@@ -408,7 +418,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(call txt-step,[Step 1/2] Remove build artifacts) \
 			$(function-artifacts) \
 			$(call txt-step,[Step 2/2] Remove temporary files) \
-			rm -rf -v ${DIR_TEMP}/*; \
+			$(function-temporary) \
 			$(newline); \
 			$(call txt-start,Listing the results...) \
 			$(sum-artifacts) \
@@ -522,12 +532,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call txt-step,[Step 8/9] Remove build artifacts) \
 			$(function-artifacts) \
 			$(call txt-step,[Step 9/9] Remove temporary files) \
-			for f in ${DIR_TEMP}/*; do \
-				[ -e "$$f" ] && \
-				rm -rf -v ${DIR_TEMP}/* || \
-				echo "Skipped, no temporary files found."; \
-				break; \
-			done; \
+			$(function-temporary) \
 			$(newline); \
 			$(call txt-start,Listing the results...) \
 			$(sum-docker) \
