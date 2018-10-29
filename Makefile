@@ -101,6 +101,21 @@ define function-release
 	rm *.${EXT_BACKUP}
 endef
 
+# Docker summary
+define sum-docker
+	$(call txt-sum,Containers (including exited state)) \
+	docker container ls -a; \
+	$(newline); \
+	$(call txt-sum,Networks) \
+	docker network ls; \
+	$(newline); \
+	$(call txt-sum,Volumes) \
+	docker volume ls; \
+	$(newline); \
+	$(call txt-sum,Images (including intermediates)) \
+	docker image ls -a;
+endef
+
 ##@ Development:
 
 .PHONY: start
@@ -390,11 +405,7 @@ refresh: ## Refresh (soft clean) the development environment
 			docker-compose down; \
 			$(newline); \
 			$(call txt-start,Listing the results...) \
-			$(call txt-sum,Containers (including exited state)) \
-			docker container ls -a; \
-			$(newline); \
-			$(call txt-sum,Networks) \
-			docker network ls; \
+			$(sum-docker) \
 			$(newline); \
 			$(txt-done) \
 		;; \
@@ -426,14 +437,7 @@ clean: ## Clean up the development environment (including persistent data)
 			docker-compose down -v; \
 			$(newline); \
 			$(call txt-start,Listing the results...) \
-			$(call txt-sum,Containers (including exited state)) \
-			docker container ls -a; \
-			$(newline); \
-			$(call txt-sum,Networks) \
-			docker network ls; \
-			$(newline); \
-			$(call txt-sum,Volumes) \
-			docker volume ls; \
+			$(sum-docker) \
 			$(newline); \
 			$(txt-done) \
 		;; \
@@ -494,17 +498,7 @@ reset: ## Reset the development environment and clean up unused data
 			done; \
 			$(newline); \
 			$(call txt-start,Listing the results...) \
-			$(call txt-sum,Containers (including exited state)) \
-			docker container ls -a; \
-			$(newline); \
-			$(call txt-sum,Networks) \
-			docker network ls; \
-			$(newline); \
-			$(call txt-sum,Volumes) \
-			docker volume ls; \
-			$(newline); \
-			$(call txt-sum,Images (including intermediates)) \
-			docker image ls -a; \
+			$(sum-docker) \
 			$(newline); \
 			$(call txt-sum,Build artifacts) \
 			if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
