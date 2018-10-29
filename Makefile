@@ -49,8 +49,8 @@ set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 # Host names
 function-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
-# Preview
-define function-preview
+# View app in the browser
+define function-browser
 	$(call txt-info,Opening $(1) in the default browser...) \
 	$(txt-done) \
 	open -a ${BROWSER_DEFAULT} $(1)
@@ -272,11 +272,11 @@ open: ## Open the app in the default browser *
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [ "$$option" == "build" ]; then \
-		$(call function-preview,${APP_URL_BUILD}); \
+		$(call function-browser,${APP_URL_BUILD}); \
 	elif [ "$$option" == "live" ]; then \
-		$(call function-preview,${APP_URL_LIVE}); \
+		$(call function-browser,${APP_URL_LIVE}); \
 	else \
-		$(call function-preview,${APP_URL_LOCAL}); \
+		$(call function-browser,${APP_URL_LOCAL}); \
 	fi;
 
 .PHONY: shell
@@ -306,7 +306,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call txt-step,[Step 4/5] Remove the container)
 	@docker container rm ${CONTAINER_NAME}
 	@$(call txt-step,[Step 5/5] Open the treemap visualization in the browser)
-	@$(call function-preview,${HOST_TEMP}/${FILE_TREEMAP})
+	@$(call function-browser,${HOST_TEMP}/${FILE_TREEMAP})
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies
