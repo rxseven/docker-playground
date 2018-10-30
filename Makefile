@@ -24,15 +24,15 @@ ANSI_COLOR_WHITE=37
 .DEFAULT_GOAL := help
 
 # Loggers
-log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
+log-bold = \e[1m$(1)\e[0m
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
+log-italic = \e[3m$(1)\e[0m
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
-log-bold = \e[1m$(1)\e[0m
-log-italic = \e[3m$(1)\e[0m
+log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-underline = \e[4m$(1)\e[0m
 
 # Text and string
