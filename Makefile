@@ -275,18 +275,26 @@ preview: ## Preview the production build locally
 .PHONY: open
 open: ## Open the app in the default browser *
 	@echo "Available options:"
-	@echo "- Development            : press enter"
-	@echo "- Local production build : build"
-	@echo "- Staging                : unavailable"
-	@echo "- Live / Production      : live"
+	@printf "1. $(call txt-bold,dev) *    : Open the app running in the development environment.\n"
+	@printf "2. $(call txt-bold,build)    : Open an optimized production build locally.\n"
+	@printf "3. $(call txt-bold,staging)  : Unavailable!\n"
+	@printf "4. $(call txt-bold,live)     : Open the live app running in the production server.\n"
+	@$(newline)
+	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
 	@$(newline)
 	@read -p "Enter the option: " option; \
-	if [ "$$option" == "build" ]; then \
-		$(call function-browser,${APP_URL_BUILD}); \
-	elif [ "$$option" == "live" ]; then \
-		$(call function-browser,${APP_URL_LIVE}); \
-	else \
+	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "dev" ]]; then \
 		$(call function-browser,${APP_URL_LOCAL}); \
+	elif [[ "$$option" == 2 || "$$option" == "build" ]]; then \
+		$(call function-browser,${APP_URL_BUILD}); \
+	elif [[ "$$option" == 3 || "$$option" == "staging" ]]; then \
+		echo "Sorry, the staging URL is not available."; \
+	elif [[ "$$option" == 4 || "$$option" == "live" ]]; then \
+		$(call function-browser,${APP_URL_LIVE}); \
+	elif [ "$$option" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
 	fi;
 
 .PHONY: shell
