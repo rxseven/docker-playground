@@ -38,6 +38,7 @@ txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-done = $(call txt-success,Done)
 txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
+txt-opps = echo "Opps! please try again."
 txt-note = $(call txt-underline,Note)
 txt-warning = $(call txt-underline,Warning)
 newline = echo ""
@@ -364,7 +365,7 @@ test: ## Run tests *
 	elif [ "$$mode" == 0 ]; then \
 		$(txt-skipped); \
 	else \
-		echo "Opps! please try again."; \
+		$(txt-opps); \
 	fi;
 
 .PHONY: lint
