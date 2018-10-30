@@ -327,7 +327,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call function-browser,${HOST_TEMP}/${FILE_TREEMAP})
 
 .PHONY: setup
-setup: ## Setup the development environment and install dependencies
+setup: ## Setup the development environment and install dependencies ***
 	@$(call txt-start,Setting up the development environment...)
 	@$(call txt-step,[Step 1/2] Install dependencies required for running on the development environment)
 	@docker pull ${IMAGE_BASE_NGINX}
@@ -816,5 +816,6 @@ help: ## Print usage
 	{ printf "  \033[${ANSI_COLOR_CYAN}m%-27s\033[0m %s\n", $$1, $$2 } /^##@/ \
 	{ printf "\n\033[0m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 	@$(newline)
-	@printf "*  with options\n"
-	@printf "** requires user input\n\n"
+	@printf "*   with options\n"
+	@printf "**  requires user input\n"
+	@printf "*** requires superuser access\n\n"
