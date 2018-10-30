@@ -31,7 +31,7 @@ log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
-txt-bold = \e[1m$(1)\e[0m
+log-bold = \e[1m$(1)\e[0m
 txt-italic = \e[3m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
 
@@ -41,7 +41,7 @@ txt-done = $(call log-success,Done)
 txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-opps = echo "Opps! please try again."
-txt-options = printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
+txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
 txt-note = $(call txt-underline,Note)
 txt-warning = $(call txt-underline,Warning)
 newline = echo ""
@@ -65,10 +65,10 @@ define function-preview
 	$(call log-start,Running the production build...) \
 	$(call log-step,[Step 1/5] Download base images (if needed)) \
 	$(call log-step,[Step 2/5] Create an optimized production build) \
-	$(call log-step,[Step 3/5] Build the production image tagged $(call txt-bold,${IMAGE_NAME})) \
+	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})) \
 	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers) \
 	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers) \
-	$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
@@ -256,7 +256,7 @@ build: ## Create an optimized production build
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
-	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
+	@$(call log-info,The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory)
 	@ls ${DIR_BUILD}
 	@$(txt-done)
 
@@ -278,10 +278,10 @@ preview: ## Preview the production build locally
 .PHONY: open
 open: ## Open the app in the default browser *
 	@echo "Available options:"
-	@printf "1. $(call txt-bold,dev) *    : Open the app running in the development environment.\n"
-	@printf "2. $(call txt-bold,build)    : Open an optimized production build locally.\n"
-	@printf "3. $(call txt-bold,staging)  : Unavailable!\n"
-	@printf "4. $(call txt-bold,live)     : Open the live app running in the production server.\n"
+	@printf "1. $(call log-bold,dev) *    : Open the app running in the development environment.\n"
+	@printf "2. $(call log-bold,build)    : Open an optimized production build locally.\n"
+	@printf "3. $(call log-bold,staging)  : Unavailable!\n"
+	@printf "4. $(call log-bold,live)     : Open the live app running in the production server.\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -346,10 +346,10 @@ setup: ## Setup the development environment and install dependencies ***
 .PHONY: test
 test: ## Run tests *
 	@echo "Available modes:"
-	@printf "1. $(call txt-bold,watch) *  : Watch files for changes and rerun tests related to changed files.\n"
-	@printf "2. $(call txt-bold,silent)   : Prevent tests from printing messages through the console.\n"
-	@printf "3. $(call txt-bold,verbose)  : Display individual test results with the test suite hierarchy.\n"
-	@printf "4. $(call txt-bold,coverage) : Generate code coverage reports (LCOV data).\n"
+	@printf "1. $(call log-bold,watch) *  : Watch files for changes and rerun tests related to changed files.\n"
+	@printf "2. $(call log-bold,silent)   : Prevent tests from printing messages through the console.\n"
+	@printf "3. $(call log-bold,verbose)  : Display individual test results with the test suite hierarchy.\n"
+	@printf "4. $(call log-bold,coverage) : Generate code coverage reports (LCOV data).\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -384,9 +384,9 @@ test: ## Run tests *
 .PHONY: lint
 lint: ## Run code linting *
 	@echo "Available options:"
-	@printf "1. $(call txt-bold,script) *   : Lint JavaScript.\n"
-	@printf "2. $(call txt-bold,fix)        : Lint JavaScript and automatically fix problems.\n"
-	@printf "3. $(call txt-bold,stylesheet) : Lint Stylesheet (SCSS).\n"
+	@printf "1. $(call log-bold,script) *   : Lint JavaScript.\n"
+	@printf "2. $(call log-bold,fix)        : Lint JavaScript and automatically fix problems.\n"
+	@printf "3. $(call log-bold,stylesheet) : Lint Stylesheet (SCSS).\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -415,10 +415,10 @@ lint: ## Run code linting *
 .PHONY: typecheck
 typecheck: ## Run static type checking *
 	@echo "Available options:"
-	@printf "1. $(call txt-bold,default) *  : Run a default check.\n"
-	@printf "2. $(call txt-bold,check)      : Run a full check and print the results.\n"
-	@printf "3. $(call txt-bold,focus)      : Run a focus check.\n"
-	@printf "4. $(call txt-bold,libdef)     : Update the library definitions (libdef).\n"
+	@printf "1. $(call log-bold,default) *  : Run a default check.\n"
+	@printf "2. $(call log-bold,check)      : Run a full check and print the results.\n"
+	@printf "3. $(call log-bold,focus)      : Run a focus check.\n"
+	@printf "4. $(call log-bold,libdef)     : Update the library definitions (libdef).\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -441,7 +441,7 @@ typecheck: ## Run static type checking *
 	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
 		$(call log-start,Updating the library definitions...) \
 		$(call function-typecheck,:libdef); \
-		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call txt-bold,./${DIR_TYPED}) directory.) \
+		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.) \
 		$(txt-done) \
 	elif [ "$$option" == 0 ]; then \
 		$(txt-skipped); \
@@ -496,7 +496,7 @@ erase: ## Clean up build artifacts and temporary files
 	@echo "- Remove all build artifacts"
 	@echo "- Remove all temporary files"
 	@$(newline)
-	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Remove build artifacts and temporary files? " confirmation; \
 	case "$$confirmation" in \
@@ -558,7 +558,7 @@ clean: ## Clean up the development environment (including persistent data)
 	@echo "- Remove the default network"
 	@echo "- Remove volumes attached to containers"
 	@$(newline)
-	@printf "$(txt-note): You are about to permanently remove persistent data. $(call txt-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-note): You are about to permanently remove persistent data. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Clean up the development environment? " confirmation; \
 	case "$$confirmation" in \
@@ -596,7 +596,7 @@ reset: ## Reset the development environment and clean up unused data
 	@echo "- Remove build artifacts"
 	@echo "- Remove temporary files"
 	@$(newline)
-	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call txt-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Reset the development environment and clean up unused data? " confirmation; \
 	case "$$confirmation" in \
@@ -644,13 +644,13 @@ reset: ## Reset the development environment and clean up unused data
 .PHONY: version
 version: ## Set the next release version **
 	@$(call log-start,Setting the next release version...)
-	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
+	@printf "The current version is $(call log-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@$(newline)
-	@printf "$(txt-warning): You $(call txt-bold,must) reset the development environment built with the configuration from v${RELEASE_VERSION} before tagging a new release version, otherwise you will not be able to remove the outdate environment once you have tagged a new version. To do that, cancel this command by hitting $(call txt-bold,enter/return) key and run $(call txt-bold,reset) command\n"
+	@printf "$(txt-warning): You $(call log-bold,must) reset the development environment built with the configuration from v${RELEASE_VERSION} before tagging a new release version, otherwise you will not be able to remove the outdate environment once you have tagged a new version. To do that, cancel this command by hitting $(call log-bold,enter/return) key and run $(call log-bold,reset) command\n"
 	@$(newline)
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
-		printf "The next release will be $(call txt-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
+		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
 		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
