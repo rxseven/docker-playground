@@ -32,7 +32,7 @@ log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
 log-bold = \e[1m$(1)\e[0m
-txt-italic = \e[3m$(1)\e[0m
+log-italic = \e[3m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
 
 # Text and string
