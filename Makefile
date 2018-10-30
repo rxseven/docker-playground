@@ -301,8 +301,8 @@ open: ## Open the app in the default browser *
 	fi;
 
 .PHONY: shell
-shell: ## Attach an interactive shell to the development container
-	@$(call log-start,Attaching an interactive shell to the development container...)
+shell: ## Run Bourne shell in the app container
+	@$(call log-start,Running Bourne shell in the app container...)
 	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
 
 .PHONY: format
