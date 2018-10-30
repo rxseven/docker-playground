@@ -334,18 +334,37 @@ setup: ## Setup the development environment and install dependencies
 .PHONY: test
 test: ## Run tests *
 	@echo "Available modes:"
-	@echo "- Watch mode    : press enter"
-	@echo "- Code coverage : coverage"
-	@echo "- Silent        : sum"
-	@echo "- Details       : details"
+	@echo "1. Watch mode    : watch"
+	@echo "2. Silent        : silent"
+	@echo "3. Verbose       : verbose"
+	@echo "4. Code coverage : coverage"
 	@$(newline)
 	@read -p "Enter test mode: " mode; \
-	if [ "$$mode" == "coverage" ]; then \
-		$(call function-test,:coverage); \
-		$(call txt-sum,[sum] LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
-		ls ${DIR_COVERAGE}; \
-	else \
+	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "watch" ]]; then \
+		$(newline); \
+		$(call txt-start,Running tests in \"watch\" mode...) \
 		$(call function-test); \
+	elif [[ "$$mode" == 2 || "$$mode" == "silent" ]]; then \
+		$(newline); \
+		$(call txt-start,Running tests in \"silent\" mode...) \
+		$(call function-test,:silent); \
+	elif [[ "$$mode" == 3 || "$$mode" == "verbose" ]]; then \
+		$(newline); \
+		$(call txt-start,Running tests in \"verbose\" mode...) \
+		$(call function-test,:verbose); \
+	elif [[ "$$mode" == 4 || "$$mode" == "coverage" ]]; then \
+		$(newline); \
+		$(call txt-start,Running tests and generate code coverage reports...) \
+		$(call function-test,:coverage); \
+		$(newline); \
+		$(call txt-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
+		ls ${DIR_COVERAGE}; \
+		$(newline); \
+		$(txt-done) \
+	elif [ "$$mode" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		echo "Opps! please try again."; \
 	fi;
 
 .PHONY: lint
