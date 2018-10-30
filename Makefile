@@ -39,6 +39,7 @@ txt-done = $(call txt-success,Done)
 txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-opps = echo "Opps! please try again."
+txt-options = printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
 txt-note = $(call txt-underline,Note)
 txt-warning = $(call txt-underline,Warning)
 newline = echo ""
@@ -280,7 +281,7 @@ open: ## Open the app in the default browser *
 	@printf "3. $(call txt-bold,staging)  : Unavailable!\n"
 	@printf "4. $(call txt-bold,live)     : Open the live app running in the production server.\n"
 	@$(newline)
-	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
+	@$(txt-options)
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "dev" ]]; then \
@@ -348,7 +349,7 @@ test: ## Run tests *
 	@printf "3. $(call txt-bold,verbose)  : Display individual test results with the test suite hierarchy.\n"
 	@printf "4. $(call txt-bold,coverage) : Generate code coverage reports (LCOV data).\n"
 	@$(newline)
-	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
+	@$(txt-options)
 	@$(newline)
 	@read -p "Enter test mode: " mode; \
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "watch" ]]; then \
@@ -385,7 +386,7 @@ lint: ## Run code linting *
 	@printf "2. $(call txt-bold,fix)        : Lint JavaScript and automatically fix problems.\n"
 	@printf "3. $(call txt-bold,stylesheet) : Lint Stylesheet (SCSS).\n"
 	@$(newline)
-	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
+	@$(txt-options)
 	@$(newline)
 	@read -p "Enter test mode: " mode; \
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "script" ]]; then \
@@ -417,7 +418,7 @@ typecheck: ## Run static type checking *
 	@printf "3. $(call txt-bold,focus)      : Run a focus check.\n"
 	@printf "4. $(call txt-bold,libdef)     : Update the library definitions (libdef).\n"
 	@$(newline)
-	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
+	@$(txt-options)
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "script" ]]; then \
