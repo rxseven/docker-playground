@@ -404,22 +404,38 @@ lint: ## Run code linting *
 .PHONY: typecheck
 typecheck: ## Run static type checking *
 	@echo "Available options:"
-	@echo "- Default           : press enter"
-	@echo "- Check             : check"
-	@echo "- Focus check       : focus"
-	@echo "- Install libdef    : install"
+	@printf "1. $(call txt-bold,default) *  : Run a default check.\n"
+	@printf "2. $(call txt-bold,check)      : Run a full check and print the results.\n"
+	@printf "3. $(call txt-bold,focus)      : Run a focus check.\n"
+	@printf "4. $(call txt-bold,libdef)     : Update the library definitions (libdef).\n"
+	@$(newline)
+	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
 	@$(newline)
 	@read -p "Enter the option: " option; \
-	if [ "$$option" == "check" ]; then \
-		$(call function-typecheck,:check); \
-	elif [ "$$option" == "focus" ]; then \
-		$(call function-typecheck,:check:focus); \
-	elif [ "$$option" == "install" ]; then \
-		$(call function-typecheck,:install); \
-		$(call txt-info,The library definitions (libdef) have been updated$(,) please commit the changes in $(call txt-bold,./${DIR_BUILD}) directory) \
-		$(txt-done) \
-	else \
+	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "script" ]]; then \
+		$(newline); \
+		$(call txt-start,Running static type checking...) \
 		$(call function-typecheck); \
+		$(txt-done) \
+	elif [[ "$$option" == 2 || "$$option" == "check" ]]; then \
+		$(newline); \
+		$(call txt-start,Running a full check and printing the results...) \
+		$(call function-typecheck,:check); \
+		$(txt-done) \
+	elif [[ "$$option" == 3 || "$$option" == "focus" ]]; then \
+		$(newline); \
+		$(call txt-start,Running a focus check...) \
+		$(call function-typecheck,:check:focus); \
+		$(txt-done) \
+	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
+		$(call txt-start,Updating the library definitions...) \
+		$(call function-typecheck,:libdef); \
+		$(call txt-info,The library definitions have been updated$(,) please commit the changes in $(call txt-bold,./${DIR_TYPED}) directory.) \
+		$(txt-done) \
+	elif [ "$$option" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
 	fi;
 
 ##@ Packages & Dependencies:
