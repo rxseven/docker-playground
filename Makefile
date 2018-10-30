@@ -23,7 +23,7 @@ ANSI_COLOR_WHITE=37
 # Default goal
 .DEFAULT_GOAL := help
 
-# Text and string
+# Loggers
 txt-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 txt-danger = $(call txt-template,${ANSI_COLOR_RED},$(1));
 txt-info = $(call txt-template,${ANSI_COLOR_WHITE},$(1));
@@ -34,6 +34,8 @@ txt-sum = $(call txt-template,${ANSI_COLOR_CYAN},$(1));
 txt-bold = \e[1m$(1)\e[0m
 txt-italic = \e[3m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
+
+# Text and string
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-done = $(call txt-success,Done)
 txt-skipped = echo "Skipped"
