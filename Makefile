@@ -28,7 +28,7 @@ log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
-txt-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
+log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
 txt-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 txt-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
 txt-bold = \e[1m$(1)\e[0m
@@ -63,21 +63,21 @@ endef
 # Preview the production build
 define function-preview
 	$(call log-start,Running the production build...) \
-	$(call txt-step,[Step 1/5] Download base images (if needed)) \
-	$(call txt-step,[Step 2/5] Create an optimized production build) \
-	$(call txt-step,[Step 3/5] Build the production image tagged $(call txt-bold,${IMAGE_NAME})) \
-	$(call txt-step,[Step 4/5] Create and start the app and reverse proxy containers) \
-	$(call txt-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers) \
+	$(call log-step,[Step 1/5] Download base images (if needed)) \
+	$(call log-step,[Step 2/5] Create an optimized production build) \
+	$(call log-step,[Step 3/5] Build the production image tagged $(call txt-bold,${IMAGE_NAME})) \
+	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers) \
+	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers) \
 	$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
 # Test
 define function-test
-	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
-	$(call txt-step,[Step 2/4] Create and start a container for running tests) \
-	$(call txt-step,[Step 3/4] Run tests) \
-	$(call txt-step,[Step 4/4] Remove the container when the process finishes) \
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running tests) \
+	$(call log-step,[Step 3/4] Run tests) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
 	docker-compose \
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
@@ -89,28 +89,28 @@ endef
 
 # Linting
 define function-lint
-	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
-	$(call txt-step,[Step 2/4] Create and start a container for running code linting) \
-	$(call txt-step,[Step 3/4] Run linting) \
-	$(call txt-step,[Step 4/4] Remove the container when the process finishes) \
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running code linting) \
+	$(call log-step,[Step 3/4] Run linting) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
 	docker-compose run --rm ${SERVICE_APP} lint$(1)
 endef
 
 # Static type checking
 define function-typecheck
-	$(call txt-step,[Step 1/4] Build the development image (if needed)) \
-	$(call txt-step,[Step 2/4] Create and start a container for running static type checking) \
-	$(call txt-step,[Step 3/4] Run static type checking) \
-	$(call txt-step,[Step 4/4] Remove the container when the process finishes) \
+	$(call log-step,[Step 1/4] Build the development image (if needed)) \
+	$(call log-step,[Step 2/4] Create and start a container for running static type checking) \
+	$(call log-step,[Step 3/4] Run static type checking) \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
 	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
 # Release
 define function-release
-	$(call txt-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
+	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
 	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS})
 	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_AWS})
-	$(call txt-step,[Step 2/2] Configure ${CONFIG_NPM} for AWS Node.js deployment)
+	$(call log-step,[Step 2/2] Configure ${CONFIG_NPM} for AWS Node.js deployment)
 	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_NPM})
 	
 	# Remove backup files after performing text transformations
@@ -120,21 +120,21 @@ endef
 # Install and update dependencies
 define function-update
 	$(call log-start,Updating dependencies...)
-	$(call txt-step,[Step 1/5] Build the development image (if needed))
-	$(call txt-step,[Step 2/5] Create and start a container for updating dependencies)
-	$(call txt-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
-	$(call txt-step,[Step 4/5] Update yarn.lock (if necessary))
-	$(call txt-step,[Step 5/5] Remove the container)
+	$(call log-step,[Step 1/5] Build the development image (if needed))
+	$(call log-step,[Step 2/5] Create and start a container for updating dependencies)
+	$(call log-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
+	$(call log-step,[Step 4/5] Update yarn.lock (if necessary))
+	$(call log-step,[Step 5/5] Remove the container)
 	docker-compose run --rm ${SERVICE_APP} install
 endef
 
 # Start the development environment
 define function-start
 	$(call log-start,Starting the development environment...)
-	$(call txt-step,[Step 1/4] Download base images (if needed))
-	$(call txt-step,[Step 2/4] Build the development image (if needed))
-	$(call txt-step,[Step 3/4] Create and start the development and reverse proxy containers)
-	$(call txt-step,[Step 4/4] Start the development and reverse proxy servers)
+	$(call log-step,[Step 1/4] Download base images (if needed))
+	$(call log-step,[Step 2/4] Build the development image (if needed))
+	$(call log-step,[Step 3/4] Create and start the development and reverse proxy containers)
+	$(call log-step,[Step 4/4] Start the development and reverse proxy servers)
 	$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	docker-compose up
 endef
@@ -203,9 +203,9 @@ start: ## Start the development environment and attach to containers for a servi
 .PHONY: restart
 restart: ## Rebuild and restart the development environment
 	@$(call log-start,Restarting the development environment...)
-	@$(call txt-step,[Step 1/3] Rebuild the development image)
-	@$(call txt-step,[Step 2/3] Create and start the development and reverse proxy containers)
-	@$(call txt-step,[Step 3/3] Start the development and reverse proxy servers)
+	@$(call log-step,[Step 1/3] Rebuild the development image)
+	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
+	@$(call log-step,[Step 3/3] Start the development and reverse proxy servers)
 	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
@@ -230,10 +230,10 @@ up: ## Rebuild images for the development environment
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(call log-start,Rebuilding images for the the development environment...) \
-			$(call txt-step,[Step 1/3] Stop running containers) \
+			$(call log-step,[Step 1/3] Stop running containers) \
 			docker-compose stop; \
-			$(call txt-step,[Step 2/3] Download base images (if needed)) \
-			$(call txt-step,[Step 3/3] Rebuild the images) \
+			$(call log-step,[Step 2/3] Download base images (if needed)) \
+			$(call log-step,[Step 3/3] Rebuild the images) \
 			docker-compose build; \
 			$(txt-done) \
 		;; \
@@ -248,13 +248,13 @@ up: ## Rebuild images for the development environment
 .PHONY: build
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
-	@$(call txt-step,[Step 1/6] Remove the existing build (if one exists))
+	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
 	-@rm -rf -v ${DIR_BUILD}
-	@$(call txt-step,[Step 2/6] Download base images (if needed))
-	@$(call txt-step,[Step 3/6] Build the development image (if it doesn't exist))
-	@$(call txt-step,[Step 4/6] Create and start a container for building the app)
-	@$(call txt-step,[Step 5/6] Create an optimized production build)
-	@$(call txt-step,[Step 6/6] Stop and remove the container)
+	@$(call log-step,[Step 2/6] Download base images (if needed))
+	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
+	@$(call log-step,[Step 4/6] Create and start a container for building the app)
+	@$(call log-step,[Step 5/6] Create an optimized production build)
+	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
 	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
 	@ls ${DIR_BUILD}
@@ -308,10 +308,10 @@ shell: ## Attach an interactive shell to the development container
 .PHONY: format
 format: ## Format code automatically
 	@$(call log-start,Formatting code...)
-	@$(call txt-step,[Step 1/4] Build the development image (if needed))
-	@$(call txt-step,[Step 2/4] Create and start a container for formatting code)
-	@$(call txt-step,[Step 3/4] Format code)
-	@$(call txt-step,[Step 4/4] Remove the container)
+	@$(call log-step,[Step 1/4] Build the development image (if needed))
+	@$(call log-step,[Step 2/4] Create and start a container for formatting code)
+	@$(call log-step,[Step 3/4] Format code)
+	@$(call log-step,[Step 4/4] Remove the container)
 	@docker-compose run --rm ${SERVICE_APP} format
 	@$(txt-done)
 
@@ -319,24 +319,24 @@ format: ## Format code automatically
 analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
 analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-start,Analyzing and debugging code...)
-	@$(call txt-step,[Step 1/5] Create and start a container for analyzing the bundle)
-	@$(call txt-step,[Step 2/5] Analyze the bundle size)
+	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
+	@$(call log-step,[Step 2/5] Analyze the bundle size)
 	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
-	@$(call txt-step,[Step 3/5] Copy the result from the container's file system to the host's)
+	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
 	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
-	@$(call txt-step,[Step 4/5] Remove the container)
+	@$(call log-step,[Step 4/5] Remove the container)
 	@docker container rm ${CONTAINER_NAME}
-	@$(call txt-step,[Step 5/5] Open the treemap visualization in the browser)
+	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
 	@$(call function-browser,${HOST_TEMP}/${FILE_TREEMAP})
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies ***
 	@$(call log-start,Setting up the development environment...)
-	@$(call txt-step,[Step 1/2] Install dependencies required for running on the development environment)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
 	@docker pull ${IMAGE_BASE_PROXY}
-	@$(call txt-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
+	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
 	@$(call function-host,${APP_DOMAIN_LOCAL})
 	@$(call function-host,${APP_DOMAIN_BUILD})
 	@$(txt-done)
@@ -456,11 +456,11 @@ install: ## Install a package and any packages that it depends on **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(call log-start,Installing npm package...) \
-		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
-		$(call txt-step,[Step 2/5] Create and start a container for installing dependencies) \
-		$(call txt-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
-		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
-		$(call txt-step,[Step 5/5] Remove the container) \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
+		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
 		docker-compose run --rm ${SERVICE_APP} add $$package; \
 		$(txt-done) \
 	else \
@@ -472,11 +472,11 @@ uninstall: ## Uninstall a package **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(call log-start,Uninstalling npm package...) \
-		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
-		$(call txt-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
-		$(call txt-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
-		$(call txt-step,[Step 4/5] Update package.json and yarn.lock) \
-		$(call txt-step,[Step 5/5] Remove the container) \
+		$(call log-step,[Step 1/5] Build the development image (if needed)) \
+		$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
+		$(call log-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
+		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 5/5] Remove the container) \
 		docker-compose run --rm ${SERVICE_APP} remove $$package; \
 		$(txt-done) \
 	else \
@@ -503,9 +503,9 @@ erase: ## Clean up build artifacts and temporary files
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Removing data...) \
-			$(call txt-step,[Step 1/2] Remove build artifacts) \
+			$(call log-step,[Step 1/2] Remove build artifacts) \
 			$(function-artifacts) \
-			$(call txt-step,[Step 2/2] Remove temporary files) \
+			$(call log-step,[Step 2/2] Remove temporary files) \
 			$(function-temporary) \
 			$(newline); \
 			$(call log-start,Listing the results...) \
@@ -534,8 +534,8 @@ refresh: ## Refresh (soft clean) the development environment
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Refreshing the development environment...) \
-			$(call txt-step,[Step 1/2] Stop and remove containers) \
-			$(call txt-step,[Step 2/2] Remove the default network) \
+			$(call log-step,[Step 1/2] Stop and remove containers) \
+			$(call log-step,[Step 2/2] Remove the default network) \
 			docker-compose down; \
 			$(newline); \
 			$(call log-start,Listing the results...) \
@@ -565,9 +565,9 @@ clean: ## Clean up the development environment (including persistent data)
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Cleaning up the development environment...) \
-			$(call txt-step,[Step 1/3] Stop and remove containers) \
-			$(call txt-step,[Step 2/3] Remove the default network) \
-			$(call txt-step,[Step 3/3] Remove volumes attached to containers) \
+			$(call log-step,[Step 1/3] Stop and remove containers) \
+			$(call log-step,[Step 2/3] Remove the default network) \
+			$(call log-step,[Step 3/3] Remove volumes attached to containers) \
 			docker-compose down -v; \
 			$(newline); \
 			$(call log-start,Listing the results...) \
@@ -603,23 +603,23 @@ reset: ## Reset the development environment and clean up unused data
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Resetting the development environment...) \
-			$(call txt-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes) \
+			$(call log-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes) \
 			docker-compose down -v; \
-			$(call txt-step,[Step 2/9] Remove the development images) \
+			$(call log-step,[Step 2/9] Remove the development images) \
 			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
-			$(call txt-step,[Step 3/9] Remove the production image) \
+			$(call log-step,[Step 3/9] Remove the production image) \
 			docker image rm ${IMAGE_NAME}; \
-			$(call txt-step,[Step 4/9] Remove the intermediate images) \
+			$(call log-step,[Step 4/9] Remove the intermediate images) \
 			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
-			$(call txt-step,[Step 5/9] Remove all stopped containers (optional)) \
+			$(call log-step,[Step 5/9] Remove all stopped containers (optional)) \
 			docker container prune; \
-			$(call txt-step,[Step 6/9] Remove unused images (optional)) \
+			$(call log-step,[Step 6/9] Remove unused images (optional)) \
 			docker image prune; \
-			$(call txt-step,[Step 7/9] Remove all unused local volumes (optional)) \
+			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)) \
 			docker volume prune; \
-			$(call txt-step,[Step 8/9] Remove build artifacts) \
+			$(call log-step,[Step 8/9] Remove build artifacts) \
 			$(function-artifacts) \
-			$(call txt-step,[Step 9/9] Remove temporary files) \
+			$(call log-step,[Step 9/9] Remove temporary files) \
 			$(function-temporary) \
 			$(newline); \
 			$(call log-start,Listing the results...) \
@@ -670,7 +670,7 @@ release: ## Release new features
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
 	@$(call log-start,Installing additional dependencies...)
-	@$(call txt-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
+	@$(call log-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
 	@sudo rm ${BINARY_PATH}/docker-compose
 	@curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
 	@chmod +x docker-compose
@@ -680,28 +680,28 @@ ci-update: ## Install additional dependencies required for running on the CI env
 .PHONY: ci-setup
 ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-start,Setting up the CI environment...)
-	@$(call txt-step,[Step 1/2] Install dependencies required for running on the CI environment)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the CI environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
-	@$(call txt-step,[Step 2/2] List downloaded Docker images)
+	@$(call log-step,[Step 2/2] List downloaded Docker images)
 	@docker image ls
 	@$(txt-done)
 
 .PHONY: ci-test
 ci-test: ## Run tests and generate code coverage reports
 	@$(call log-start,Running tests...)
-	@$(call txt-step,[Step 1/3] Build an image based on the development environment)
-	@$(call txt-step,[Step 2/3] Create and start a container for running tests)
-	@$(call txt-step,[Step 3/3] Run tests and generate code coverage reports)
+	@$(call log-step,[Step 1/3] Build an image based on the development environment)
+	@$(call log-step,[Step 2/3] Create and start a container for running tests)
+	@$(call log-step,[Step 3/3] Run tests and generate code coverage reports)
 	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} up ${SERVICE_APP}
 	@$(txt-done)
 
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage reports (LCOV format)
 	@$(call log-start,Creating code coverage reports...)
-	@$(call txt-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
+	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
 	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
-	@$(call txt-step,[Step 2/2] Fix source paths in the LCOV file)
+	@$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
 	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 	@$(txt-done)
 
@@ -710,22 +710,22 @@ ci-deploy: ## Create deployment configuration and build a production image
 	@$(call log-start,Configuring a deployment configuration...)
 	@$(function-release)
 	@$(call log-start,Building a deployment configuration...)
-	@$(call txt-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
+	@$(call log-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
 	@zip ${BUILD_ZIP} ${CONFIG_AWS}
 	@$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
-	@$(call txt-step,[Step 1/3] Build the image)
+	@$(call log-step,[Step 1/3] Build the image)
 	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
-	@$(call txt-step,[Step 2/3] Login to Docker Hub)
+	@$(call log-step,[Step 2/3] Login to Docker Hub)
 	@echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-	@$(call txt-step,[Step 3/3] Push the image to Docker Hub)
+	@$(call log-step,[Step 3/3] Push the image to Docker Hub)
 	@docker push ${IMAGE_NAME}
 	@$(txt-done)
 
 .PHONY: ci-coveralls
 ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
 	@$(call log-start,Sending LCOV data to coveralls.io...)
-	@$(call txt-step,[Step 1/2] Collect LCOV data from /coverage/lcov.info)
-	@$(call txt-step,[Step 2/2] Send the data to coveralls.io)
+	@$(call log-step,[Step 1/2] Collect LCOV data from /coverage/lcov.info)
+	@$(call log-step,[Step 2/2] Send the data to coveralls.io)
 	@cat ${LCOV_DATA} | coveralls
 	@$(txt-done)
 
