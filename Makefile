@@ -25,7 +25,7 @@ ANSI_COLOR_WHITE=37
 
 # Loggers
 log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
-txt-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
+log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
 txt-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
 txt-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
 txt-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
