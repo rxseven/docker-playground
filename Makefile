@@ -26,7 +26,7 @@ ANSI_COLOR_WHITE=37
 # Loggers
 log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
-txt-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
+log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
 txt-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
 txt-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
 txt-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
@@ -55,7 +55,7 @@ function-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # View app in the browser
 define function-browser
-	$(call txt-info,Opening $(1) in the default browser...) \
+	$(call log-info,Opening $(1) in the default browser...) \
 	$(txt-done) \
 	open -a ${BROWSER_DEFAULT} $(1)
 endef
@@ -68,7 +68,7 @@ define function-preview
 	$(call txt-step,[Step 3/5] Build the production image tagged $(call txt-bold,${IMAGE_NAME})) \
 	$(call txt-step,[Step 4/5] Create and start the app and reverse proxy containers) \
 	$(call txt-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers) \
-	$(call txt-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
+	$(call log-info,You can view $(call txt-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
@@ -135,7 +135,7 @@ define function-start
 	$(call txt-step,[Step 2/4] Build the development image (if needed))
 	$(call txt-step,[Step 3/4] Create and start the development and reverse proxy containers)
 	$(call txt-step,[Step 4/4] Start the development and reverse proxy servers)
-	$(call txt-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
+	$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	docker-compose up
 endef
 
@@ -206,7 +206,7 @@ restart: ## Rebuild and restart the development environment
 	@$(call txt-step,[Step 1/3] Rebuild the development image)
 	@$(call txt-step,[Step 2/3] Create and start the development and reverse proxy containers)
 	@$(call txt-step,[Step 3/3] Start the development and reverse proxy servers)
-	@$(call txt-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
+	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
 	@docker-compose up --build
 
 .PHONY: stop
@@ -256,7 +256,7 @@ build: ## Create an optimized production build
 	@$(call txt-step,[Step 5/6] Create an optimized production build)
 	@$(call txt-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
-	@$(call txt-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
+	@$(call log-info,The production build has been created successfully in $(call txt-bold,./${DIR_BUILD}) directory)
 	@ls ${DIR_BUILD}
 	@$(txt-done)
 
@@ -441,7 +441,7 @@ typecheck: ## Run static type checking *
 	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
 		$(call txt-start,Updating the library definitions...) \
 		$(call function-typecheck,:libdef); \
-		$(call txt-info,The library definitions have been updated$(,) please commit the changes in $(call txt-bold,./${DIR_TYPED}) directory.) \
+		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call txt-bold,./${DIR_TYPED}) directory.) \
 		$(txt-done) \
 	elif [ "$$option" == 0 ]; then \
 		$(txt-skipped); \
