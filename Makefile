@@ -36,13 +36,13 @@ log-italic = \e[3m$(1)\e[0m
 log-underline = \e[4m$(1)\e[0m
 
 # Text and string
-txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
-txt-done = $(call log-success,Done)
-txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
+txt-done = $(call log-success,Done)
+txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
+txt-note = $(call log-underline,Note)
 txt-opps = echo "Opps! please try again."
 txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
-txt-note = $(call log-underline,Note)
+txt-skipped = echo "Skipped"
 txt-warning = $(call log-underline,Warning)
 newline = echo ""
 
