@@ -29,7 +29,7 @@ log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
-txt-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
+log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 txt-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
 txt-bold = \e[1m$(1)\e[0m
 txt-italic = \e[3m$(1)\e[0m
@@ -37,7 +37,7 @@ txt-underline = \e[4m$(1)\e[0m
 
 # Text and string
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
-txt-done = $(call txt-success,Done)
+txt-done = $(call log-success,Done)
 txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-opps = echo "Opps! please try again."
