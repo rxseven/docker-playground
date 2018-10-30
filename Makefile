@@ -373,17 +373,32 @@ test: ## Run tests *
 .PHONY: lint
 lint: ## Run code linting *
 	@echo "Available options:"
-	@echo "- JavaScript        : press enter"
-	@echo "- JavaScript (fix)  : fix"
-	@echo "- Stylesheet        : stylesheet"
+	@printf "1. $(call txt-bold,script) *   : Lint JavaScript.\n"
+	@printf "2. $(call txt-bold,fix)        : Lint JavaScript and automatically fix problems.\n"
+	@printf "3. $(call txt-bold,stylesheet) : Lint Stylesheet (SCSS).\n"
 	@$(newline)
-	@read -p "Enter the option: " option; \
-	if [ "$$option" == "stylesheet" ]; then \
-		$(call function-lint,:stylesheet); \
-	elif [ "$$option" == "fix" ]; then \
-		$(call function-lint,:script:fix); \
-	else \
+	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
+	@$(newline)
+	@read -p "Enter test mode: " mode; \
+	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "script" ]]; then \
+		$(newline); \
+		$(call txt-start,Running JavaScript linting...) \
 		$(call function-lint,:script); \
+		$(txt-done) \
+	elif [[ "$$mode" == 2 || "$$mode" == "fix" ]]; then \
+		$(newline); \
+		$(call txt-start,Running JavaScript linting and trying to fix problems...) \
+		$(call function-lint,:script:fix); \
+		$(txt-done) \
+	elif [[ "$$mode" == 3 || "$$mode" == "stylesheet" ]]; then \
+		$(newline); \
+		$(call txt-start,Running Stylesheet linting...) \
+		$(call function-lint,:stylesheet); \
+		$(txt-done) \
+	elif [ "$$mode" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
 	fi;
 
 .PHONY: typecheck
