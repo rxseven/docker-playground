@@ -335,10 +335,12 @@ setup: ## Setup the development environment and install dependencies
 .PHONY: test
 test: ## Run tests *
 	@echo "Available modes:"
-	@echo "1. Watch mode    : watch"
-	@echo "2. Silent        : silent"
-	@echo "3. Verbose       : verbose"
-	@echo "4. Code coverage : coverage"
+	@printf "1. $(call txt-bold,watch) *  : Watch files for changes and rerun tests related to changed files.\n"
+	@printf "2. $(call txt-bold,silent)   : Prevent tests from printing messages through the console.\n"
+	@printf "3. $(call txt-bold,verbose)  : Display individual test results with the test suite hierarchy.\n"
+	@printf "4. $(call txt-bold,coverage) : Generate code coverage reports (LCOV data).\n"
+	@$(newline)
+	@printf "* default option, press $(call txt-bold,enter) key to continue / enter $(call txt-bold,0) to cancel.\n"
 	@$(newline)
 	@read -p "Enter test mode: " mode; \
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "watch" ]]; then \
