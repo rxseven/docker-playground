@@ -30,7 +30,7 @@ log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
 log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
-txt-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
+log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
 txt-bold = \e[1m$(1)\e[0m
 txt-italic = \e[3m$(1)\e[0m
 txt-underline = \e[4m$(1)\e[0m
@@ -160,22 +160,22 @@ endef
 
 # Docker summary
 define sum-docker
-	$(call txt-sum,Containers (including exited state)) \
+	$(call log-sum,Containers (including exited state)) \
 	docker container ls -a; \
 	$(newline); \
-	$(call txt-sum,Networks) \
+	$(call log-sum,Networks) \
 	docker network ls; \
 	$(newline); \
-	$(call txt-sum,Volumes) \
+	$(call log-sum,Volumes) \
 	docker volume ls; \
 	$(newline); \
-	$(call txt-sum,Images (including intermediates)) \
+	$(call log-sum,Images (including intermediates)) \
 	docker image ls -a;
 endef
 
 # Build artifacts summary
 define sum-artifacts
-	$(call txt-sum,Build artifacts) \
+	$(call log-sum,Build artifacts) \
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		echo "Opps! there are some artifacts left, please try again."; \
 	else \
@@ -185,7 +185,7 @@ endef
 
 # Temporary files summary
 define sum-temporary
-	$(call txt-sum,Temporary files) \
+	$(call log-sum,Temporary files) \
 	for f in ${DIR_TEMP}/*; do \
 		[ -e "$$f" ] && \
 		echo "Opps! there are some files left, please try again." || \
@@ -371,7 +371,7 @@ test: ## Run tests *
 		$(call log-start,Running tests and generate code coverage reports...) \
 		$(call function-test,:coverage); \
 		$(newline); \
-		$(call txt-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
+		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
 		$(txt-done) \
@@ -809,7 +809,7 @@ status: ## Show system status
 	@$(call log-start,Listing system status...)
 	@$(sum-docker)
 	@$(newline)
-	@$(call txt-sum,The working tree status)
+	@$(call log-sum,The working tree status)
 	@git status
 
 .PHONY: help
