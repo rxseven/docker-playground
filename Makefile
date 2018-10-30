@@ -33,7 +33,7 @@ log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
 log-bold = \e[1m$(1)\e[0m
 log-italic = \e[3m$(1)\e[0m
-txt-underline = \e[4m$(1)\e[0m
+log-underline = \e[4m$(1)\e[0m
 
 # Text and string
 txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
@@ -42,8 +42,8 @@ txt-skipped = echo "Skipped"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-opps = echo "Opps! please try again."
 txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
-txt-note = $(call txt-underline,Note)
-txt-warning = $(call txt-underline,Warning)
+txt-note = $(call log-underline,Note)
+txt-warning = $(call log-underline,Warning)
 newline = echo ""
 
 # Set configuration values
