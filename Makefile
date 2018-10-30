@@ -27,7 +27,7 @@ ANSI_COLOR_WHITE=37
 log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
-txt-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
+log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1));
 txt-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
 txt-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 txt-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
@@ -62,7 +62,7 @@ endef
 
 # Preview the production build
 define function-preview
-	$(call txt-start,Running the production build...) \
+	$(call log-start,Running the production build...) \
 	$(call txt-step,[Step 1/5] Download base images (if needed)) \
 	$(call txt-step,[Step 2/5] Create an optimized production build) \
 	$(call txt-step,[Step 3/5] Build the production image tagged $(call txt-bold,${IMAGE_NAME})) \
@@ -119,7 +119,7 @@ endef
 
 # Install and update dependencies
 define function-update
-	$(call txt-start,Updating dependencies...)
+	$(call log-start,Updating dependencies...)
 	$(call txt-step,[Step 1/5] Build the development image (if needed))
 	$(call txt-step,[Step 2/5] Create and start a container for updating dependencies)
 	$(call txt-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
@@ -130,7 +130,7 @@ endef
 
 # Start the development environment
 define function-start
-	$(call txt-start,Starting the development environment...)
+	$(call log-start,Starting the development environment...)
 	$(call txt-step,[Step 1/4] Download base images (if needed))
 	$(call txt-step,[Step 2/4] Build the development image (if needed))
 	$(call txt-step,[Step 3/4] Create and start the development and reverse proxy containers)
@@ -202,7 +202,7 @@ start: ## Start the development environment and attach to containers for a servi
 
 .PHONY: restart
 restart: ## Rebuild and restart the development environment
-	@$(call txt-start,Restarting the development environment...)
+	@$(call log-start,Restarting the development environment...)
 	@$(call txt-step,[Step 1/3] Rebuild the development image)
 	@$(call txt-step,[Step 2/3] Create and start the development and reverse proxy containers)
 	@$(call txt-step,[Step 3/3] Start the development and reverse proxy servers)
@@ -211,7 +211,7 @@ restart: ## Rebuild and restart the development environment
 
 .PHONY: stop
 stop: ## Stop running containers without removing them
-	@$(call txt-start,Stopping running containers...)
+	@$(call log-start,Stopping running containers...)
 	@docker-compose stop
 	@$(txt-done)
 
@@ -222,14 +222,14 @@ run: ## Update dependencies and start the development environment
 
 .PHONY: up
 up: ## Rebuild images for the development environment
-	@$(call txt-start,This command will perform the following actions:)
+	@$(call log-start,This command will perform the following actions:)
 	@echo "- Stop running containers without removing them"
 	@echo "- Rebuild images for the development environment"
 	@$(newline)
 	@read -p "Stop working on the app and rebuild the images? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
-			$(call txt-start,Rebuilding images for the the development environment...) \
+			$(call log-start,Rebuilding images for the the development environment...) \
 			$(call txt-step,[Step 1/3] Stop running containers) \
 			docker-compose stop; \
 			$(call txt-step,[Step 2/3] Download base images (if needed)) \
@@ -247,7 +247,7 @@ up: ## Rebuild images for the development environment
 
 .PHONY: build
 build: ## Create an optimized production build
-	@$(call txt-start,Creating an optimized production build...)
+	@$(call log-start,Creating an optimized production build...)
 	@$(call txt-step,[Step 1/6] Remove the existing build (if one exists))
 	-@rm -rf -v ${DIR_BUILD}
 	@$(call txt-step,[Step 2/6] Download base images (if needed))
@@ -302,12 +302,12 @@ open: ## Open the app in the default browser *
 
 .PHONY: shell
 shell: ## Attach an interactive shell to the development container
-	@$(call txt-start,Attaching an interactive shell to the development container...)
+	@$(call log-start,Attaching an interactive shell to the development container...)
 	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
 
 .PHONY: format
 format: ## Format code automatically
-	@$(call txt-start,Formatting code...)
+	@$(call log-start,Formatting code...)
 	@$(call txt-step,[Step 1/4] Build the development image (if needed))
 	@$(call txt-step,[Step 2/4] Create and start a container for formatting code)
 	@$(call txt-step,[Step 3/4] Format code)
@@ -318,7 +318,7 @@ format: ## Format code automatically
 .PHONY: analyze
 analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
 analyze: build ## Analyze and debug code bloat through source maps
-	@$(call txt-start,Analyzing and debugging code...)
+	@$(call log-start,Analyzing and debugging code...)
 	@$(call txt-step,[Step 1/5] Create and start a container for analyzing the bundle)
 	@$(call txt-step,[Step 2/5] Analyze the bundle size)
 	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
@@ -331,7 +331,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies ***
-	@$(call txt-start,Setting up the development environment...)
+	@$(call log-start,Setting up the development environment...)
 	@$(call txt-step,[Step 1/2] Install dependencies required for running on the development environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
@@ -356,19 +356,19 @@ test: ## Run tests *
 	@read -p "Enter test mode: " mode; \
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "watch" ]]; then \
 		$(newline); \
-		$(call txt-start,Running tests in \"watch\" mode...) \
+		$(call log-start,Running tests in \"watch\" mode...) \
 		$(call function-test); \
 	elif [[ "$$mode" == 2 || "$$mode" == "silent" ]]; then \
 		$(newline); \
-		$(call txt-start,Running tests in \"silent\" mode...) \
+		$(call log-start,Running tests in \"silent\" mode...) \
 		$(call function-test,:silent); \
 	elif [[ "$$mode" == 3 || "$$mode" == "verbose" ]]; then \
 		$(newline); \
-		$(call txt-start,Running tests in \"verbose\" mode...) \
+		$(call log-start,Running tests in \"verbose\" mode...) \
 		$(call function-test,:verbose); \
 	elif [[ "$$mode" == 4 || "$$mode" == "coverage" ]]; then \
 		$(newline); \
-		$(call txt-start,Running tests and generate code coverage reports...) \
+		$(call log-start,Running tests and generate code coverage reports...) \
 		$(call function-test,:coverage); \
 		$(newline); \
 		$(call txt-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
@@ -393,17 +393,17 @@ lint: ## Run code linting *
 	@read -p "Enter test mode: " mode; \
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "script" ]]; then \
 		$(newline); \
-		$(call txt-start,Running JavaScript linting...) \
+		$(call log-start,Running JavaScript linting...) \
 		$(call function-lint,:script); \
 		$(txt-done) \
 	elif [[ "$$mode" == 2 || "$$mode" == "fix" ]]; then \
 		$(newline); \
-		$(call txt-start,Running JavaScript linting and trying to fix problems...) \
+		$(call log-start,Running JavaScript linting and trying to fix problems...) \
 		$(call function-lint,:script:fix); \
 		$(txt-done) \
 	elif [[ "$$mode" == 3 || "$$mode" == "stylesheet" ]]; then \
 		$(newline); \
-		$(call txt-start,Running Stylesheet linting...) \
+		$(call log-start,Running Stylesheet linting...) \
 		$(call function-lint,:stylesheet); \
 		$(txt-done) \
 	elif [ "$$mode" == 0 ]; then \
@@ -425,21 +425,21 @@ typecheck: ## Run static type checking *
 	@read -p "Enter the option: " option; \
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "script" ]]; then \
 		$(newline); \
-		$(call txt-start,Running static type checking...) \
+		$(call log-start,Running static type checking...) \
 		$(call function-typecheck); \
 		$(txt-done) \
 	elif [[ "$$option" == 2 || "$$option" == "check" ]]; then \
 		$(newline); \
-		$(call txt-start,Running a full check and printing the results...) \
+		$(call log-start,Running a full check and printing the results...) \
 		$(call function-typecheck,:check); \
 		$(txt-done) \
 	elif [[ "$$option" == 3 || "$$option" == "focus" ]]; then \
 		$(newline); \
-		$(call txt-start,Running a focus check...) \
+		$(call log-start,Running a focus check...) \
 		$(call function-typecheck,:check:focus); \
 		$(txt-done) \
 	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
-		$(call txt-start,Updating the library definitions...) \
+		$(call log-start,Updating the library definitions...) \
 		$(call function-typecheck,:libdef); \
 		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call txt-bold,./${DIR_TYPED}) directory.) \
 		$(txt-done) \
@@ -455,7 +455,7 @@ typecheck: ## Run static type checking *
 install: ## Install a package and any packages that it depends on **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
-		$(call txt-start,Installing npm package...) \
+		$(call log-start,Installing npm package...) \
 		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
 		$(call txt-step,[Step 2/5] Create and start a container for installing dependencies) \
 		$(call txt-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
@@ -471,7 +471,7 @@ install: ## Install a package and any packages that it depends on **
 uninstall: ## Uninstall a package **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
-		$(call txt-start,Uninstalling npm package...) \
+		$(call log-start,Uninstalling npm package...) \
 		$(call txt-step,[Step 1/5] Build the development image (if needed)) \
 		$(call txt-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
 		$(call txt-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
@@ -492,7 +492,7 @@ update: ## Install and update all the dependencies listed within package.json
 
 .PHONY: erase
 erase: ## Clean up build artifacts and temporary files
-	@$(call txt-start,This command will perform the following actions:)
+	@$(call log-start,This command will perform the following actions:)
 	@echo "- Remove all build artifacts"
 	@echo "- Remove all temporary files"
 	@$(newline)
@@ -502,13 +502,13 @@ erase: ## Clean up build artifacts and temporary files
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call txt-start,Removing data...) \
+			$(call log-start,Removing data...) \
 			$(call txt-step,[Step 1/2] Remove build artifacts) \
 			$(function-artifacts) \
 			$(call txt-step,[Step 2/2] Remove temporary files) \
 			$(function-temporary) \
 			$(newline); \
-			$(call txt-start,Listing the results...) \
+			$(call log-start,Listing the results...) \
 			$(sum-artifacts) \
 			$(newline); \
 			$(sum-temporary) \
@@ -525,7 +525,7 @@ erase: ## Clean up build artifacts and temporary files
 
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
-	@$(call txt-start,This command will perform the following actions:)
+	@$(call log-start,This command will perform the following actions:)
 	@echo "- Remove containers"
 	@echo "- Remove the default network"
 	@$(newline)
@@ -533,12 +533,12 @@ refresh: ## Refresh (soft clean) the development environment
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call txt-start,Refreshing the development environment...) \
+			$(call log-start,Refreshing the development environment...) \
 			$(call txt-step,[Step 1/2] Stop and remove containers) \
 			$(call txt-step,[Step 2/2] Remove the default network) \
 			docker-compose down; \
 			$(newline); \
-			$(call txt-start,Listing the results...) \
+			$(call log-start,Listing the results...) \
 			$(sum-docker) \
 			$(newline); \
 			$(txt-done) \
@@ -553,7 +553,7 @@ refresh: ## Refresh (soft clean) the development environment
 
 .PHONY: clean
 clean: ## Clean up the development environment (including persistent data)
-	@$(call txt-start,This command will perform the following actions:)
+	@$(call log-start,This command will perform the following actions:)
 	@echo "- Remove containers"
 	@echo "- Remove the default network"
 	@echo "- Remove volumes attached to containers"
@@ -564,13 +564,13 @@ clean: ## Clean up the development environment (including persistent data)
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call txt-start,Cleaning up the development environment...) \
+			$(call log-start,Cleaning up the development environment...) \
 			$(call txt-step,[Step 1/3] Stop and remove containers) \
 			$(call txt-step,[Step 2/3] Remove the default network) \
 			$(call txt-step,[Step 3/3] Remove volumes attached to containers) \
 			docker-compose down -v; \
 			$(newline); \
-			$(call txt-start,Listing the results...) \
+			$(call log-start,Listing the results...) \
 			$(sum-docker) \
 			$(newline); \
 			$(txt-done) \
@@ -585,7 +585,7 @@ clean: ## Clean up the development environment (including persistent data)
 
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
-	@$(call txt-start,This command will perform the following actions:)
+	@$(call log-start,This command will perform the following actions:)
 	@echo "- Remove containers, default network, and volumes attached to containers"
 	@echo "- Remove the development image"
 	@echo "- Remove the production image"
@@ -602,7 +602,7 @@ reset: ## Reset the development environment and clean up unused data
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call txt-start,Resetting the development environment...) \
+			$(call log-start,Resetting the development environment...) \
 			$(call txt-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes) \
 			docker-compose down -v; \
 			$(call txt-step,[Step 2/9] Remove the development images) \
@@ -622,7 +622,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call txt-step,[Step 9/9] Remove temporary files) \
 			$(function-temporary) \
 			$(newline); \
-			$(call txt-start,Listing the results...) \
+			$(call log-start,Listing the results...) \
 			$(sum-docker) \
 			$(newline); \
 			$(sum-artifacts) \
@@ -643,7 +643,7 @@ reset: ## Reset the development environment and clean up unused data
 
 .PHONY: version
 version: ## Set the next release version **
-	@$(call txt-start,Setting the next release version...)
+	@$(call log-start,Setting the next release version...)
 	@printf "The current version is $(call txt-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@$(newline)
 	@printf "$(txt-warning): You $(call txt-bold,must) reset the development environment built with the configuration from v${RELEASE_VERSION} before tagging a new release version, otherwise you will not be able to remove the outdate environment once you have tagged a new version. To do that, cancel this command by hitting $(call txt-bold,enter/return) key and run $(call txt-bold,reset) command\n"
@@ -661,7 +661,7 @@ version: ## Set the next release version **
 
 .PHONY: release
 release: ## Release new features
-	@$(call txt-start,Release new features)
+	@$(call log-start,Release new features)
 	@$(function-release)
 	@$(txt-done)
 
@@ -669,7 +669,7 @@ release: ## Release new features
 
 .PHONY: ci-update
 ci-update: ## Install additional dependencies required for running on the CI environment
-	@$(call txt-start,Installing additional dependencies...)
+	@$(call log-start,Installing additional dependencies...)
 	@$(call txt-step,[Step 1/1] Update Docker Compose to version ${DOCKER_COMPOSE_VERSION})
 	@sudo rm ${BINARY_PATH}/docker-compose
 	@curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
@@ -679,7 +679,7 @@ ci-update: ## Install additional dependencies required for running on the CI env
 
 .PHONY: ci-setup
 ci-setup: ## Setup the CI environment and install required dependencies
-	@$(call txt-start,Setting up the CI environment...)
+	@$(call log-start,Setting up the CI environment...)
 	@$(call txt-step,[Step 1/2] Install dependencies required for running on the CI environment)
 	@docker pull ${IMAGE_BASE_NGINX}
 	@docker pull ${IMAGE_BASE_NODE}
@@ -689,7 +689,7 @@ ci-setup: ## Setup the CI environment and install required dependencies
 
 .PHONY: ci-test
 ci-test: ## Run tests and generate code coverage reports
-	@$(call txt-start,Running tests...)
+	@$(call log-start,Running tests...)
 	@$(call txt-step,[Step 1/3] Build an image based on the development environment)
 	@$(call txt-step,[Step 2/3] Create and start a container for running tests)
 	@$(call txt-step,[Step 3/3] Run tests and generate code coverage reports)
@@ -698,7 +698,7 @@ ci-test: ## Run tests and generate code coverage reports
 
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage reports (LCOV format)
-	@$(call txt-start,Creating code coverage reports...)
+	@$(call log-start,Creating code coverage reports...)
 	@$(call txt-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
 	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 	@$(call txt-step,[Step 2/2] Fix source paths in the LCOV file)
@@ -707,12 +707,12 @@ ci-coverage: ## Create code coverage reports (LCOV format)
 
 .PHONY: ci-deploy
 ci-deploy: ## Create deployment configuration and build a production image
-	@$(call txt-start,Configuring a deployment configuration...)
+	@$(call log-start,Configuring a deployment configuration...)
 	@$(function-release)
-	@$(call txt-start,Building a deployment configuration...)
+	@$(call log-start,Building a deployment configuration...)
 	@$(call txt-step,[Step 1/1] Build ${BUILD_ZIP} for uploading to AWS S3 service)
 	@zip ${BUILD_ZIP} ${CONFIG_AWS}
-	@$(call txt-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
+	@$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	@$(call txt-step,[Step 1/3] Build the image)
 	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
 	@$(call txt-step,[Step 2/3] Login to Docker Hub)
@@ -723,7 +723,7 @@ ci-deploy: ## Create deployment configuration and build a production image
 
 .PHONY: ci-coveralls
 ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
-	@$(call txt-start,Sending LCOV data to coveralls.io...)
+	@$(call log-start,Sending LCOV data to coveralls.io...)
 	@$(call txt-step,[Step 1/2] Collect LCOV data from /coverage/lcov.info)
 	@$(call txt-step,[Step 2/2] Send the data to coveralls.io)
 	@cat ${LCOV_DATA} | coveralls
@@ -731,7 +731,7 @@ ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
 
 .PHONY: ci-clean
 ci-clean: ## Remove unused data from the CI server
-	@$(call txt-start,Removing unused data...)
+	@$(call log-start,Removing unused data...)
 	@docker system prune --all --volumes --force
 	@$(txt-done)
 
@@ -806,7 +806,7 @@ info: ## Display system-wide information
 
 .PHONY: status
 status: ## Show system status
-	@$(call txt-start,Listing system status...)
+	@$(call log-start,Listing system status...)
 	@$(sum-docker)
 	@$(newline)
 	@$(call txt-sum,The working tree status)
