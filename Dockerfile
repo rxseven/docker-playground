@@ -22,8 +22,8 @@ ENV PATH ${MODULES}:${PATH}
 # Specify the working directory
 WORKDIR ${WORKDIR}
 
-# Install Git
-RUN apk --no-cache add git
+# Install Bash and Git
+RUN apk --no-cache add bash git
 
 # Install GNU C library as a Alpine Linux package
 RUN wget -q -O /etc/apk/keys/sgerrand.rsa.pub \
