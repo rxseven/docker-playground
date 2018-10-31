@@ -308,6 +308,12 @@ preview: ## Run the production build locally
 
 ##@ Utilities:
 
+.PHONY: code
+code: ## Open the project in the default code editor
+	@$(call log-start,Opening the project in ${EDITOR_DEFAULT}...)
+	@code .
+	@$(txt-done)
+
 .PHONY: open
 open: ## Open the app in the default browser *
 	@echo "Available options:"
