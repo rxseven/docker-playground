@@ -72,8 +72,8 @@ define helper-preview
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
-# Test
-define function-test
+# Test helper
+define helper-test
 	$(call log-step,[Step 1/4] Build the development image (if needed)) \
 	$(call log-step,[Step 2/4] Create and start a container for running tests) \
 	$(call log-step,[Step 3/4] Run tests) \
@@ -362,19 +362,19 @@ test: ## Run tests *
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "watch" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests in \"watch\" mode...) \
-		$(call function-test); \
+		$(call helper-test); \
 	elif [[ "$$mode" == 2 || "$$mode" == "silent" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests in \"silent\" mode...) \
-		$(call function-test,:silent); \
+		$(call helper-test,:silent); \
 	elif [[ "$$mode" == 3 || "$$mode" == "verbose" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests in \"verbose\" mode...) \
-		$(call function-test,:verbose); \
+		$(call helper-test,:verbose); \
 	elif [[ "$$mode" == 4 || "$$mode" == "coverage" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests and generate code coverage reports...) \
-		$(call function-test,:coverage); \
+		$(call helper-test,:coverage); \
 		$(newline); \
 		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
 		ls ${DIR_COVERAGE}; \
