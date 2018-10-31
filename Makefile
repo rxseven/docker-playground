@@ -422,6 +422,48 @@ setup: ## Setup the development environment and install dependencies ***
 	@$(newline)
 	@$(txt-done)
 
+.PHONY: backup
+backup: BACKUP_DATE = $$(date +'%d.%m.%Y')
+backup: BACKUP_TIME = $$(date +'%H.%M.%S')
+backup: BACKUP_NAME = ${APP_NAME}-${BACKUP_DATE}-${BACKUP_TIME}.${EXT_ARCHIVE}
+backup: ## Create a backup copy of the project
+	@$(call log-start,Creating a backup copy...)
+	@$(call log-step,[Step 1/2] Create a backup copy)
+	@zip -r -q ${FILE_BACKUP} . -x \
+	.DS_Store \
+	/*.git/* \
+	"build/*" \
+	"coverage/*" \
+	"node_modules/*" \
+	"tmp/*";
+	@$(call log-step,[Step 2/2] Upload the archive to the cloud storage)
+	@mv ${FILE_BACKUP} ${DIR_BACKUP}/${BACKUP_NAME}
+	@$(newline)
+	@echo "- Date     : ${BACKUP_DATE}"
+	@echo "- Time     : ${BACKUP_TIME}"
+	@echo "- Prefix   : ${APP_NAME}"
+	@echo "- Type     : ${EXT_ARCHIVE}"
+	@echo "- File     : ${BACKUP_NAME}"
+	@echo "- Location : ${DIR_BACKUP}"
+	@$(newline)
+	@$(txt-done)
+	@$(newline)
+	@read -p "Would you like to show archived backup copies? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(newline); \
+			$(call log-sum,Archived backup copies) \
+			ls ${DIR_BACKUP}; \
+			open ${DIR_BACKUP}; \
+		;; \
+		[nN] | [nN][oO]) \
+			$(txt-skipped) \
+		;; \
+		*) \
+			$(txt-confirm); \
+		;; \
+	esac
+
 ##@ Testing & Linting:
 
 .PHONY: test
