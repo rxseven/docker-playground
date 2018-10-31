@@ -3,7 +3,7 @@ version: "3.7"
 services:
   app:
     build:
-      dockerfile: Dockerfile.ci
+      dockerfile: ${DOCKERFILE_CI}
     command: test:coverage
     container_name: ${CONTAINER_NAME_CI}
     environment:

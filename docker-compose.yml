@@ -26,6 +26,6 @@ services:
         PORT_EXPOSE: ${PORT_EXPOSE_APP}
         WORKDIR: ${CONTAINER_WORKDIR}
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ${DOCKERFILE_BASE}
     container_name: ${IMAGE_REPO}
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"
