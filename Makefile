@@ -23,7 +23,7 @@ ANSI_COLOR_WHITE=37
 # Default goal
 .DEFAULT_GOAL := help
 
-# Loggers
+# Log helpers
 log-bold = \e[1m$(1)\e[0m
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
@@ -35,7 +35,7 @@ log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
 log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-underline = \e[4m$(1)\e[0m
 
-# Text and string
+# Text and string helpers
 newline = echo ""
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-done = $(call log-success,Done)
@@ -46,21 +46,19 @@ txt-options = printf "* default option, press $(call log-bold,enter) key to cont
 txt-skipped = echo "Skipped"
 txt-warning = $(call log-underline,Warning)
 
-# Set configuration values
+# Configuration helpers
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
-
-# Set host names
 set-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
-# View app in the browser
+# Browser helper
 define helper-browser
 	$(call log-info,Opening $(1) in the default browser...) \
 	$(txt-done) \
 	open -a ${BROWSER_DEFAULT} $(1)
 endef
 
-# Preview the production build
+# Preview helper
 define helper-preview
 	$(call log-start,Running the production build...) \
 	$(call log-step,[Step 1/5] Download base images (if needed)) \
