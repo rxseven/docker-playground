@@ -319,12 +319,15 @@ open: ## Open the app in the default browser *
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "dev" ]]; then \
+		$(newline); \
 		$(call helper-browser,${APP_URL_LOCAL}); \
 	elif [[ "$$option" == 2 || "$$option" == "build" ]]; then \
+		$(newline); \
 		$(call helper-browser,${APP_URL_BUILD}); \
 	elif [[ "$$option" == 3 || "$$option" == "staging" ]]; then \
 		echo "Sorry, the staging URL is not available."; \
 	elif [[ "$$option" == 4 || "$$option" == "live" ]]; then \
+		$(newline); \
 		$(call helper-browser,${APP_URL_LIVE}); \
 	elif [ "$$option" == 0 ]; then \
 		$(txt-skipped); \
