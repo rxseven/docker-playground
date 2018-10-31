@@ -259,16 +259,22 @@ build: ## Create an optimized production build
 	@$(txt-done)
 
 .PHONY: preview
-preview: ## Preview the production build locally
+preview: ## Run the production build locally
 	@echo "Available options:"
-	@echo "- Build image & preview  : press enter"
-	@echo "- Rebuild image          : rebuild"
+	@printf "1. $(call log-bold,run) *  : Run the production build\n"
+	@printf "2. $(call log-bold,build)  : Build image before running the app\n"
+	@$(newline)
+	@$(txt-options)
 	@$(newline)
 	@read -p "Enter the option: " option; \
-	if [ "$$option" == "rebuild" ]; then \
-		$(call helper-preview,--build); \
-	else \
+	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "run" ]]; then \
 		$(call helper-preview); \
+	elif [[ "$$option" == 2 || "$$option" == "build" ]]; then \
+		$(call helper-preview,--build); \
+	elif [ "$$option" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
 	fi;
 
 ##@ Utilities:
