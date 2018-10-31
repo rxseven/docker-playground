@@ -126,6 +126,15 @@ define helper-update
 	docker-compose run --rm ${SERVICE_APP} install
 endef
 
+# Rebuding images helper
+define helper-up
+	$(call log-step,[Step 1/3] Stop running containers (if ones exist)) \
+	docker-compose stop; \
+	$(call log-step,[Step 2/3] Download base images (if needed)) \
+	$(call log-step,[Step 3/3] Rebuild the image(s)) \
+	docker-compose build $(1)
+endef
+
 # Starting the development environment helper
 define helper-start
 	$(call log-start,Starting the development environment...)
@@ -228,29 +237,36 @@ run: ## Update dependencies and start the development environment
 	@$(helper-start)
 
 .PHONY: up
-up: ## Rebuild images for the development environment
+up: ## Rebuild images for the development environment services
 	@$(call log-start,This command will perform the following actions:)
-	@echo "- Stop running containers without removing them"
-	@echo "- Rebuild images for the development environment"
+	@echo "- Stop running containers (if ones exist)"
+	@echo "- Rebuild images for the development environment services"
 	@$(newline)
-	@read -p "Stop working on the app and rebuild the images? " confirmation; \
-	case "$$confirmation" in \
-		[yY] | [yY][eE][sS]) \
-			$(call log-start,Rebuilding images for the the development environment...) \
-			$(call log-step,[Step 1/3] Stop running containers) \
-			docker-compose stop; \
-			$(call log-step,[Step 2/3] Download base images (if needed)) \
-			$(call log-step,[Step 3/3] Rebuild the images) \
-			docker-compose build; \
-			$(txt-done) \
-		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
-		;; \
-	esac
+	@echo "Available options:"
+	@printf "1. $(call log-bold,all) *  : Rebuild images for all services\n"
+	@printf "2. $(call log-bold,app)    : Rebuild image for app service\n"
+	@printf "3. $(call log-bold,proxy)  : Rebuild image for proxy service\n"
+	@$(newline)
+	@$(txt-options)
+	@$(newline)
+	@read -p "Enter the option: " option; \
+	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "all" ]]; then \
+		$(newline); \
+		$(call log-start,Rebuilding images for all services...) \
+		$(call helper-up); \
+		$(txt-done) \
+	elif [[ "$$option" == 2 || "$$option" == "app" ]]; then \
+		$(newline); \
+		$(call log-start,Rebuilding image for ${SERVICE_APP} service...) \
+		$(call helper-up,${SERVICE_APP}); \
+		$(txt-done) \
+	elif [[ "$$option" == 3 || "$$option" == "proxy" ]]; then \
+		printf "Skipped, $(call log-bold,${SERVICE_PROXY}) service uses an image.\n"; \
+	elif [ "$$option" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
+	fi;
 
 .PHONY: build
 build: ## Create an optimized production build
