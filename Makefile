@@ -641,13 +641,15 @@ reset: ## Reset the development environment and clean up unused data
 
 .PHONY: version
 version: ## Set the next release version **
-	@$(call log-start,Setting the next release version...)
+	@$(call log-start,Set the next release version)
 	@printf "The current version is $(call log-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"
 	@$(newline)
-	@printf "$(txt-warning): You $(call log-bold,must) reset the development environment built with the configuration from v${RELEASE_VERSION} before tagging a new release version, otherwise you will not be able to remove the outdate environment once you have tagged a new version. To do that, cancel this command by hitting $(call log-bold,enter/return) key and run $(call log-bold,reset) command\n"
+	@printf "$(txt-warning): You $(call log-bold,must) reset the development environment built with the configuration from v${RELEASE_VERSION} before tagging a new release version, otherwise you will not be able to remove the outdated environment once you have tagged a new version. To do that, cancel this command by hitting $(call log-bold,enter/return) key and run $(call log-bold,reset) command.\n"
 	@$(newline)
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
+		$(newline); \
+		$(call log-start,Processing...) \
 		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
 		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
