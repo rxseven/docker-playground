@@ -146,7 +146,7 @@ define helper-build
 	fi;
 endef
 
-# Removing build artifacts helper
+# Removing artifacts helper
 define helper-artifacts
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
