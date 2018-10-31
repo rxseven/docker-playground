@@ -499,7 +499,7 @@ erase: ## Clean up build artifacts and temporary files
 	@echo "- Remove all build artifacts"
 	@echo "- Remove all temporary files"
 	@$(newline)
-	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call log-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Remove build artifacts and temporary files? " confirmation; \
 	case "$$confirmation" in \
@@ -513,9 +513,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(newline); \
 			$(call log-start,Listing the results...) \
 			$(sum-artifacts) \
-			$(newline); \
 			$(sum-temporary) \
-			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
