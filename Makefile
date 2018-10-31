@@ -61,7 +61,7 @@ define helper-browser
 endef
 
 # Preview the production build
-define function-preview
+define helper-preview
 	$(call log-start,Running the production build...) \
 	$(call log-step,[Step 1/5] Download base images (if needed)) \
 	$(call log-step,[Step 2/5] Create an optimized production build) \
@@ -268,9 +268,9 @@ preview: ## Preview the production build locally
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [ "$$option" == "rebuild" ]; then \
-		$(call function-preview,--build); \
+		$(call helper-preview,--build); \
 	else \
-		$(call function-preview); \
+		$(call helper-preview); \
 	fi;
 
 ##@ Utilities:
