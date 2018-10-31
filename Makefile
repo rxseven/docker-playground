@@ -731,9 +731,9 @@ ci-deploy: ## Create deployment configuration and build a production image
 	@$(txt-done)
 
 .PHONY: ci-coveralls
-ci-coveralls: ## Send LCOV data (code coverage reports) to coveralls.io
+ci-coveralls: ## Send LCOV data (code coverage) to coveralls.io
 	@$(call log-start,Sending LCOV data to coveralls.io...)
-	@$(call log-step,[Step 1/2] Collect LCOV data from /coverage/lcov.info)
+	@$(call log-step,[Step 1/2] Collect LCOV data from /${DIR_COVERAGE}/${FILE_LCOV})
 	@$(call log-step,[Step 2/2] Send the data to coveralls.io)
 	@cat ${LCOV_DATA} | coveralls
 	@$(txt-done)
