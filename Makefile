@@ -527,21 +527,20 @@ erase: ## Clean up build artifacts and temporary files
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
 	@$(call log-start,This command will perform the following actions:)
-	@echo "- Remove containers"
-	@echo "- Remove the default network"
+	@echo "- Stop running containers"
+	@echo "- Remove containers and the default network"
 	@$(newline)
 	@read -p "Refresh the development environment? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Refreshing the development environment...) \
-			$(call log-step,[Step 1/2] Stop and remove containers) \
-			$(call log-step,[Step 2/2] Remove the default network) \
+			$(call log-step,[Step 1/2] Stop running containers) \
+			$(call log-step,[Step 2/2] Remove containers and the default network) \
 			docker-compose down; \
 			$(newline); \
 			$(call log-start,Listing the results...) \
 			$(sum-docker) \
-			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
