@@ -585,6 +585,7 @@ clean: ## Clean up the development environment (including persistent data)
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
 	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop running containers"
 	@echo "- Remove containers, default network, and volumes attached to containers"
 	@echo "- Remove the development image"
 	@echo "- Remove the production image"
@@ -595,7 +596,7 @@ reset: ## Reset the development environment and clean up unused data
 	@echo "- Remove build artifacts"
 	@echo "- Remove temporary files"
 	@$(newline)
-	@printf "$(txt-note): You are about to permanently remove files and folders. You will not be able to recover these folders or their contents. $(call log-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Reset the development environment and clean up unused data? " confirmation; \
 	case "$$confirmation" in \
@@ -625,9 +626,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(sum-docker) \
 			$(newline); \
 			$(sum-artifacts) \
-			$(newline); \
 			$(sum-temporary) \
-			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
