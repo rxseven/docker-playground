@@ -660,9 +660,13 @@ version: ## Set the next release version **
 	fi;
 
 .PHONY: release
-release: ## Release new features
-	@$(call log-start,Release new features)
+release: ## Release new update
+	@$(call log-start,Preparing for a new release...)
 	@$(helper-release)
+	@$(newline)
+	@$(call log-start,Listing the results...)
+	@git diff ${CONFIG_AWS}
+	@git diff ${CONFIG_NPM}
 	@$(txt-done)
 
 ##@ Continuous Integration:
