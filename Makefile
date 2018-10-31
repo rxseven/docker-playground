@@ -138,6 +138,15 @@ define helper-start
 endef
 
 # Removing build artifacts helper
+define helper-build
+	if [ -d "${DIR_BUILD}" ]; then \
+		rm -rf -v ${DIR_BUILD}; \
+	else \
+		echo "Skipped, no build artifacts found."; \
+	fi;
+endef
+
+# Removing build artifacts helper
 define helper-artifacts
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
@@ -247,15 +256,18 @@ up: ## Rebuild images for the development environment
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
 	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
-	-@rm -rf -v ${DIR_BUILD}
+	@$(helper-build)
 	@$(call log-step,[Step 2/6] Download base images (if needed))
 	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
-	@$(call log-info,The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory)
+	@$(call log-start,Listing the results...)
 	@ls ${DIR_BUILD}
+	@$(newline)
+	@$(call log-info,The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory)
+	@open ./${DIR_BUILD}
 	@$(txt-done)
 
 .PHONY: preview
