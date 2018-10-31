@@ -669,6 +669,9 @@ release: ## Release new update
 	@$(call log-start,Listing the results...)
 	@git diff ${CONFIG_AWS}
 	@git diff ${CONFIG_NPM}
+	@$(newline)
+	@printf "$(txt-note): please commit the changes and merge into $(call log-bold,master) branch.\n"
+	@$(newline)
 	@$(txt-done)
 
 ##@ Continuous Integration:
