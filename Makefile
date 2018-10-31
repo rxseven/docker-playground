@@ -139,8 +139,8 @@ define helper-start
 	docker-compose up
 endef
 
-# Remove build artifacts
-define function-artifacts
+# Removing build artifacts helper
+define helper-artifacts
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 	else \
@@ -509,7 +509,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(newline); \
 			$(call log-start,Removing data...) \
 			$(call log-step,[Step 1/2] Remove build artifacts) \
-			$(function-artifacts) \
+			$(helper-artifacts) \
 			$(call log-step,[Step 2/2] Remove temporary files) \
 			$(function-temporary) \
 			$(newline); \
@@ -623,7 +623,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)) \
 			docker volume prune; \
 			$(call log-step,[Step 8/9] Remove build artifacts) \
-			$(function-artifacts) \
+			$(helper-artifacts) \
 			$(call log-step,[Step 9/9] Remove temporary files) \
 			$(function-temporary) \
 			$(newline); \
