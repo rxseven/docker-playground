@@ -96,3 +96,82 @@ version: ## Set the next release version
 			echo "Skipped, please enter y/yes or n/no"; \
 		;; \
 	esac
+
+--------------------------------------------------------------------------------
+
+# docker-compose.override.yml
+
+  githooks:
+    build:
+      args:
+        BUSYBOX_VERSION: ${IMAGE_BASE_BUSYBOX}
+      context: .
+      dockerfile: Dockerfile.githooks
+      target: githooks
+    container_name: "${IMAGE_REPO}-githooks"
+    image: "${ENV_LOCAL}/${IMAGE_REPO}:githooks"
+    volumes:
+      - type: bind
+        source: ./.git/hooks
+        target: /tmp/.git/hooks
+      - type: bind
+        source: ./hooks
+        target: /tmp/hooks
+
+--------------------------------------------------------------------------------
+
+# Makefile
+
+docker image rm ${ENV_LOCAL}/${IMAGE_REPO}:githooks; \
+
+--------------------------------------------------------------------------------
+
+# package.json
+
+"precommit": "lint-staged",
+
+"lint-staged": {
+	"linters": {
+		"src/**/*.{js,jsx}": [
+			"node scripts/test.js --config jest.config.json --coverage --no-cache --silent",
+			"git add"
+		]
+	}
+},
+
+--------------------------------------------------------------------------------
+
+# hooks/pre-commit
+
+#!/bin/sh
+
+# Husky 0.14.3
+# Custom configuration v3
+
+has_hook_script () {
+  [ -f package.json ] && cat package.json | grep -q "\"$1\"[[:space:]]*:"
+}
+
+cd "."
+
+# Check if precommit script is defined, skip if not
+has_hook_script precommit || exit 0
+
+# Add common path where Node can be found
+# Brew standard installation path /usr/local/bin
+# Node standard installation path /usr/local
+export PATH="$PATH:/usr/local/bin:/usr/local"
+
+# Export Git hook params
+export GIT_PARAMS="$*"
+
+# Run pre-commit script within a container
+echo "Husky : docker container run --rm local/playground:git precommit"
+echo
+
+docker container run --rm local/playground:git precommit || {
+  echo
+  echo "Husky : pre-commit hook failed (add --no-verify to bypass)"
+  exit 1
+}
+

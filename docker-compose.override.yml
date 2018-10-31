@@ -4,6 +4,10 @@ services:
   proxy:
     container_name: "${IMAGE_REPO}-${SUFFIX_LOCAL}-${SUFFIX_PROXY}"
   app:
+    build:
+      args:
+        PACKAGE_GLIBC_VERSION: ${PACKAGE_GLIBC_VERSION}
+        PACKAGE_YARN_VERSION: ${PACKAGE_YARN_VERSION}
     container_name: "${IMAGE_REPO}-${SUFFIX_LOCAL}"
     environment:
       NODE_ENV: development

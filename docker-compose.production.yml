@@ -19,7 +19,7 @@ services:
         PROXY_CONFIG: ${PROXY_CONFIG}
         PROXY_CONTAINER: ${PROXY_CONTAINER}
         PROXY_HOST: ${PROXY_HOST}
-      dockerfile: Dockerfile.production
+      dockerfile: ${DOCKERFILE_PROD}
     environment:
       NODE_ENV: production
       VIRTUAL_HOST: ${APP_DOMAIN}

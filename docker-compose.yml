@@ -19,11 +19,13 @@ services:
     build:
       args:
         BASE_NODE: ${IMAGE_BASE_NODE}
+        BINARY: ${CONTAINER_BIN}
         DEPENDENCY_LIST: ${CONFIG_NPM}
         DEPENDENCY_LOCK: ${CONFIG_PACKAGE}
+        MODULES: ${CONTAINER_MODULES}
         PORT_EXPOSE: ${PORT_EXPOSE_APP}
         WORKDIR: ${CONTAINER_WORKDIR}
       context: .
-      dockerfile: Dockerfile
+      dockerfile: ${DOCKERFILE_BASE}
     container_name: ${IMAGE_REPO}
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"

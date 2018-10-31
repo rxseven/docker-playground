@@ -1,0 +1,12 @@
+# Specify global variables
+ARG BUSYBOX_VERSION
+
+# Initialize build stage and set the base image for Git hooks
+FROM busybox:${BUSYBOX_VERSION} as githooks
+
+# Setup Git hooks
+ENTRYPOINT sh -c "cd /tmp/hooks \
+  && ls | xargs chmod +x \
+  && cd /tmp/.git/hooks \
+  && find ../../hooks -type f -exec ln -sf {} /tmp/.git/hooks/ \; \
+  && echo 'Git hooks installed'"
