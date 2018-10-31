@@ -117,8 +117,8 @@ define helper-release
 	rm *.${EXT_BACKUP}
 endef
 
-# Install and update dependencies
-define function-update
+# Installing and updating helper
+define helper-update
 	$(call log-start,Updating dependencies...)
 	$(call log-step,[Step 1/5] Build the development image (if needed))
 	$(call log-step,[Step 2/5] Create and start a container for updating dependencies)
@@ -217,7 +217,7 @@ stop: ## Stop running containers without removing them
 
 .PHONY: run
 run: ## Update dependencies and start the development environment
-	@$(function-update)
+	@$(helper-update)
 	@$(function-start)
 
 .PHONY: up
@@ -490,7 +490,7 @@ uninstall: ## Uninstall a package **
 
 .PHONY: update
 update: ## Install and update all the dependencies listed within package.json
-	@$(function-update)
+	@$(helper-update)
 	@$(txt-done)
 
 ##@ Cleanup:
