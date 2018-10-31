@@ -151,7 +151,7 @@ define helper-artifacts
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 	else \
-		echo "Skipped, no build artifacts found."; \
+		echo "Skipped, no artifacts found."; \
 	fi;
 endef
 
