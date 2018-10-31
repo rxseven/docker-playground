@@ -96,8 +96,8 @@ define helper-lint
 	docker-compose run --rm ${SERVICE_APP} lint$(1)
 endef
 
-# Static type checking
-define function-typecheck
+# Static type checking helper
+define helper-typecheck
 	$(call log-step,[Step 1/4] Build the development image (if needed)) \
 	$(call log-step,[Step 2/4] Create and start a container for running static type checking) \
 	$(call log-step,[Step 3/4] Run static type checking) \
@@ -431,21 +431,21 @@ typecheck: ## Run static type checking *
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "script" ]]; then \
 		$(newline); \
 		$(call log-start,Running static type checking...) \
-		$(call function-typecheck); \
+		$(call helper-typecheck); \
 		$(txt-done) \
 	elif [[ "$$option" == 2 || "$$option" == "check" ]]; then \
 		$(newline); \
 		$(call log-start,Running a full check and printing the results...) \
-		$(call function-typecheck,:check); \
+		$(call helper-typecheck,:check); \
 		$(txt-done) \
 	elif [[ "$$option" == 3 || "$$option" == "focus" ]]; then \
 		$(newline); \
 		$(call log-start,Running a focus check...) \
-		$(call function-typecheck,:check:focus); \
+		$(call helper-typecheck,:check:focus); \
 		$(txt-done) \
 	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
 		$(call log-start,Updating the library definitions...) \
-		$(call function-typecheck,:libdef); \
+		$(call helper-typecheck,:libdef); \
 		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.) \
 		$(txt-done) \
 	elif [ "$$option" == 0 ]; then \
