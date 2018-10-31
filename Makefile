@@ -492,11 +492,12 @@ typecheck: ## Run static type checking *
 install: ## Install a package and any packages that it depends on **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
+		$(newline); \
 		$(call log-start,Installing npm package...) \
 		$(call log-step,[Step 1/5] Build the development image (if needed)) \
 		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
 		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
-		$(call log-step,[Step 4/5] Update package.json and yarn.lock) \
+		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}) \
 		$(call log-step,[Step 5/5] Remove the container) \
 		docker-compose run --rm ${SERVICE_APP} add $$package; \
 		$(txt-done) \
