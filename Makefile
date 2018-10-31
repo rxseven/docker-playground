@@ -350,6 +350,26 @@ format: ## Format code automatically
 	@$(call log-step,[Step 3/4] Format code)
 	@$(call log-step,[Step 4/4] Remove the container)
 	@docker-compose run --rm ${SERVICE_APP} format
+	@$(newline)
+	@$(call log-start,Listing the results...)
+	@$(call log-sum,Modified files)
+	@git status | grep modified
+	@$(newline)
+	@read -p "Would you like to show changes between commits? " confirmation; \
+	case "$$confirmation" in \
+		[yY] | [yY][eE][sS]) \
+			$(newline); \
+			$(call log-sum,Changes between commits and working tree) \
+			git diff; \
+		;; \
+		[nN] | [nN][oO]) \
+			$(txt-skipped) \
+		;; \
+		*) \
+			$(txt-confirm); \
+		;; \
+	esac
+	@$(newline)
 	@$(txt-done)
 
 .PHONY: analyze
