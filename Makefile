@@ -554,25 +554,24 @@ refresh: ## Refresh (soft clean) the development environment
 .PHONY: clean
 clean: ## Clean up the development environment (including persistent data)
 	@$(call log-start,This command will perform the following actions:)
+	@echo "- Stop running containers"
 	@echo "- Remove containers"
 	@echo "- Remove the default network"
 	@echo "- Remove volumes attached to containers"
 	@$(newline)
-	@printf "$(txt-note): You are about to permanently remove persistent data. $(call log-bold,This operation cannot be undone.)\n"
+	@printf "$(txt-warning): You are about to permanently remove persistent data. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
 	@read -p "Clean up the development environment? " confirmation; \
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Cleaning up the development environment...) \
-			$(call log-step,[Step 1/3] Stop and remove containers) \
-			$(call log-step,[Step 2/3] Remove the default network) \
-			$(call log-step,[Step 3/3] Remove volumes attached to containers) \
+			$(call log-step,[Step 1/2] Stop running containers) \
+			$(call log-step,[Step 2/2] Remove containers$(,) the default network$(,) and volumes) \
 			docker-compose down -v; \
 			$(newline); \
 			$(call log-start,Listing the results...) \
 			$(sum-docker) \
-			$(newline); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
