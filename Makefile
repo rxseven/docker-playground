@@ -830,4 +830,5 @@ help: ## Print usage
 	@$(newline)
 	@printf "*   with options\n"
 	@printf "**  requires user input\n"
-	@printf "*** requires superuser access\n\n"
+	@printf "*** requires superuser access\n"
+	@$(newline)
