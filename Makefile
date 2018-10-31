@@ -54,7 +54,7 @@ set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 function-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # View app in the browser
-define function-browser
+define helper-browser
 	$(call log-info,Opening $(1) in the default browser...) \
 	$(txt-done) \
 	open -a ${BROWSER_DEFAULT} $(1)
@@ -287,13 +287,13 @@ open: ## Open the app in the default browser *
 	@$(newline)
 	@read -p "Enter the option: " option; \
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "dev" ]]; then \
-		$(call function-browser,${APP_URL_LOCAL}); \
+		$(call helper-browser,${APP_URL_LOCAL}); \
 	elif [[ "$$option" == 2 || "$$option" == "build" ]]; then \
-		$(call function-browser,${APP_URL_BUILD}); \
+		$(call helper-browser,${APP_URL_BUILD}); \
 	elif [[ "$$option" == 3 || "$$option" == "staging" ]]; then \
 		echo "Sorry, the staging URL is not available."; \
 	elif [[ "$$option" == 4 || "$$option" == "live" ]]; then \
-		$(call function-browser,${APP_URL_LIVE}); \
+		$(call helper-browser,${APP_URL_LIVE}); \
 	elif [ "$$option" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -332,7 +332,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-step,[Step 4/5] Remove the container)
 	@docker container rm ${CONTAINER_NAME}
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
-	@$(call function-browser,${HOST_TEMP}/${FILE_TREEMAP})
+	@$(call helper-browser,${HOST_TEMP}/${FILE_TREEMAP})
 
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies ***
