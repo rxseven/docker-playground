@@ -650,10 +650,12 @@ version: ## Set the next release version **
 	if [ "$$VERSION" != "" ]; then \
 		$(newline); \
 		$(call log-start,Processing...) \
-		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
 		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
+		git diff ${CONFIG_ENV}; \
+		$(newline); \
+		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
 		$(txt-done) \
 	else \
 		$(txt-skipped); \
