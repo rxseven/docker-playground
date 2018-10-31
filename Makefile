@@ -87,8 +87,8 @@ define helper-test
 	${SERVICE_APP} test$(1)
 endef
 
-# Linting
-define function-lint
+# Linting helper
+define helper-lint
 	$(call log-step,[Step 1/4] Build the development image (if needed)) \
 	$(call log-step,[Step 2/4] Create and start a container for running code linting) \
 	$(call log-step,[Step 3/4] Run linting) \
@@ -399,17 +399,17 @@ lint: ## Run code linting *
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "script" ]]; then \
 		$(newline); \
 		$(call log-start,Running JavaScript linting...) \
-		$(call function-lint,:script); \
+		$(call helper-lint,:script); \
 		$(txt-done) \
 	elif [[ "$$mode" == 2 || "$$mode" == "fix" ]]; then \
 		$(newline); \
 		$(call log-start,Running JavaScript linting and trying to fix problems...) \
-		$(call function-lint,:script:fix); \
+		$(call helper-lint,:script:fix); \
 		$(txt-done) \
 	elif [[ "$$mode" == 3 || "$$mode" == "stylesheet" ]]; then \
 		$(newline); \
 		$(call log-start,Running Stylesheet linting...) \
-		$(call function-lint,:stylesheet); \
+		$(call helper-lint,:stylesheet); \
 		$(txt-done) \
 	elif [ "$$mode" == 0 ]; then \
 		$(txt-skipped); \
