@@ -706,11 +706,11 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(txt-done)
 
 .PHONY: ci-coverage
-ci-coverage: ## Create code coverage reports (LCOV format)
-	@$(call log-start,Creating code coverage reports...)
+ci-coverage: ## Create code coverage data (LCOV format)
+	@$(call log-start,Creating code coverage data...)
 	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
 	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
-	@$(call log-step,[Step 2/2] Fix source paths in the LCOV file)
+	@$(call log-step,[Step 2/2] Fix incorrect source paths in the LCOV file)
 	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
 	@$(txt-done)
 
