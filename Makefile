@@ -50,8 +50,8 @@ txt-warning = $(call log-underline,Warning)
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
-# Host names
-function-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
+# Set host names
+set-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # View app in the browser
 define helper-browser
@@ -342,8 +342,8 @@ setup: ## Setup the development environment and install dependencies ***
 	@docker pull ${IMAGE_BASE_NODE}
 	@docker pull ${IMAGE_BASE_PROXY}
 	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call function-host,${APP_DOMAIN_LOCAL})
-	@$(call function-host,${APP_DOMAIN_BUILD})
+	@$(call set-host,${APP_DOMAIN_LOCAL})
+	@$(call set-host,${APP_DOMAIN_BUILD})
 	@$(txt-done)
 
 ##@ Testing & Linting:
