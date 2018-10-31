@@ -128,8 +128,8 @@ define helper-update
 	docker-compose run --rm ${SERVICE_APP} install
 endef
 
-# Start the development environment
-define function-start
+# Starting the development environment helper
+define helper-start
 	$(call log-start,Starting the development environment...)
 	$(call log-step,[Step 1/4] Download base images (if needed))
 	$(call log-step,[Step 2/4] Build the development image (if needed))
@@ -198,7 +198,7 @@ endef
 
 .PHONY: start
 start: ## Start the development environment and attach to containers for a service
-	@$(function-start)
+	@$(helper-start)
 
 .PHONY: restart
 restart: ## Rebuild and restart the development environment
@@ -218,7 +218,7 @@ stop: ## Stop running containers without removing them
 .PHONY: run
 run: ## Update dependencies and start the development environment
 	@$(helper-update)
-	@$(function-start)
+	@$(helper-start)
 
 .PHONY: up
 up: ## Rebuild images for the development environment
