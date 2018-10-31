@@ -342,6 +342,12 @@ open: ## Open the app in the default browser *
 		$(txt-opps); \
 	fi;
 
+.PHONY: finder
+finder: ## Open the project in Finder
+	@$(call log-start,Opening the project...)
+	@open ${DIR_CWD}
+	@$(txt-done)
+
 .PHONY: shell
 shell: ## Run Bourne shell in the app container
 	@$(call log-start,Running Bourne shell in the app container...)
