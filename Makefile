@@ -311,7 +311,7 @@ preview: ## Run the production build locally
 .PHONY: code
 code: ## Open the project in the default code editor
 	@$(call log-start,Opening the project in ${EDITOR_DEFAULT}...)
-	@code .
+	@code ${DIR_CWD}
 	@$(txt-done)
 
 .PHONY: open
