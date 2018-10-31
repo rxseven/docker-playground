@@ -60,6 +60,7 @@ endef
 
 # Preview helper
 define helper-preview
+	$(newline); \
 	$(call log-start,Running the production build...) \
 	$(call log-step,[Step 1/5] Download base images (if needed)) \
 	$(call log-step,[Step 2/5] Create an optimized production build) \
