@@ -376,6 +376,14 @@ setup: ## Setup the development environment and install dependencies ***
 	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
 	@$(call set-host,${APP_DOMAIN_LOCAL})
 	@$(call set-host,${APP_DOMAIN_BUILD})
+	@$(newline)
+	@$(call log-start,Listing the results...)
+	@$(call log-sum,Images)
+	@docker image ls
+	@$(newline)
+	@$(call log-sum,Local hosts)
+	@cat ${HOST_DNS}
+	@$(newline)
 	@$(txt-done)
 
 ##@ Testing & Linting:
