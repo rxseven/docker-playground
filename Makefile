@@ -67,7 +67,7 @@ define helper-preview
 	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
 	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
 	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
-	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}); \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}.); \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
@@ -143,7 +143,7 @@ define helper-start
 	$(call log-step,[Step 2/4] Build the development image (if needed))
 	$(call log-step,[Step 3/4] Create and start the development and reverse proxy containers)
 	$(call log-step,[Step 4/4] Start the development and reverse proxy servers)
-	$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
+	$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL}.)
 	docker-compose up
 endef
 
@@ -223,7 +223,7 @@ restart: ## Rebuild and restart the development environment
 	@$(call log-step,[Step 1/3] Rebuild the development image)
 	@$(call log-step,[Step 2/3] Create and start the development and reverse proxy containers)
 	@$(call log-step,[Step 3/3] Start the development and reverse proxy servers)
-	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL})
+	@$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL}.)
 	@docker-compose up --build
 
 .PHONY: stop
@@ -283,15 +283,15 @@ build: ## Create an optimized production build
 	@$(call log-start,Listing the results...)
 	@ls ${DIR_BUILD}
 	@$(newline)
-	@$(call log-info,The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory)
+	@$(call log-info,The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory.)
 	@open ./${DIR_BUILD}
 	@$(txt-done)
 
 .PHONY: preview
 preview: ## Run the production build locally
 	@echo "Available options:"
-	@printf "1. $(call log-bold,run) *  : Run the production build.\n"
-	@printf "2. $(call log-bold,build)  : Build image before running the app.\n"
+	@printf "1. $(call log-bold,run) *  : Run the production build\n"
+	@printf "2. $(call log-bold,build)  : Build image before running the app\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -317,10 +317,10 @@ code: ## Open the project in the default code editor
 .PHONY: open
 open: ## Open the app in the default browser *
 	@echo "Available options:"
-	@printf "1. $(call log-bold,dev) *    : Open the app running in the development environment.\n"
-	@printf "2. $(call log-bold,build)    : Open an optimized production build locally.\n"
+	@printf "1. $(call log-bold,dev) *    : Open the app running in the development environment\n"
+	@printf "2. $(call log-bold,build)    : Open an optimized production build locally\n"
 	@printf "3. $(call log-bold,staging)  : Unavailable!\n"
-	@printf "4. $(call log-bold,live)     : Open the live app running in the production server.\n"
+	@printf "4. $(call log-bold,live)     : Open the live app running in the production server\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -469,10 +469,10 @@ backup: ## Create a backup copy of the project
 .PHONY: test
 test: ## Run tests *
 	@echo "Available modes:"
-	@printf "1. $(call log-bold,watch) *  : Watch files for changes and rerun tests related to changed files.\n"
-	@printf "2. $(call log-bold,silent)   : Prevent tests from printing messages through the console.\n"
-	@printf "3. $(call log-bold,verbose)  : Display individual test results with the test suite hierarchy.\n"
-	@printf "4. $(call log-bold,coverage) : Generate code coverage reports (LCOV data).\n"
+	@printf "1. $(call log-bold,watch) *  : Watch files for changes and rerun tests related to changed files\n"
+	@printf "2. $(call log-bold,silent)   : Prevent tests from printing messages through the console\n"
+	@printf "3. $(call log-bold,verbose)  : Display individual test results with the test suite hierarchy\n"
+	@printf "4. $(call log-bold,coverage) : Generate code coverage reports (LCOV data)\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -494,7 +494,7 @@ test: ## Run tests *
 		$(call log-start,Running tests and generate code coverage reports...); \
 		$(call helper-test,:coverage); \
 		$(newline); \
-		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory); \
+		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory.); \
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
 		$(txt-done); \
@@ -507,9 +507,9 @@ test: ## Run tests *
 .PHONY: lint
 lint: ## Run code linting *
 	@echo "Available options:"
-	@printf "1. $(call log-bold,script) *   : Lint JavaScript.\n"
-	@printf "2. $(call log-bold,fix)        : Lint JavaScript and automatically fix problems.\n"
-	@printf "3. $(call log-bold,stylesheet) : Lint Stylesheet (SCSS).\n"
+	@printf "1. $(call log-bold,script) *   : Lint JavaScript\n"
+	@printf "2. $(call log-bold,fix)        : Lint JavaScript and automatically fix problems\n"
+	@printf "3. $(call log-bold,stylesheet) : Lint Stylesheet (SCSS)\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -538,10 +538,10 @@ lint: ## Run code linting *
 .PHONY: typecheck
 typecheck: ## Run static type checking *
 	@echo "Available options:"
-	@printf "1. $(call log-bold,default) *  : Run a default check.\n"
-	@printf "2. $(call log-bold,check)      : Run a full check and print the results.\n"
-	@printf "3. $(call log-bold,focus)      : Run a focus check.\n"
-	@printf "4. $(call log-bold,libdef)     : Update the library definitions (libdef).\n"
+	@printf "1. $(call log-bold,default) *  : Run a default check\n"
+	@printf "2. $(call log-bold,check)      : Run a full check and print the results\n"
+	@printf "3. $(call log-bold,focus)      : Run a focus check\n"
+	@printf "4. $(call log-bold,libdef)     : Update the library definitions (libdef)\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
@@ -588,7 +588,7 @@ install: ## Install a package and any packages that it depends on **
 		docker-compose run --rm ${SERVICE_APP} add $$PACKAGE; \
 		$(txt-done); \
 	else \
-		echo "Skipped, you did not enter the package name, please try again"; \
+		echo "Skipped, you did not enter the package name, please try again."; \
 	fi;
 
 .PHONY: uninstall
@@ -784,7 +784,7 @@ version: ## Set the next release version **
 		git diff ${CONFIG_ENV}; \
 		$(newline); \
 		$(call log-sum,Summary); \
-		$(call log-info,The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)); \
+		$(call log-info,The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today).); \
 		$(txt-done); \
 	else \
 		$(txt-skipped); \
