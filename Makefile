@@ -29,7 +29,7 @@ log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
 log-italic = \e[3m$(1)\e[0m
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1))
-log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1));
+log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1))
 log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
 log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
 log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
@@ -61,22 +61,22 @@ endef
 # Preview helper
 define helper-preview
 	$(newline); \
-	$(call log-start,Running the production build...) \
-	$(call log-step,[Step 1/5] Download base images (if needed)) \
-	$(call log-step,[Step 2/5] Create an optimized production build) \
-	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})) \
-	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers) \
-	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers) \
+	$(call log-start,Running the production build...); \
+	$(call log-step,[Step 1/5] Download base images (if needed)); \
+	$(call log-step,[Step 2/5] Create an optimized production build); \
+	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
+	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
+	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
 	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
 # Test helper
 define helper-test
-	$(call log-step,[Step 1/4] Build the development image (if needed)) \
-	$(call log-step,[Step 2/4] Create and start a container for running tests) \
-	$(call log-step,[Step 3/4] Run tests) \
-	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	$(call log-step,[Step 1/4] Build the development image (if needed)); \
+	$(call log-step,[Step 2/4] Create and start a container for running tests); \
+	$(call log-step,[Step 3/4] Run tests); \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes); \
 	docker-compose \
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
@@ -88,19 +88,19 @@ endef
 
 # Linting helper
 define helper-lint
-	$(call log-step,[Step 1/4] Build the development image (if needed)) \
-	$(call log-step,[Step 2/4] Create and start a container for running code linting) \
-	$(call log-step,[Step 3/4] Run code linting) \
-	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	$(call log-step,[Step 1/4] Build the development image (if needed)); \
+	$(call log-step,[Step 2/4] Create and start a container for running code linting); \
+	$(call log-step,[Step 3/4] Run code linting); \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes); \
 	docker-compose run --rm ${SERVICE_APP} lint$(1)
 endef
 
 # Static type checking helper
 define helper-typecheck
-	$(call log-step,[Step 1/4] Build the development image (if needed)) \
-	$(call log-step,[Step 2/4] Create and start a container for running static type checking) \
-	$(call log-step,[Step 3/4] Run static type checking) \
-	$(call log-step,[Step 4/4] Remove the container when the process finishes) \
+	$(call log-step,[Step 1/4] Build the development image (if needed)); \
+	$(call log-step,[Step 2/4] Create and start a container for running static type checking); \
+	$(call log-step,[Step 3/4] Run static type checking); \
+	$(call log-step,[Step 4/4] Remove the container when the process finishes); \
 	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
@@ -129,10 +129,10 @@ endef
 
 # Rebuding images helper
 define helper-up
-	$(call log-step,[Step 1/3] Stop running containers (if ones exist)) \
+	$(call log-step,[Step 1/3] Stop running containers (if ones exist)); \
 	docker-compose stop; \
-	$(call log-step,[Step 2/3] Download base images (if needed)) \
-	$(call log-step,[Step 3/3] Rebuild the image(s)) \
+	$(call log-step,[Step 2/3] Download base images (if needed)); \
+	$(call log-step,[Step 3/3] Rebuild the image(s)); \
 	docker-compose build $(1)
 endef
 
@@ -253,12 +253,12 @@ up: ## Rebuild images for the development environment services
 	@read -p "Enter the option: " option; \
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "all" ]]; then \
 		$(newline); \
-		$(call log-start,Rebuilding images for all services...) \
+		$(call log-start,Rebuilding images for all services...); \
 		$(call helper-up); \
 		$(txt-done) \
 	elif [[ "$$option" == 2 || "$$option" == "app" ]]; then \
 		$(newline); \
-		$(call log-start,Rebuilding image for ${SERVICE_APP} service...) \
+		$(call log-start,Rebuilding image for ${SERVICE_APP} service...); \
 		$(call helper-up,${SERVICE_APP}); \
 		$(txt-done) \
 	elif [[ "$$option" == 3 || "$$option" == "proxy" ]]; then \
@@ -479,19 +479,19 @@ test: ## Run tests *
 	@read -p "Enter test mode: " mode; \
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "watch" ]]; then \
 		$(newline); \
-		$(call log-start,Running tests in \"watch\" mode...) \
+		$(call log-start,Running tests in \"watch\" mode...); \
 		$(call helper-test); \
 	elif [[ "$$mode" == 2 || "$$mode" == "silent" ]]; then \
 		$(newline); \
-		$(call log-start,Running tests in \"silent\" mode...) \
+		$(call log-start,Running tests in \"silent\" mode...); \
 		$(call helper-test,:silent); \
 	elif [[ "$$mode" == 3 || "$$mode" == "verbose" ]]; then \
 		$(newline); \
-		$(call log-start,Running tests in \"verbose\" mode...) \
+		$(call log-start,Running tests in \"verbose\" mode...); \
 		$(call helper-test,:verbose); \
 	elif [[ "$$mode" == 4 || "$$mode" == "coverage" ]]; then \
 		$(newline); \
-		$(call log-start,Running tests and generate code coverage reports...) \
+		$(call log-start,Running tests and generate code coverage reports...); \
 		$(call helper-test,:coverage); \
 		$(newline); \
 		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
@@ -516,17 +516,17 @@ lint: ## Run code linting *
 	@read -p "Enter test mode: " mode; \
 	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "script" ]]; then \
 		$(newline); \
-		$(call log-start,Running JavaScript linting...) \
+		$(call log-start,Running JavaScript linting...); \
 		$(call helper-lint,:script); \
 		$(txt-done) \
 	elif [[ "$$mode" == 2 || "$$mode" == "fix" ]]; then \
 		$(newline); \
-		$(call log-start,Running JavaScript linting and trying to fix problems...) \
+		$(call log-start,Running JavaScript linting and trying to fix problems...); \
 		$(call helper-lint,:script:fix); \
 		$(txt-done) \
 	elif [[ "$$mode" == 3 || "$$mode" == "stylesheet" ]]; then \
 		$(newline); \
-		$(call log-start,Running Stylesheet linting...) \
+		$(call log-start,Running Stylesheet linting...); \
 		$(call helper-lint,:stylesheet); \
 		$(txt-done) \
 	elif [ "$$mode" == 0 ]; then \
@@ -548,21 +548,21 @@ typecheck: ## Run static type checking *
 	@read -p "Enter the option: " option; \
 	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "script" ]]; then \
 		$(newline); \
-		$(call log-start,Running static type checking...) \
+		$(call log-start,Running static type checking...); \
 		$(call helper-typecheck); \
 		$(txt-done) \
 	elif [[ "$$option" == 2 || "$$option" == "check" ]]; then \
 		$(newline); \
-		$(call log-start,Running a full check and printing the results...) \
+		$(call log-start,Running a full check and printing the results...); \
 		$(call helper-typecheck,:check); \
 		$(txt-done) \
 	elif [[ "$$option" == 3 || "$$option" == "focus" ]]; then \
 		$(newline); \
-		$(call log-start,Running a focus check...) \
+		$(call log-start,Running a focus check...); \
 		$(call helper-typecheck,:check:focus); \
 		$(txt-done) \
 	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
-		$(call log-start,Updating the library definitions...) \
+		$(call log-start,Updating the library definitions...); \
 		$(call helper-typecheck,:libdef); \
 		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.) \
 		$(txt-done) \
@@ -579,12 +579,12 @@ install: ## Install a package and any packages that it depends on **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(newline); \
-		$(call log-start,Installing npm package...) \
-		$(call log-step,[Step 1/5] Build the development image (if needed)) \
-		$(call log-step,[Step 2/5] Create and start a container for installing dependencies) \
-		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)) \
-		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}) \
-		$(call log-step,[Step 5/5] Remove the container) \
+		$(call log-start,Installing npm package...); \
+		$(call log-step,[Step 1/5] Build the development image (if needed)); \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies); \
+		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)); \
+		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
+		$(call log-step,[Step 5/5] Remove the container); \
 		docker-compose run --rm ${SERVICE_APP} add $$package; \
 		$(txt-done) \
 	else \
@@ -596,12 +596,12 @@ uninstall: ## Uninstall a package **
 	@read -p "Enter package name: " package; \
 	if [ "$$package" != "" ]; then \
 		$(newline); \
-		$(call log-start,Uninstalling npm package...) \
-		$(call log-step,[Step 1/5] Build the development image (if needed)) \
-		$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies) \
-		$(call log-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)) \
-		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}) \
-		$(call log-step,[Step 5/5] Remove the container) \
+		$(call log-start,Uninstalling npm package...); \
+		$(call log-step,[Step 1/5] Build the development image (if needed)); \
+		$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies); \
+		$(call log-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)); \
+		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
+		$(call log-step,[Step 5/5] Remove the container); \
 		docker-compose run --rm ${SERVICE_APP} remove $$package; \
 		$(txt-done) \
 	else \
@@ -627,13 +627,13 @@ erase: ## Clean up build artifacts and temporary files
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call log-start,Removing data...) \
-			$(call log-step,[Step 1/2] Remove build artifacts) \
+			$(call log-start,Removing data...); \
+			$(call log-step,[Step 1/2] Remove build artifacts); \
 			$(remove-artifacts) \
-			$(call log-step,[Step 2/2] Remove temporary files) \
+			$(call log-step,[Step 2/2] Remove temporary files); \
 			$(remove-temporary) \
 			$(newline); \
-			$(call log-start,Listing the results...) \
+			$(call log-start,Listing the results...); \
 			$(sum-artifacts) \
 			$(sum-temporary) \
 			$(txt-done) \
@@ -656,12 +656,12 @@ refresh: ## Refresh (soft clean) the development environment
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call log-start,Refreshing the development environment...) \
-			$(call log-step,[Step 1/2] Stop running containers) \
-			$(call log-step,[Step 2/2] Remove containers and the default network) \
+			$(call log-start,Refreshing the development environment...); \
+			$(call log-step,[Step 1/2] Stop running containers); \
+			$(call log-step,[Step 2/2] Remove containers and the default network); \
 			docker-compose down; \
 			$(newline); \
-			$(call log-start,Listing the results...) \
+			$(call log-start,Listing the results...); \
 			$(sum-docker) \
 			$(txt-done) \
 		;; \
@@ -687,12 +687,12 @@ clean: ## Clean up the development environment (including persistent data)
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call log-start,Cleaning up the development environment...) \
-			$(call log-step,[Step 1/2] Stop running containers) \
-			$(call log-step,[Step 2/2] Remove containers$(,) the default network$(,) and volumes) \
+			$(call log-start,Cleaning up the development environment...); \
+			$(call log-step,[Step 1/2] Stop running containers); \
+			$(call log-step,[Step 2/2] Remove containers$(,) the default network$(,) and volumes); \
 			docker-compose down -v; \
 			$(newline); \
-			$(call log-start,Listing the results...) \
+			$(call log-start,Listing the results...); \
 			$(sum-docker) \
 			$(txt-done) \
 		;; \
@@ -724,27 +724,27 @@ reset: ## Reset the development environment and clean up unused data
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call log-start,Resetting the development environment...) \
-			$(call log-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes) \
+			$(call log-start,Resetting the development environment...); \
+			$(call log-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes); \
 			docker-compose down -v; \
-			$(call log-step,[Step 2/9] Remove the development images) \
+			$(call log-step,[Step 2/9] Remove the development images); \
 			docker image rm ${ENV_LOCAL}/${IMAGE_REPO}; \
-			$(call log-step,[Step 3/9] Remove the production image) \
+			$(call log-step,[Step 3/9] Remove the production image); \
 			docker image rm ${IMAGE_NAME}; \
-			$(call log-step,[Step 4/9] Remove the intermediate images) \
+			$(call log-step,[Step 4/9] Remove the intermediate images); \
 			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
-			$(call log-step,[Step 5/9] Remove all stopped containers (optional)) \
+			$(call log-step,[Step 5/9] Remove all stopped containers (optional)); \
 			docker container prune; \
-			$(call log-step,[Step 6/9] Remove unused images (optional)) \
+			$(call log-step,[Step 6/9] Remove unused images (optional)); \
 			docker image prune; \
-			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)) \
+			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)); \
 			docker volume prune; \
-			$(call log-step,[Step 8/9] Remove build artifacts) \
+			$(call log-step,[Step 8/9] Remove build artifacts); \
 			$(remove-artifacts) \
-			$(call log-step,[Step 9/9] Remove temporary files) \
+			$(call log-step,[Step 9/9] Remove temporary files); \
 			$(remove-temporary) \
 			$(newline); \
-			$(call log-start,Listing the results...) \
+			$(call log-start,Listing the results...); \
 			$(sum-docker) \
 			$(newline); \
 			$(sum-artifacts) \
@@ -771,7 +771,7 @@ version: ## Set the next release version **
 	@read -p "Enter a version number: " VERSION; \
 	if [ "$$VERSION" != "" ]; then \
 		$(newline); \
-		$(call log-start,Processing...) \
+		$(call log-start,Processing...); \
 		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
