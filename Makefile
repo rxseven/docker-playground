@@ -447,6 +447,26 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
 	@$(call helper-browser,${HOST_TEMP}/${FILE_TREEMAP})
 
+.PHONY: report
+report: ## Show development statistics and reports
+	@echo "Available options:"
+	@printf "1. $(call log-bold,coverage) * : Open code coverage reports in the browser\n"
+	@printf "2. $(call log-bold,none)       : Unavailable!\n"
+	@$(newline)
+	@$(txt-options)
+	@$(newline)
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "coverage" ]]; then \
+		$(newline); \
+		$(helper-coverage); \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "none" ]]; then \
+		echo "Sorry, this option is not available."; \
+	elif [ "$$OPTION" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
+	fi;
+
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies ***
 	@$(call log-start,Setting up the development environment...)
