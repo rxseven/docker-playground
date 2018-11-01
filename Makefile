@@ -250,20 +250,20 @@ up: ## Rebuild images for the development environment services
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
-	@read -p "Enter the option: " option; \
-	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "all" ]]; then \
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "all" ]]; then \
 		$(newline); \
 		$(call log-start,Rebuilding images for all services...); \
 		$(call helper-up); \
 		$(txt-done); \
-	elif [[ "$$option" == 2 || "$$option" == "app" ]]; then \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "app" ]]; then \
 		$(newline); \
 		$(call log-start,Rebuilding image for ${SERVICE_APP} service...); \
 		$(call helper-up,${SERVICE_APP}); \
 		$(txt-done); \
-	elif [[ "$$option" == 3 || "$$option" == "proxy" ]]; then \
+	elif [[ "$$OPTION" == 3 || "$$OPTION" == "proxy" ]]; then \
 		printf "Skipped, $(call log-bold,${SERVICE_PROXY}) service uses an image.\n"; \
-	elif [ "$$option" == 0 ]; then \
+	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
 		$(txt-opps); \
@@ -295,12 +295,12 @@ preview: ## Run the production build locally
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
-	@read -p "Enter the option: " option; \
-	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "run" ]]; then \
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "run" ]]; then \
 		$(call helper-preview); \
-	elif [[ "$$option" == 2 || "$$option" == "build" ]]; then \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
 		$(call helper-preview,--build); \
-	elif [ "$$option" == 0 ]; then \
+	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
 		$(txt-opps); \
@@ -324,19 +324,19 @@ open: ## Open the app in the default browser *
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
-	@read -p "Enter the option: " option; \
-	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "dev" ]]; then \
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "dev" ]]; then \
 		$(newline); \
 		$(call helper-browser,${APP_URL_LOCAL}); \
-	elif [[ "$$option" == 2 || "$$option" == "build" ]]; then \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
 		$(newline); \
 		$(call helper-browser,${APP_URL_BUILD}); \
-	elif [[ "$$option" == 3 || "$$option" == "staging" ]]; then \
+	elif [[ "$$OPTION" == 3 || "$$OPTION" == "staging" ]]; then \
 		echo "Sorry, the staging URL is not available."; \
-	elif [[ "$$option" == 4 || "$$option" == "live" ]]; then \
+	elif [[ "$$OPTION" == 4 || "$$OPTION" == "live" ]]; then \
 		$(newline); \
 		$(call helper-browser,${APP_URL_LIVE}); \
-	elif [ "$$option" == 0 ]; then \
+	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
 		$(txt-opps); \
@@ -545,28 +545,28 @@ typecheck: ## Run static type checking *
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
-	@read -p "Enter the option: " option; \
-	if [[ "$$option" == "" || "$$option" == 1 || "$$option" == "script" ]]; then \
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "script" ]]; then \
 		$(newline); \
 		$(call log-start,Running static type checking...); \
 		$(call helper-typecheck); \
 		$(txt-done); \
-	elif [[ "$$option" == 2 || "$$option" == "check" ]]; then \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "check" ]]; then \
 		$(newline); \
 		$(call log-start,Running a full check and printing the results...); \
 		$(call helper-typecheck,:check); \
 		$(txt-done); \
-	elif [[ "$$option" == 3 || "$$option" == "focus" ]]; then \
+	elif [[ "$$OPTION" == 3 || "$$OPTION" == "focus" ]]; then \
 		$(newline); \
 		$(call log-start,Running a focus check...); \
 		$(call helper-typecheck,:check:focus); \
 		$(txt-done); \
-	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
+	elif [[ "$$OPTION" == 4 || "$$OPTION" == "libdef" ]]; then \
 		$(call log-start,Updating the library definitions...); \
 		$(call helper-typecheck,:libdef); \
 		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.); \
 		$(txt-done); \
-	elif [ "$$option" == 0 ]; then \
+	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
 		$(txt-opps); \
