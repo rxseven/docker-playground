@@ -562,6 +562,7 @@ typecheck: ## Run static type checking *
 		$(call helper-typecheck,:check:focus); \
 		$(txt-done); \
 	elif [[ "$$OPTION" == 4 || "$$OPTION" == "libdef" ]]; then \
+		$(newline); \
 		$(call log-start,Updating the library definitions...); \
 		$(call helper-typecheck,:libdef); \
 		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.); \
