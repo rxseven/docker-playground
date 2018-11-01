@@ -476,20 +476,20 @@ test: ## Run tests *
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
-	@read -p "Enter test mode: " mode; \
-	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "watch" ]]; then \
+	@read -p "Enter test mode: " MODE; \
+	if [[ "$$MODE" == "" || "$$MODE" == 1 || "$$MODE" == "watch" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests in \"watch\" mode...); \
 		$(call helper-test); \
-	elif [[ "$$mode" == 2 || "$$mode" == "silent" ]]; then \
+	elif [[ "$$MODE" == 2 || "$$MODE" == "silent" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests in \"silent\" mode...); \
 		$(call helper-test,:silent); \
-	elif [[ "$$mode" == 3 || "$$mode" == "verbose" ]]; then \
+	elif [[ "$$MODE" == 3 || "$$MODE" == "verbose" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests in \"verbose\" mode...); \
 		$(call helper-test,:verbose); \
-	elif [[ "$$mode" == 4 || "$$mode" == "coverage" ]]; then \
+	elif [[ "$$MODE" == 4 || "$$MODE" == "coverage" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests and generate code coverage reports...); \
 		$(call helper-test,:coverage); \
@@ -498,7 +498,7 @@ test: ## Run tests *
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
 		$(txt-done); \
-	elif [ "$$mode" == 0 ]; then \
+	elif [ "$$MODE" == 0 ]; then \
 		$(txt-skipped); \
 	else \
 		$(txt-opps); \
@@ -513,23 +513,23 @@ lint: ## Run code linting *
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
-	@read -p "Enter test mode: " mode; \
-	if [[ "$$mode" == "" || "$$mode" == 1 || "$$mode" == "script" ]]; then \
+	@read -p "Enter test mode: " MODE; \
+	if [[ "$$MODE" == "" || "$$MODE" == 1 || "$$MODE" == "script" ]]; then \
 		$(newline); \
 		$(call log-start,Running JavaScript linting...); \
 		$(call helper-lint,:script); \
 		$(txt-done); \
-	elif [[ "$$mode" == 2 || "$$mode" == "fix" ]]; then \
+	elif [[ "$$MODE" == 2 || "$$MODE" == "fix" ]]; then \
 		$(newline); \
 		$(call log-start,Running JavaScript linting and trying to fix problems...); \
 		$(call helper-lint,:script:fix); \
 		$(txt-done); \
-	elif [[ "$$mode" == 3 || "$$mode" == "stylesheet" ]]; then \
+	elif [[ "$$MODE" == 3 || "$$MODE" == "stylesheet" ]]; then \
 		$(newline); \
 		$(call log-start,Running Stylesheet linting...); \
 		$(call helper-lint,:stylesheet); \
 		$(txt-done); \
-	elif [ "$$mode" == 0 ]; then \
+	elif [ "$$MODE" == 0 ]; then \
 		$(txt-skipped); \
 	else \
 		$(txt-opps); \
