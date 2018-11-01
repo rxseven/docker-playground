@@ -148,7 +148,7 @@ define helper-start
 endef
 
 # Removing build artifacts helper
-define helper-build
+define remove-build
 	if [ -d "${DIR_BUILD}" ]; then \
 		rm -rf -v ${DIR_BUILD}; \
 	else \
@@ -273,7 +273,7 @@ up: ## Rebuild images for the development environment services
 build: ## Create an optimized production build
 	@$(call log-start,Creating an optimized production build...)
 	@$(call log-step,[Step 1/6] Remove the existing build (if one exists))
-	@$(helper-build)
+	@$(remove-build)
 	@$(call log-step,[Step 2/6] Download base images (if needed))
 	@$(call log-step,[Step 3/6] Build the development image (if it doesn't exist))
 	@$(call log-step,[Step 4/6] Create and start a container for building the app)
