@@ -217,3 +217,13 @@ system: ## Display system-wide information
 --------------------------------------------------------------------------------
 
 txt-done = printf "\e[${ANSI_COLOR_GREEN}mDone\e[0m\n"
+
+txt-hint = $(call log-underline,Hint)
+
+--------------------------------------------------------------------------------
+
+# LCOV hint
+define hint-coverage
+	printf "Skipped, you can view the reports later by running $(call log-bold,report) command.\n"; \
+	$(txt-done)
+endef
