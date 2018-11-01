@@ -143,7 +143,7 @@ define helper-start
 	$(call log-step,[Step 2/4] Build the development image (if needed))
 	$(call log-step,[Step 3/4] Create and start the development and reverse proxy containers)
 	$(call log-step,[Step 4/4] Start the development and reverse proxy servers)
-	$(call log-info,You can view ${APP_NAME} in the browser at ${APP_URL_LOCAL}.)
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).)
 	docker-compose up
 endef
 
