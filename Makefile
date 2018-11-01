@@ -37,9 +37,9 @@ log-underline = \e[4m$(1)\e[0m
 
 # Text and string helpers
 newline = echo ""
+headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-done = $(call log-success,Done)
-txt-headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-note = $(call log-underline,Note)
 txt-opps = echo "Opps! please try again."
 txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
@@ -877,34 +877,34 @@ ci-clean: ## Remove unused data from the CI server
 
 .PHONY: info
 info: ## Show project configuration
-	@$(call txt-headline,Releases)
+	@$(call headline,Releases)
 	@echo "Date                           : ${RELEASE_DATE}"
 	@echo "Version                        : ${RELEASE_VERSION}"
 	@$(newline)
-	@$(call txt-headline,App)
+	@$(call headline,App)
 	@echo "Name                           : ${APP_NAME}"
 	@echo "Repository                     : ${APP_REPO}"
 	@echo "Live URL                       : ${APP_URL_LIVE}"
 	@$(newline)
-	@$(call txt-headline,Domain name & URLs)
+	@$(call headline,Domain name & URLs)
 	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
 	@echo "Top level domain (TLD)         : ${HOST_TLD}"
 	@echo "Domain name                    : ${APP_DOMAIN}"
 	@echo "Development URL                : ${APP_URL_LOCAL}"
 	@echo "Production build URL           : ${APP_URL_BUILD}"
 	@$(newline)
-	@$(call txt-headline,Host machine)
+	@$(call headline,Host machine)
 	@echo "Hosts file                     : ${HOST_DNS}"
 	@echo "Working directory              : $$PWD"
 	@echo "Temporary path                 : ${HOST_TEMP}"
 	@echo "IP address                     : ${HOST_IP}"
 	@$(newline)
-	@$(call txt-headline,Base images)
+	@$(call headline,Base images)
 	@echo "NGINX                          : ${IMAGE_BASE_NGINX}"
 	@echo "Node.js                        : ${IMAGE_BASE_NODE}"
 	@echo "Proxy                          : ${IMAGE_BASE_PROXY}"
 	@$(newline)
-	@$(call txt-headline,Image & Container)
+	@$(call headline,Image & Container)
 	@echo "Cloud-based registry service   : ${IMAGE_REGISTRY}"
 	@echo "Username                       : ${IMAGE_USERNAME}"
 	@echo "Repository                     : ${IMAGE_REPO}"
@@ -915,29 +915,29 @@ info: ## Show project configuration
 	@echo "Temporary path                 : ${CONTAINER_TEMP}"
 	@echo "Working directory              : ${CONTAINER_WORKDIR}"
 	@$(newline)
-	@$(call txt-headline,Configuration files)
+	@$(call headline,Configuration files)
 	@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
 	@echo "NPM & Yarn                     : ${CONFIG_NPM}"
 	@echo "Travis CI                      : ${CONFIG_CI}"
 	@echo "Environment variables          : ${CONFIG_ENV}"
 	@$(newline)
-	@$(call txt-headline,Files & Directories)
+	@$(call headline,Files & Directories)
 	@echo "Optimized production build     : ${DIR_BUILD}"
 	@echo "Code coverage                  : ${DIR_COVERAGE}"
 	@echo "Temporary                      : ${DIR_TEMP}"
 	@echo "Treemap                        : ${FILE_TREEMAP}"
 	@$(newline)
-	@$(call txt-headline,Ports)
+	@$(call headline,Ports)
 	@echo "Development server             : ${PORT_EXPOSE_APP}"
 	@echo "Reverse proxy server           : ${PORT_EXPOSE_PROXY}"
 	@echo "Unsecured HTTP port mapping    : ${PORT_MAPPING_DEFAULT}"
 	@echo "SSL port mapping               : ${PORT_MAPPING_SSL}"
 	@$(newline)
-	@$(call txt-headline,Miscellaneous)
+	@$(call headline,Miscellaneous)
 	@echo "Default browser                : ${BROWSER_DEFAULT}"
 	@echo "License                        : ${IMAGE_LICENSE}"
 	@$(newline)
-	@$(call txt-headline,Maintainer)
+	@$(call headline,Maintainer)
 	@echo "Name                           : ${AUTHOR_NAME}"
 	@echo "Email                          : ${AUTHOR_EMAIL}"
 	@$(newline)
