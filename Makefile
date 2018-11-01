@@ -599,7 +599,9 @@ install: ## Install a package and any packages that it depends on **
 		$(call log-sum,The working tree status); \
 		git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
 		$(newline); \
-		$(call log-info,The package has been installed$(,) please commit the changes (if any).); \
+		$(call log-sum,Summary); \
+		printf "The package has been installed successfully$(,) please commit the changes (if any).\n"; \
+		$(newline); \
 		$(txt-done); \
 	else \
 		echo "Skipped, you did not enter the package name, please try again."; \
