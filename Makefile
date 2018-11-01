@@ -39,6 +39,7 @@ log-underline = \e[4m$(1)\e[0m
 newline = echo ""
 headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
+txt-continue = echo "Continue to the next step..."
 txt-done = $(call log-success,Done)
 txt-note = $(call log-underline,Note)
 txt-opps = echo "Opps! please try again."
@@ -73,10 +74,17 @@ endef
 
 # Test helper
 define helper-test
-	$(call log-step,[Step 1/4] Build the development image (if needed)); \
-	$(call log-step,[Step 2/4] Create and start a container for running tests); \
-	$(call log-step,[Step 3/4] Run tests); \
-	$(call log-step,[Step 4/4] Remove the container when the process finishes); \
+	$(call log-step,[Step 1/5] Remove the existing code coverage reports); \
+	if [ "$(2)" == "cleanup" ]; then \
+		$(remove-coverage); \
+	else \
+		echo "Skipped, this is not the case."; \
+		$(txt-continue); \
+	fi; \
+	$(call log-step,[Step 2/5] Build the development image (if needed)); \
+	$(call log-step,[Step 3/5] Create and start a container for running tests); \
+	$(call log-step,[Step 4/5] Run tests); \
+	$(call log-step,[Step 5/5] Remove the container when the process finishes); \
 	docker-compose \
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
@@ -153,6 +161,16 @@ define remove-build
 		rm -rf -v ${DIR_BUILD}; \
 	else \
 		echo "Skipped, no build artifacts found."; \
+	fi
+endef
+
+# Removing code coverage reports helper
+define remove-coverage
+	if [ -d "${DIR_COVERAGE}" ]; then \
+		rm -rf -v ${DIR_COVERAGE}; \
+	else \
+		echo "Skipped, no code coverage reports found."; \
+		$(txt-continue); \
 	fi
 endef
 
@@ -509,12 +527,24 @@ test: ## Run tests *
 	elif [[ "$$MODE" == 4 || "$$MODE" == "coverage" ]]; then \
 		$(newline); \
 		$(call log-start,Running tests and generate code coverage reports...); \
-		$(call helper-test,:coverage); \
+		$(call helper-test,:coverage,cleanup); \
 		$(newline); \
-		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory.); \
+		$(call log-start,Listing the results...); \
+		$(call log-sum,Code coverage reports); \
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
-		$(txt-done); \
+		$(call log-sum,Summary); \
+		printf "Code coverage reports have been generated in $(call log-bold,${DIR_ROOT}${DIR_COVERAGE}) directory.\n"; \
+		read -p "Would you like to view the report visualization in the browser? " CONFIRMATION; \
+		case "$$CONFIRMATION" in \
+			[yY] | [yY][eE][sS]) \
+				$(call helper-browser,./${DIR_COVERAGE}/lcov-report/index.html); \
+			;; \
+			[nN] | [nN][oO] | *) \
+				printf "Skipped, you can view the reports later by running $(call log-bold,report) command.\n"; \
+				$(txt-done); \
+			;; \
+		esac; \
 	elif [ "$$MODE" == 0 ]; then \
 		$(txt-skipped); \
 	else \
