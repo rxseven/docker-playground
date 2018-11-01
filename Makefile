@@ -371,8 +371,8 @@ format: ## Format code automatically
 	@$(call log-sum,Modified files)
 	@git status | grep modified
 	@$(newline)
-	@read -p "Would you like to show changes between commits? " confirmation; \
-	case "$$confirmation" in \
+	@read -p "Would you like to show changes between commits? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-sum,Changes between commits and working tree); \
@@ -448,8 +448,8 @@ backup: ## Create a backup copy of the project
 	@$(newline)
 	@$(txt-done)
 	@$(newline)
-	@read -p "Would you like to show archived backup copies? " confirmation; \
-	case "$$confirmation" in \
+	@read -p "Would you like to show archived backup copies? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-sum,Archived backup copies); \
@@ -623,8 +623,8 @@ erase: ## Clean up build artifacts and temporary files
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Remove build artifacts and temporary files? " confirmation; \
-	case "$$confirmation" in \
+	@read -p "Remove build artifacts and temporary files? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Removing data...); \
@@ -652,8 +652,8 @@ refresh: ## Refresh (soft clean) the development environment
 	@echo "- Stop running containers"
 	@echo "- Remove containers and the default network"
 	@$(newline)
-	@read -p "Refresh the development environment? " confirmation; \
-	case "$$confirmation" in \
+	@read -p "Refresh the development environment? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Refreshing the development environment...); \
@@ -683,8 +683,8 @@ clean: ## Clean up the development environment (including persistent data)
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove persistent data. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Clean up the development environment? " confirmation; \
-	case "$$confirmation" in \
+	@read -p "Clean up the development environment? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Cleaning up the development environment...); \
@@ -720,8 +720,8 @@ reset: ## Reset the development environment and clean up unused data
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Reset the development environment and clean up unused data? " confirmation; \
-	case "$$confirmation" in \
+	@read -p "Reset the development environment and clean up unused data? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
 			$(call log-start,Resetting the development environment...); \
