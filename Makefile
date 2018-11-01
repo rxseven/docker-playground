@@ -280,11 +280,26 @@ build: ## Create an optimized production build
 	@$(call log-step,[Step 5/6] Create an optimized production build)
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
+	@$(newline)
 	@$(call log-start,Listing the results...)
+	@$(call log-sum,Build artifacts)
 	@ls ${DIR_BUILD}
 	@$(newline)
-	@$(call log-info,The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory.)
-	@open ./${DIR_BUILD}
+	@$(call log-sum,Summary)
+	@printf "The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory.\n"
+	@read -p "Would you like to view the build artifacts in Finder? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		[yY] | [yY][eE][sS]) \
+			echo "Opening in Finder..."; \
+			open ./${DIR_BUILD}; \
+		;; \
+		[nN] | [nN][oO]) \
+			$(txt-skipped) \
+		;; \
+		*) \
+			$(txt-confirm); \
+		;; \
+	esac
 	@$(txt-done)
 
 .PHONY: preview
