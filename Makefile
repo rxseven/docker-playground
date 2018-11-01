@@ -876,7 +876,7 @@ ci-clean: ## Remove unused data from the CI server
 ##@ Miscellaneous:
 
 .PHONY: info
-info: ## Display system-wide information
+info: ## Show project configuration
 	@$(call txt-headline,Releases)
 	@echo "Date                           : ${RELEASE_DATE}"
 	@echo "Version                        : ${RELEASE_VERSION}"
