@@ -496,7 +496,7 @@ analyze: build ## Analyze and debug code bloat through source maps
 	@$(call helper-browser,${HOST_TEMP}/${FILE_TREEMAP})
 
 .PHONY: report
-report: ## Show development statistics and reports
+report: ## Show development statistics and reports *
 	@echo "Available options:"
 	@printf "1. $(call log-bold,coverage) * : Open code coverage reports in the browser\n"
 	@printf "2. $(call log-bold,none)       : Unavailable!\n"
