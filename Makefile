@@ -826,11 +826,15 @@ version: ## Set the next release version **
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
 		$(newline); \
 		$(call log-start,Listing the results...); \
+		$(call log-sum,The working tree status); \
+		git status ${CONFIG_ENV}; \
+		$(newline); \
 		$(call log-sum,Changes between commits and working tree); \
 		git diff ${CONFIG_ENV}; \
 		$(newline); \
 		$(call log-sum,Summary); \
 		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today).\n"; \
+		printf "Please run $(call log-bold,release) command to prepare for the next release.\n"; \
 		$(txt-done); \
 	else \
 		$(txt-skipped); \
