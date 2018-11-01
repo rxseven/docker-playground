@@ -54,8 +54,8 @@ set-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 # Browser helper
 define helper-browser
 	printf "Opening $(call log-bold,$(1)) in the default browser...\n"; \
-	$(txt-done); \
-	open -a ${BROWSER_DEFAULT} $(1)
+	open -a ${BROWSER_DEFAULT} $(1); \
+	$(txt-done)
 endef
 
 # Preview helper
