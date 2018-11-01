@@ -162,7 +162,7 @@ define remove-artifacts
 		rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 	else \
 		echo "Skipped, no artifacts found."; \
-	fi;
+	fi
 endef
 
 # Removing temporary files helper
@@ -629,7 +629,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(newline); \
 			$(call log-start,Removing data...); \
 			$(call log-step,[Step 1/2] Remove build artifacts); \
-			$(remove-artifacts) \
+			$(remove-artifacts); \
 			$(call log-step,[Step 2/2] Remove temporary files); \
 			$(remove-temporary) \
 			$(newline); \
@@ -740,7 +740,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)); \
 			docker volume prune; \
 			$(call log-step,[Step 8/9] Remove build artifacts); \
-			$(remove-artifacts) \
+			$(remove-artifacts); \
 			$(call log-step,[Step 9/9] Remove temporary files); \
 			$(remove-temporary) \
 			$(newline); \
