@@ -175,3 +175,45 @@ docker container run --rm local/playground:git precommit || {
   exit 1
 }
 
+--------------------------------------------------------------------------------
+
+txt-subheadline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n"
+
+# Special characters
+define line
+	echo ""
+	echo "--------------------------------------------------------------------------------"
+	echo ""
+endef
+
+.PHONY: system
+system: ## Display system-wide information
+	@$(call log-start,Listing system-wide information...)
+	@$(newline)
+	@$(call txt-subheadline,Git)
+	@git --version
+	@$(line)
+	@$(call txt-subheadline,Bash)
+	@bash --version
+	@$(line)
+	@$(call txt-subheadline,Make)
+	@make --version
+	@$(line)
+	@$(call txt-subheadline,Docker)
+	@docker --version
+	@$(line)
+	@docker-compose --version
+	@$(line)
+	@$(call txt-subheadline,Node.js)
+	@node --version
+	@$(line)
+	@$(call txt-subheadline,npm)
+	@npm --version
+	@$(line)
+	@$(call txt-subheadline,Yarn)
+	@yarn --version
+	@$(line)
+
+--------------------------------------------------------------------------------
+
+txt-done = printf "\e[${ANSI_COLOR_GREEN}mDone\e[0m\n"
