@@ -576,16 +576,16 @@ typecheck: ## Run static type checking *
 
 .PHONY: install
 install: ## Install a package and any packages that it depends on **
-	@read -p "Enter package name: " package; \
-	if [ "$$package" != "" ]; then \
+	@read -p "Enter package name: " PACKAGE; \
+	if [ "$$PACKAGE" != "" ]; then \
 		$(newline); \
 		$(call log-start,Installing npm package...); \
 		$(call log-step,[Step 1/5] Build the development image (if needed)); \
 		$(call log-step,[Step 2/5] Create and start a container for installing dependencies); \
-		$(call log-step,[Step 3/5] Install $$package package in the persistent storage (volume)); \
+		$(call log-step,[Step 3/5] Install $$PACKAGE package in the persistent storage (volume)); \
 		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
 		$(call log-step,[Step 5/5] Remove the container); \
-		docker-compose run --rm ${SERVICE_APP} add $$package; \
+		docker-compose run --rm ${SERVICE_APP} add $$PACKAGE; \
 		$(txt-done); \
 	else \
 		echo "Skipped, you did not enter the package name, please try again"; \
@@ -593,16 +593,16 @@ install: ## Install a package and any packages that it depends on **
 
 .PHONY: uninstall
 uninstall: ## Uninstall a package **
-	@read -p "Enter package name: " package; \
-	if [ "$$package" != "" ]; then \
+	@read -p "Enter package name: " PACKAGE; \
+	if [ "$$PACKAGE" != "" ]; then \
 		$(newline); \
 		$(call log-start,Uninstalling npm package...); \
 		$(call log-step,[Step 1/5] Build the development image (if needed)); \
 		$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies); \
-		$(call log-step,[Step 3/5] Uninstall $$package package from the persistent storage (volume)); \
+		$(call log-step,[Step 3/5] Uninstall $$PACKAGE package from the persistent storage (volume)); \
 		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
 		$(call log-step,[Step 5/5] Remove the container); \
-		docker-compose run --rm ${SERVICE_APP} remove $$package; \
+		docker-compose run --rm ${SERVICE_APP} remove $$PACKAGE; \
 		$(txt-done); \
 	else \
 		echo "Skipped, you did not enter the package name, please try again."; \
