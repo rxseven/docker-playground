@@ -153,7 +153,7 @@ define remove-build
 		rm -rf -v ${DIR_BUILD}; \
 	else \
 		echo "Skipped, no build artifacts found."; \
-	fi;
+	fi
 endef
 
 # Removing artifacts helper
