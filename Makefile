@@ -255,12 +255,12 @@ up: ## Rebuild images for the development environment services
 		$(newline); \
 		$(call log-start,Rebuilding images for all services...); \
 		$(call helper-up); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [[ "$$option" == 2 || "$$option" == "app" ]]; then \
 		$(newline); \
 		$(call log-start,Rebuilding image for ${SERVICE_APP} service...); \
 		$(call helper-up,${SERVICE_APP}); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [[ "$$option" == 3 || "$$option" == "proxy" ]]; then \
 		printf "Skipped, $(call log-bold,${SERVICE_PROXY}) service uses an image.\n"; \
 	elif [ "$$option" == 0 ]; then \
@@ -497,7 +497,7 @@ test: ## Run tests *
 		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory); \
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [ "$$mode" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -518,17 +518,17 @@ lint: ## Run code linting *
 		$(newline); \
 		$(call log-start,Running JavaScript linting...); \
 		$(call helper-lint,:script); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [[ "$$mode" == 2 || "$$mode" == "fix" ]]; then \
 		$(newline); \
 		$(call log-start,Running JavaScript linting and trying to fix problems...); \
 		$(call helper-lint,:script:fix); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [[ "$$mode" == 3 || "$$mode" == "stylesheet" ]]; then \
 		$(newline); \
 		$(call log-start,Running Stylesheet linting...); \
 		$(call helper-lint,:stylesheet); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [ "$$mode" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -550,22 +550,22 @@ typecheck: ## Run static type checking *
 		$(newline); \
 		$(call log-start,Running static type checking...); \
 		$(call helper-typecheck); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [[ "$$option" == 2 || "$$option" == "check" ]]; then \
 		$(newline); \
 		$(call log-start,Running a full check and printing the results...); \
 		$(call helper-typecheck,:check); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [[ "$$option" == 3 || "$$option" == "focus" ]]; then \
 		$(newline); \
 		$(call log-start,Running a focus check...); \
 		$(call helper-typecheck,:check:focus); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
 		$(call log-start,Updating the library definitions...); \
 		$(call helper-typecheck,:libdef); \
 		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.); \
-		$(txt-done) \
+		$(txt-done); \
 	elif [ "$$option" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -586,7 +586,7 @@ install: ## Install a package and any packages that it depends on **
 		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
 		$(call log-step,[Step 5/5] Remove the container); \
 		docker-compose run --rm ${SERVICE_APP} add $$package; \
-		$(txt-done) \
+		$(txt-done); \
 	else \
 		echo "Skipped, you did not enter the package name, please try again"; \
 	fi;
@@ -603,7 +603,7 @@ uninstall: ## Uninstall a package **
 		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
 		$(call log-step,[Step 5/5] Remove the container); \
 		docker-compose run --rm ${SERVICE_APP} remove $$package; \
-		$(txt-done) \
+		$(txt-done); \
 	else \
 		echo "Skipped, you did not enter the package name, please try again."; \
 	fi;
@@ -636,7 +636,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(call log-start,Listing the results...); \
 			$(sum-artifacts); \
 			$(sum-temporary); \
-			$(txt-done) \
+			$(txt-done); \
 		;; \
 		[nN] | [nN][oO]) \
 			$(txt-skipped) \
@@ -663,7 +663,7 @@ refresh: ## Refresh (soft clean) the development environment
 			$(newline); \
 			$(call log-start,Listing the results...); \
 			$(sum-docker); \
-			$(txt-done) \
+			$(txt-done); \
 		;; \
 		[nN] | [nN][oO]) \
 			$(txt-skipped) \
@@ -694,7 +694,7 @@ clean: ## Clean up the development environment (including persistent data)
 			$(newline); \
 			$(call log-start,Listing the results...); \
 			$(sum-docker); \
-			$(txt-done) \
+			$(txt-done); \
 		;; \
 		[nN] | [nN][oO]) \
 			$(txt-skipped) \
@@ -749,7 +749,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(newline); \
 			$(sum-artifacts); \
 			$(sum-temporary); \
-			$(txt-done) \
+			$(txt-done); \
 		;; \
 		[nN] | [nN][oO]) \
 			$(txt-skipped) \
@@ -778,7 +778,7 @@ version: ## Set the next release version **
 		git diff ${CONFIG_ENV}; \
 		$(newline); \
 		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
-		$(txt-done) \
+		$(txt-done); \
 	else \
 		$(txt-skipped); \
 	fi;
