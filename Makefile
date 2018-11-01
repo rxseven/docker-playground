@@ -208,7 +208,7 @@ define sum-temporary
 		echo "Opps! there are some files left, please try again." || \
 		echo "All clean"; \
 		break; \
-	done;
+	done
 endef
 
 ##@ Development:
@@ -635,7 +635,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(newline); \
 			$(call log-start,Listing the results...); \
 			$(sum-artifacts); \
-			$(sum-temporary) \
+			$(sum-temporary); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
@@ -748,7 +748,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(sum-docker); \
 			$(newline); \
 			$(sum-artifacts); \
-			$(sum-temporary) \
+			$(sum-temporary); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
