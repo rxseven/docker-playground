@@ -617,6 +617,18 @@ uninstall: ## Uninstall a package **
 		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
 		$(call log-step,[Step 5/5] Remove the container); \
 		docker-compose run --rm ${SERVICE_APP} remove $$PACKAGE; \
+		$(newline); \
+		$(call log-start,Listing the results...); \
+		$(call log-sum,Changes between commits and working tree); \
+		git diff ${CONFIG_NPM}; \
+		git diff ${CONFIG_PACKAGE}; \
+		$(newline); \
+		$(call log-sum,The working tree status); \
+		git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
+		$(newline); \
+		$(call log-sum,Summary); \
+		printf "The package has been uninstalled successfully$(,) please commit the changes (if any).\n"; \
+		$(newline); \
 		$(txt-done); \
 	else \
 		echo "Skipped, you did not enter the package name, please try again."; \
