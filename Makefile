@@ -172,7 +172,7 @@ define remove-temporary
 		rm -rf -v ${DIR_TEMP}/* || \
 		echo "Skipped, no temporary files found."; \
 		break; \
-	done;
+	done
 endef
 
 # Docker summary
@@ -631,7 +631,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(call log-step,[Step 1/2] Remove build artifacts); \
 			$(remove-artifacts); \
 			$(call log-step,[Step 2/2] Remove temporary files); \
-			$(remove-temporary) \
+			$(remove-temporary); \
 			$(newline); \
 			$(call log-start,Listing the results...); \
 			$(sum-artifacts); \
@@ -742,7 +742,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 8/9] Remove build artifacts); \
 			$(remove-artifacts); \
 			$(call log-step,[Step 9/9] Remove temporary files); \
-			$(remove-temporary) \
+			$(remove-temporary); \
 			$(newline); \
 			$(call log-start,Listing the results...); \
 			$(sum-docker); \
