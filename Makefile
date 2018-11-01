@@ -67,7 +67,7 @@ define helper-preview
 	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
 	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
 	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
-	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}.); \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_BUILD}).); \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
