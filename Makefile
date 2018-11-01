@@ -565,7 +565,10 @@ typecheck: ## Run static type checking *
 		$(newline); \
 		$(call log-start,Updating the library definitions...); \
 		$(call helper-typecheck,:libdef); \
-		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.); \
+		$(call log-sum,The working tree status); \
+		git status ${DIR_TYPED}; \
+		$(call log-sum,Summary); \
+		printf "The library definitions have been updated$(,) please commit the changes (if any) in $(call log-bold,./${DIR_TYPED}) directory.\n"; \
 		$(txt-done); \
 	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
