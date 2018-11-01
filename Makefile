@@ -94,6 +94,16 @@ define helper-test
 	${SERVICE_APP} test$(1)
 endef
 
+# Code coverage helper
+define helper-coverage
+	if [ -d "${DIR_COVERAGE}" ]; then \
+		$(call helper-browser,./${DIR_COVERAGE}/lcov-report/index.html); \
+	else \
+		printf "Skipped, no code coverage reports found.\n"; \
+		printf "Run $(call log-bold,test) command with $(call log-bold,coverage) option to generate the reports.\n"; \
+	fi
+endef
+
 # Linting helper
 define helper-lint
 	$(call log-step,[Step 1/4] Build the development image (if needed)); \
@@ -538,7 +548,7 @@ test: ## Run tests *
 		read -p "Would you like to view the report visualization in the browser? " CONFIRMATION; \
 		case "$$CONFIRMATION" in \
 			[yY] | [yY][eE][sS]) \
-				$(call helper-browser,./${DIR_COVERAGE}/lcov-report/index.html); \
+				$(helper-coverage); \
 			;; \
 			[nN] | [nN][oO] | *) \
 				printf "Skipped, you can view the reports later by running $(call log-bold,report) command.\n"; \
