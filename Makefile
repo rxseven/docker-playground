@@ -197,7 +197,7 @@ define sum-artifacts
 		echo "Opps! there are some artifacts left, please try again."; \
 	else \
 		echo "All clean"; \
-	fi;
+	fi
 endef
 
 # Temporary files summary
@@ -634,7 +634,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(remove-temporary) \
 			$(newline); \
 			$(call log-start,Listing the results...); \
-			$(sum-artifacts) \
+			$(sum-artifacts); \
 			$(sum-temporary) \
 			$(txt-done) \
 		;; \
@@ -747,7 +747,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-start,Listing the results...); \
 			$(sum-docker); \
 			$(newline); \
-			$(sum-artifacts) \
+			$(sum-artifacts); \
 			$(sum-temporary) \
 			$(txt-done) \
 		;; \
