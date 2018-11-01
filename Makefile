@@ -349,186 +349,6 @@ preview: ## Run the production build locally
 		$(txt-opps); \
 	fi;
 
-##@ Utilities:
-
-.PHONY: code
-code: ## Open the project in the default code editor
-	@$(call log-start,Opening the project in ${EDITOR_DEFAULT}...)
-	@code ${DIR_CWD}
-	@$(txt-done)
-
-.PHONY: open
-open: ## Open the app in the default browser *
-	@echo "Available options:"
-	@printf "1. $(call log-bold,dev) *    : Open the app running in the development environment\n"
-	@printf "2. $(call log-bold,build)    : Open an optimized production build locally\n"
-	@printf "3. $(call log-bold,staging)  : Unavailable!\n"
-	@printf "4. $(call log-bold,live)     : Open the live app running in the production server\n"
-	@$(newline)
-	@$(txt-options)
-	@$(newline)
-	@read -p "Enter the option: " OPTION; \
-	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "dev" ]]; then \
-		$(newline); \
-		$(call helper-browser,${APP_URL_LOCAL}); \
-	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
-		$(newline); \
-		$(call helper-browser,${APP_URL_BUILD}); \
-	elif [[ "$$OPTION" == 3 || "$$OPTION" == "staging" ]]; then \
-		echo "Sorry, the staging URL is not available."; \
-	elif [[ "$$OPTION" == 4 || "$$OPTION" == "live" ]]; then \
-		$(newline); \
-		$(call helper-browser,${APP_URL_LIVE}); \
-	elif [ "$$OPTION" == 0 ]; then \
-		$(txt-skipped); \
-	else \
-		$(txt-opps); \
-	fi;
-
-.PHONY: finder
-finder: ## Open the project in Finder
-	@$(call log-start,Opening the project...)
-	@open ${DIR_CWD}
-	@$(txt-done)
-
-.PHONY: shell
-shell: ## Run Bourne shell in the app container
-	@$(call log-start,Running Bourne shell in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
-
-.PHONY: bash
-bash: ## Run Bash in the app container
-	@$(call log-start,Running Bash in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} bash
-
-.PHONY: format
-format: ## Format code automatically
-	@$(call log-start,Formatting code...)
-	@$(call log-step,[Step 1/4] Build the development image (if needed))
-	@$(call log-step,[Step 2/4] Create and start a container for formatting code)
-	@$(call log-step,[Step 3/4] Format code)
-	@$(call log-step,[Step 4/4] Remove the container)
-	@docker-compose run --rm ${SERVICE_APP} format
-	@$(newline)
-	@$(call log-start,Listing the results...)
-	@$(call log-sum,Modified files)
-	@git status | grep modified
-	@$(newline)
-	@read -p "Would you like to show changes between commits? " CONFIRMATION; \
-	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
-			$(newline); \
-			$(call log-sum,Changes between commits and working tree); \
-			git diff; \
-		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
-		;; \
-	esac
-	@$(newline)
-	@$(txt-done)
-
-.PHONY: analyze
-analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
-analyze: build ## Analyze and debug code bloat through source maps
-	@$(newline)
-	@$(call log-start,Analyzing and debugging code...)
-	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
-	@$(call log-step,[Step 2/5] Analyze the bundle size)
-	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
-	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
-	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
-	@ls ${HOST_TEMP}
-	@$(call log-step,[Step 4/5] Remove the container)
-	@docker container rm ${CONTAINER_NAME}
-	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
-	@$(call helper-browser,${HOST_TEMP}/${FILE_TREEMAP})
-
-.PHONY: report
-report: ## Show development statistics and reports
-	@echo "Available options:"
-	@printf "1. $(call log-bold,coverage) * : Open code coverage reports in the browser\n"
-	@printf "2. $(call log-bold,none)       : Unavailable!\n"
-	@$(newline)
-	@$(txt-options)
-	@$(newline)
-	@read -p "Enter the option: " OPTION; \
-	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "coverage" ]]; then \
-		$(newline); \
-		$(helper-coverage); \
-	elif [[ "$$OPTION" == 2 || "$$OPTION" == "none" ]]; then \
-		echo "Sorry, this option is not available."; \
-	elif [ "$$OPTION" == 0 ]; then \
-		$(txt-skipped); \
-	else \
-		$(txt-opps); \
-	fi;
-
-.PHONY: setup
-setup: ## Setup the development environment and install dependencies ***
-	@$(call log-start,Setting up the development environment...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
-	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
-	@docker pull ${IMAGE_BASE_PROXY}
-	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call set-host,${APP_DOMAIN_LOCAL})
-	@$(call set-host,${APP_DOMAIN_BUILD})
-	@$(newline)
-	@$(call log-start,Listing the results...)
-	@$(call log-sum,Images)
-	@docker image ls
-	@$(newline)
-	@$(call log-sum,Local hosts)
-	@cat ${HOST_DNS}
-	@$(newline)
-	@$(txt-done)
-
-.PHONY: backup
-backup: BACKUP_DATE = $$(date +'%d.%m.%Y')
-backup: BACKUP_TIME = $$(date +'%H.%M.%S')
-backup: BACKUP_NAME = ${APP_NAME}-${BACKUP_DATE}-${BACKUP_TIME}.${EXT_ARCHIVE}
-backup: ## Create a backup copy of the project
-	@$(call log-start,Creating a backup copy...)
-	@$(call log-step,[Step 1/2] Create a backup copy)
-	@zip -r -q ${FILE_BACKUP} . -x \
-	.DS_Store \
-	/*.git/* \
-	"build/*" \
-	"coverage/*" \
-	"node_modules/*" \
-	"tmp/*";
-	@$(call log-step,[Step 2/2] Upload the archive to the cloud storage)
-	@mv ${FILE_BACKUP} ${DIR_BACKUP}/${BACKUP_NAME}
-	@$(newline)
-	@echo "- Date     : ${BACKUP_DATE}"
-	@echo "- Time     : ${BACKUP_TIME}"
-	@echo "- Prefix   : ${APP_NAME}"
-	@echo "- Type     : ${EXT_ARCHIVE}"
-	@echo "- File     : ${BACKUP_NAME}"
-	@echo "- Location : ${DIR_BACKUP}"
-	@$(newline)
-	@$(txt-done)
-	@$(newline)
-	@read -p "Would you like to show archived backup copies? " CONFIRMATION; \
-	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
-			$(newline); \
-			$(call log-sum,Archived backup copies); \
-			ls ${DIR_BACKUP}; \
-			open ${DIR_BACKUP}; \
-		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
-		;; \
-	esac
-
 ##@ Testing & Linting:
 
 .PHONY: test
@@ -651,6 +471,44 @@ typecheck: ## Run static type checking *
 		printf "The library definitions have been installed in $(call log-bold,./${DIR_TYPED}) directory.\n"; \
 		printf "Please commit the changes (if any).\n"; \
 		$(txt-done); \
+	elif [ "$$OPTION" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
+	fi;
+
+##@ Statistics & Reports:
+
+.PHONY: analyze
+analyze: CONTAINER_NAME = ${IMAGE_REPO}-analyzing
+analyze: build ## Analyze and debug code bloat through source maps
+	@$(newline)
+	@$(call log-start,Analyzing and debugging code...)
+	@$(call log-step,[Step 1/5] Create and start a container for analyzing the bundle)
+	@$(call log-step,[Step 2/5] Analyze the bundle size)
+	@docker-compose run --name ${CONTAINER_NAME} ${SERVICE_APP} analyze
+	@$(call log-step,[Step 3/5] Copy the result from the container's file system to the host's)
+	@docker cp ${CONTAINER_NAME}:${CONTAINER_TEMP}/. ${HOST_TEMP}
+	@ls ${HOST_TEMP}
+	@$(call log-step,[Step 4/5] Remove the container)
+	@docker container rm ${CONTAINER_NAME}
+	@$(call log-step,[Step 5/5] Open the treemap visualization in the browser)
+	@$(call helper-browser,${HOST_TEMP}/${FILE_TREEMAP})
+
+.PHONY: report
+report: ## Show development statistics and reports
+	@echo "Available options:"
+	@printf "1. $(call log-bold,coverage) * : Open code coverage reports in the browser\n"
+	@printf "2. $(call log-bold,none)       : Unavailable!\n"
+	@$(newline)
+	@$(txt-options)
+	@$(newline)
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "coverage" ]]; then \
+		$(newline); \
+		$(helper-coverage); \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "none" ]]; then \
+		echo "Sorry, this option is not available."; \
 	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -859,6 +717,150 @@ reset: ## Reset the development environment and clean up unused data
 			$(sum-artifacts); \
 			$(sum-temporary); \
 			$(txt-done); \
+		;; \
+		[nN] | [nN][oO]) \
+			$(txt-skipped) \
+		;; \
+		*) \
+			$(txt-confirm); \
+		;; \
+	esac
+
+##@ Utilities:
+
+.PHONY: code
+code: ## Open the project in the default code editor
+	@$(call log-start,Opening the project in ${EDITOR_DEFAULT}...)
+	@code ${DIR_CWD}
+	@$(txt-done)
+
+.PHONY: open
+open: ## Open the app in the default browser *
+	@echo "Available options:"
+	@printf "1. $(call log-bold,dev) *    : Open the app running in the development environment\n"
+	@printf "2. $(call log-bold,build)    : Open an optimized production build locally\n"
+	@printf "3. $(call log-bold,staging)  : Unavailable!\n"
+	@printf "4. $(call log-bold,live)     : Open the live app running in the production server\n"
+	@$(newline)
+	@$(txt-options)
+	@$(newline)
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "dev" ]]; then \
+		$(newline); \
+		$(call helper-browser,${APP_URL_LOCAL}); \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
+		$(newline); \
+		$(call helper-browser,${APP_URL_BUILD}); \
+	elif [[ "$$OPTION" == 3 || "$$OPTION" == "staging" ]]; then \
+		echo "Sorry, the staging URL is not available."; \
+	elif [[ "$$OPTION" == 4 || "$$OPTION" == "live" ]]; then \
+		$(newline); \
+		$(call helper-browser,${APP_URL_LIVE}); \
+	elif [ "$$OPTION" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
+	fi;
+
+.PHONY: finder
+finder: ## Open the project in Finder
+	@$(call log-start,Opening the project...)
+	@open ${DIR_CWD}
+	@$(txt-done)
+
+.PHONY: shell
+shell: ## Run Bourne shell in the app container
+	@$(call log-start,Running Bourne shell in the app container...)
+	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
+
+.PHONY: bash
+bash: ## Run Bash in the app container
+	@$(call log-start,Running Bash in the app container...)
+	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} bash
+
+.PHONY: format
+format: ## Format code automatically
+	@$(call log-start,Formatting code...)
+	@$(call log-step,[Step 1/4] Build the development image (if needed))
+	@$(call log-step,[Step 2/4] Create and start a container for formatting code)
+	@$(call log-step,[Step 3/4] Format code)
+	@$(call log-step,[Step 4/4] Remove the container)
+	@docker-compose run --rm ${SERVICE_APP} format
+	@$(newline)
+	@$(call log-start,Listing the results...)
+	@$(call log-sum,Modified files)
+	@git status | grep modified
+	@$(newline)
+	@read -p "Would you like to show changes between commits? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		[yY] | [yY][eE][sS]) \
+			$(newline); \
+			$(call log-sum,Changes between commits and working tree); \
+			git diff; \
+		;; \
+		[nN] | [nN][oO]) \
+			$(txt-skipped) \
+		;; \
+		*) \
+			$(txt-confirm); \
+		;; \
+	esac
+	@$(newline)
+	@$(txt-done)
+
+.PHONY: setup
+setup: ## Setup the development environment and install dependencies ***
+	@$(call log-start,Setting up the development environment...)
+	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
+	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${IMAGE_BASE_PROXY}
+	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
+	@$(call set-host,${APP_DOMAIN_LOCAL})
+	@$(call set-host,${APP_DOMAIN_BUILD})
+	@$(newline)
+	@$(call log-start,Listing the results...)
+	@$(call log-sum,Images)
+	@docker image ls
+	@$(newline)
+	@$(call log-sum,Local hosts)
+	@cat ${HOST_DNS}
+	@$(newline)
+	@$(txt-done)
+
+.PHONY: backup
+backup: BACKUP_DATE = $$(date +'%d.%m.%Y')
+backup: BACKUP_TIME = $$(date +'%H.%M.%S')
+backup: BACKUP_NAME = ${APP_NAME}-${BACKUP_DATE}-${BACKUP_TIME}.${EXT_ARCHIVE}
+backup: ## Create a backup copy of the project
+	@$(call log-start,Creating a backup copy...)
+	@$(call log-step,[Step 1/2] Create a backup copy)
+	@zip -r -q ${FILE_BACKUP} . -x \
+	.DS_Store \
+	/*.git/* \
+	"build/*" \
+	"coverage/*" \
+	"node_modules/*" \
+	"tmp/*";
+	@$(call log-step,[Step 2/2] Upload the archive to the cloud storage)
+	@mv ${FILE_BACKUP} ${DIR_BACKUP}/${BACKUP_NAME}
+	@$(newline)
+	@echo "- Date     : ${BACKUP_DATE}"
+	@echo "- Time     : ${BACKUP_TIME}"
+	@echo "- Prefix   : ${APP_NAME}"
+	@echo "- Type     : ${EXT_ARCHIVE}"
+	@echo "- File     : ${BACKUP_NAME}"
+	@echo "- Location : ${DIR_BACKUP}"
+	@$(newline)
+	@$(txt-done)
+	@$(newline)
+	@read -p "Would you like to show archived backup copies? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		[yY] | [yY][eE][sS]) \
+			$(newline); \
+			$(call log-sum,Archived backup copies); \
+			ls ${DIR_BACKUP}; \
+			open ${DIR_BACKUP}; \
 		;; \
 		[nN] | [nN][oO]) \
 			$(txt-skipped) \
