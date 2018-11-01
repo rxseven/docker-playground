@@ -290,8 +290,8 @@ build: ## Create an optimized production build
 .PHONY: preview
 preview: ## Run the production build locally
 	@echo "Available options:"
-	@printf "1. $(call log-bold,run) *  : Run the production build\n"
-	@printf "2. $(call log-bold,build)  : Build image before running the app\n"
+	@printf "1. $(call log-bold,run) *  : Run the production build.\n"
+	@printf "2. $(call log-bold,build)  : Build image before running the app.\n"
 	@$(newline)
 	@$(txt-options)
 	@$(newline)
