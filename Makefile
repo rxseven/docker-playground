@@ -26,7 +26,7 @@ ANSI_COLOR_WHITE=37
 # Log helpers
 log-bold = \e[1m$(1)\e[0m
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1));
-log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1));
+log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1))
 log-italic = \e[3m$(1)\e[0m
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1))
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1))
@@ -53,7 +53,7 @@ set-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 
 # Browser helper
 define helper-browser
-	$(call log-info,Opening $(1) in the default browser...) \
+	$(call log-info,Opening $(1) in the default browser...); \
 	$(txt-done) \
 	open -a ${BROWSER_DEFAULT} $(1)
 endef
@@ -67,7 +67,7 @@ define helper-preview
 	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
 	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
 	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
-	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}) \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at ${APP_URL_BUILD}); \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
@@ -564,7 +564,7 @@ typecheck: ## Run static type checking *
 	elif [[ "$$option" == 4 || "$$option" == "libdef" ]]; then \
 		$(call log-start,Updating the library definitions...); \
 		$(call helper-typecheck,:libdef); \
-		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.) \
+		$(call log-info,The library definitions have been updated$(,) please commit the changes in $(call log-bold,./${DIR_TYPED}) directory.); \
 		$(txt-done) \
 	elif [ "$$option" == 0 ]; then \
 		$(txt-skipped); \
