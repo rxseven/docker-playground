@@ -772,7 +772,9 @@ version: ## Set the next release version **
 	if [ "$$VERSION" != "" ]; then \
 		$(newline); \
 		$(call log-start,Processing...); \
+		$(call log-step,[Step 1/2] Set release date); \
 		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
+		$(call log-step,[Step 2/2] Set release version); \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
 		git diff ${CONFIG_ENV}; \
