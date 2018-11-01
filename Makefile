@@ -842,11 +842,15 @@ release: ## Release new update
 	@$(helper-release)
 	@$(newline)
 	@$(call log-start,Listing the results...)
+	@$(call log-sum,The working tree status)
+	@git status ${CONFIG_AWS} ${CONFIG_NPM}
+	@$(newline)
+	@$(call log-sum,Changes between commits and working tree)
 	@git diff ${CONFIG_AWS}
 	@git diff ${CONFIG_NPM}
 	@$(newline)
-	@printf "$(txt-note): please commit the changes and merge into $(call log-bold,master) branch.\n"
-	@$(newline)
+	@$(call log-sum,Summary)
+	@printf "Please commit the changes and merge into $(call log-bold,master) branch.\n"
 	@$(txt-done)
 
 ##@ Continuous Integration:
