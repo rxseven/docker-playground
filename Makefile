@@ -31,7 +31,7 @@ log-italic = \e[3m$(1)\e[0m
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1))
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1))
 log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1));
-log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1));
+log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1))
 log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-underline = \e[4m$(1)\e[0m
 
@@ -177,22 +177,22 @@ endef
 
 # Docker summary
 define sum-docker
-	$(call log-sum,Containers (including exited state)) \
+	$(call log-sum,Containers (including exited state)); \
 	docker container ls -a; \
 	$(newline); \
-	$(call log-sum,Networks) \
+	$(call log-sum,Networks); \
 	docker network ls; \
 	$(newline); \
-	$(call log-sum,Volumes) \
+	$(call log-sum,Volumes); \
 	docker volume ls; \
 	$(newline); \
-	$(call log-sum,Images (including intermediates)) \
-	docker image ls -a;
+	$(call log-sum,Images (including intermediates)); \
+	docker image ls -a
 endef
 
 # Build artifacts summary
 define sum-artifacts
-	$(call log-sum,Build artifacts) \
+	$(call log-sum,Build artifacts); \
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		echo "Opps! there are some artifacts left, please try again."; \
 	else \
@@ -202,7 +202,7 @@ endef
 
 # Temporary files summary
 define sum-temporary
-	$(call log-sum,Temporary files) \
+	$(call log-sum,Temporary files); \
 	for f in ${DIR_TEMP}/*; do \
 		[ -e "$$f" ] && \
 		echo "Opps! there are some files left, please try again." || \
@@ -375,7 +375,7 @@ format: ## Format code automatically
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call log-sum,Changes between commits and working tree) \
+			$(call log-sum,Changes between commits and working tree); \
 			git diff; \
 		;; \
 		[nN] | [nN][oO]) \
@@ -452,7 +452,7 @@ backup: ## Create a backup copy of the project
 	case "$$confirmation" in \
 		[yY] | [yY][eE][sS]) \
 			$(newline); \
-			$(call log-sum,Archived backup copies) \
+			$(call log-sum,Archived backup copies); \
 			ls ${DIR_BACKUP}; \
 			open ${DIR_BACKUP}; \
 		;; \
@@ -494,7 +494,7 @@ test: ## Run tests *
 		$(call log-start,Running tests and generate code coverage reports...); \
 		$(call helper-test,:coverage); \
 		$(newline); \
-		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory) \
+		$(call log-sum,LCOV data is created in ${DIR_ROOT}${DIR_COVERAGE} directory); \
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
 		$(txt-done) \
@@ -662,7 +662,7 @@ refresh: ## Refresh (soft clean) the development environment
 			docker-compose down; \
 			$(newline); \
 			$(call log-start,Listing the results...); \
-			$(sum-docker) \
+			$(sum-docker); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
@@ -693,7 +693,7 @@ clean: ## Clean up the development environment (including persistent data)
 			docker-compose down -v; \
 			$(newline); \
 			$(call log-start,Listing the results...); \
-			$(sum-docker) \
+			$(sum-docker); \
 			$(txt-done) \
 		;; \
 		[nN] | [nN][oO]) \
@@ -745,7 +745,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(remove-temporary) \
 			$(newline); \
 			$(call log-start,Listing the results...); \
-			$(sum-docker) \
+			$(sum-docker); \
 			$(newline); \
 			$(sum-artifacts) \
 			$(sum-temporary) \
