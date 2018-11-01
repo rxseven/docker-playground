@@ -774,12 +774,17 @@ version: ## Set the next release version **
 		$(call log-start,Processing...); \
 		$(call log-step,[Step 1/2] Set release date); \
 		$(call set-env,RELEASE_DATE,${CURRENT_DATE},${CONFIG_ENV}); \
+		echo ${CURRENT_DATE}; \
 		$(call log-step,[Step 2/2] Set release version); \
+		echo $$VERSION; \
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
+		$(newline); \
+		$(call log-start,Listing the results...); \
 		git diff ${CONFIG_ENV}; \
 		$(newline); \
-		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)\n"; \
+		$(call log-sum,Summary); \
+		$(call log-info,The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today)); \
 		$(txt-done); \
 	else \
 		$(txt-skipped); \
