@@ -1101,5 +1101,6 @@ help: ## Print usage
 	@$(newline)
 	@printf "*   with options\n"
 	@printf "**  requires user input\n"
-	@printf "*** requires superuser access\n"
+	@printf "*** requires superuser access\n\n"
+	@printf "Makefile version ${MAKEFILE_VERSION}\n"
 	@$(newline)
