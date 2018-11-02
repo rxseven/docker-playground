@@ -48,6 +48,7 @@ txt-opps = echo "Opps! please try again."
 txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
 txt-result = $(call log-result,Listing the results...)
 txt-skipped = echo "Skipped"
+txt-status = $(call log-sum,The working tree status)
 txt-warning = $(call log-underline,Warning)
 
 # Configuration helpers
@@ -477,7 +478,7 @@ typecheck: ## Run static type checking *
 		$(call helper-typecheck,:libdef); \
 		$(newline); \
 		$(txt-result); \
-		$(call log-sum,The working tree status); \
+		$(txt-status); \
 		git status ${DIR_TYPED}; \
 		$(newline); \
 		$(call log-sum,Summary); \
@@ -548,7 +549,7 @@ install: ## Install a package and any packages that it depends on **
 		git diff ${CONFIG_NPM}; \
 		git diff ${CONFIG_PACKAGE}; \
 		$(newline); \
-		$(call log-sum,The working tree status); \
+		$(txt-status); \
 		git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
 		$(newline); \
 		$(call log-sum,Summary); \
@@ -577,7 +578,7 @@ uninstall: ## Uninstall a package **
 		git diff ${CONFIG_NPM}; \
 		git diff ${CONFIG_PACKAGE}; \
 		$(newline); \
-		$(call log-sum,The working tree status); \
+		$(txt-status); \
 		git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
 		$(newline); \
 		$(call log-sum,Summary); \
@@ -816,7 +817,7 @@ format: ## Format code automatically
 	@docker-compose run --rm ${SERVICE_APP} format
 	@$(newline)
 	@$(txt-result)
-	@$(call log-sum,Modified files)
+	@$(txt-status)
 	@git status | grep modified
 	@$(newline)
 	@read -p "Would you like to show changes between commits? " CONFIRMATION; \
@@ -918,7 +919,7 @@ version: ## Set the next release version **
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
 		$(newline); \
 		$(txt-result); \
-		$(call log-sum,The working tree status); \
+		$(txt-status); \
 		git status ${CONFIG_ENV}; \
 		$(newline); \
 		$(txt-diff); \
@@ -938,7 +939,7 @@ release: ## Release new update
 	@$(helper-release)
 	@$(newline)
 	@$(txt-result)
-	@$(call log-sum,The working tree status)
+	@$(txt-status)
 	@git status ${CONFIG_AWS} ${CONFIG_NPM}
 	@$(newline)
 	@$(txt-diff)
@@ -1093,7 +1094,7 @@ status: ## Show system status
 	@$(call log-start,Listing system status...)
 	@$(sum-docker)
 	@$(newline)
-	@$(call log-sum,The working tree status)
+	@$(txt-status)
 	@git status
 
 .PHONY: help
