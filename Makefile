@@ -59,6 +59,11 @@ define helper-browser
 	$(txt-done)
 endef
 
+# Finder helper
+define helper-finder
+	open $(1)
+endef
+
 # Preview helper
 define helper-preview
 	$(newline); \
@@ -765,7 +770,7 @@ open: ## Open the app in the default browser *
 .PHONY: finder
 finder: ## Open the project in Finder
 	@$(call log-start,Opening the project...)
-	@open ${DIR_CWD}
+	@$(call helper-finder,${DIR_CWD})
 	@$(txt-done)
 
 .PHONY: shell
