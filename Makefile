@@ -317,7 +317,7 @@ build: ## Create an optimized production build
 	@$(call log-step,[Step 6/6] Stop and remove the container)
 	@docker-compose run --rm ${SERVICE_APP} build
 	@$(newline)
-	@$(call log-start,Listing the results...)
+	@$(call log-result,Listing the results...)
 	@$(call log-sum,Build artifacts)
 	@ls ${DIR_BUILD}
 	@$(newline)
@@ -387,7 +387,7 @@ test: ## Run tests *
 		$(call log-start,Running tests and generate code coverage reports...); \
 		$(call helper-test,:coverage,cleanup); \
 		$(newline); \
-		$(call log-start,Listing the results...); \
+		$(call log-result,Listing the results...); \
 		$(call log-sum,Code coverage reports); \
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
@@ -471,7 +471,7 @@ typecheck: ## Run static type checking *
 		$(call log-start,Updating the library definitions...); \
 		$(call helper-typecheck,:libdef); \
 		$(newline); \
-		$(call log-start,Listing the results...); \
+		$(call log-result,Listing the results...); \
 		$(call log-sum,The working tree status); \
 		git status ${DIR_TYPED}; \
 		$(newline); \
@@ -538,7 +538,7 @@ install: ## Install a package and any packages that it depends on **
 		$(call log-step,[Step 5/5] Remove the container); \
 		docker-compose run --rm ${SERVICE_APP} add $$PACKAGE; \
 		$(newline); \
-		$(call log-start,Listing the results...); \
+		$(call log-result,Listing the results...); \
 		$(call log-sum,Changes between commits and working tree); \
 		git diff ${CONFIG_NPM}; \
 		git diff ${CONFIG_PACKAGE}; \
@@ -567,7 +567,7 @@ uninstall: ## Uninstall a package **
 		$(call log-step,[Step 5/5] Remove the container); \
 		docker-compose run --rm ${SERVICE_APP} remove $$PACKAGE; \
 		$(newline); \
-		$(call log-start,Listing the results...); \
+		$(call log-result,Listing the results...); \
 		$(call log-sum,Changes between commits and working tree); \
 		git diff ${CONFIG_NPM}; \
 		git diff ${CONFIG_PACKAGE}; \
@@ -608,7 +608,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(call log-step,[Step 2/2] Remove temporary files); \
 			$(remove-temporary); \
 			$(newline); \
-			$(call log-start,Listing the results...); \
+			$(call log-result,Listing the results...); \
 			$(sum-artifacts); \
 			$(sum-temporary); \
 			$(txt-done); \
@@ -636,7 +636,7 @@ refresh: ## Refresh (soft clean) the development environment
 			$(call log-step,[Step 2/2] Remove containers and the default network); \
 			docker-compose down; \
 			$(newline); \
-			$(call log-start,Listing the results...); \
+			$(call log-result,Listing the results...); \
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
@@ -667,7 +667,7 @@ clean: ## Clean up the development environment (including persistent data)
 			$(call log-step,[Step 2/2] Remove containers$(,) the default network$(,) and volumes); \
 			docker-compose down -v; \
 			$(newline); \
-			$(call log-start,Listing the results...); \
+			$(call log-result,Listing the results...); \
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
@@ -719,7 +719,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 9/9] Remove temporary files); \
 			$(remove-temporary); \
 			$(newline); \
-			$(call log-start,Listing the results...); \
+			$(call log-result,Listing the results...); \
 			$(sum-docker); \
 			$(newline); \
 			$(sum-artifacts); \
@@ -810,7 +810,7 @@ format: ## Format code automatically
 	@$(call log-step,[Step 4/4] Remove the container)
 	@docker-compose run --rm ${SERVICE_APP} format
 	@$(newline)
-	@$(call log-start,Listing the results...)
+	@$(call log-result,Listing the results...)
 	@$(call log-sum,Modified files)
 	@git status | grep modified
 	@$(newline)
@@ -842,7 +842,7 @@ setup: ## Setup the development environment and install dependencies ***
 	@$(call set-host,${APP_DOMAIN_LOCAL})
 	@$(call set-host,${APP_DOMAIN_BUILD})
 	@$(newline)
-	@$(call log-start,Listing the results...)
+	@$(call log-result,Listing the results...)
 	@$(call log-sum,Images)
 	@docker image ls
 	@$(newline)
@@ -875,7 +875,7 @@ backup: ## Create a backup copy of the project
 	@echo "File     : ${BACKUP_NAME}"
 	@echo "Location : ${DIR_BACKUP}"
 	@$(newline)
-	@$(call log-start,Listing the results...)
+	@$(call log-result,Listing the results...)
 	@$(call log-sum,Archived backup copies)
 	@ls ${DIR_BACKUP}
 	@$(newline)
@@ -913,7 +913,7 @@ version: ## Set the next release version **
 		$(call set-env,RELEASE_VERSION,$$VERSION,${CONFIG_ENV}); \
 		rm ${CONFIG_ENV}.${EXT_BACKUP}; \
 		$(newline); \
-		$(call log-start,Listing the results...); \
+		$(call log-result,Listing the results...); \
 		$(call log-sum,The working tree status); \
 		git status ${CONFIG_ENV}; \
 		$(newline); \
@@ -933,7 +933,7 @@ release: ## Release new update
 	@$(call log-start,Preparing for a new release...)
 	@$(helper-release)
 	@$(newline)
-	@$(call log-start,Listing the results...)
+	@$(call log-result,Listing the results...)
 	@$(call log-sum,The working tree status)
 	@git status ${CONFIG_AWS} ${CONFIG_NPM}
 	@$(newline)
