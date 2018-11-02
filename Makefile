@@ -41,6 +41,7 @@ newline = echo ""
 headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-continue = echo "Continue to the next step..."
+txt-diff = $(call log-sum,Changes between commits and working tree)
 txt-done = $(call log-success,Done)
 txt-note = $(call log-underline,Note)
 txt-opps = echo "Opps! please try again."
@@ -543,7 +544,7 @@ install: ## Install a package and any packages that it depends on **
 		docker-compose run --rm ${SERVICE_APP} add $$PACKAGE; \
 		$(newline); \
 		$(txt-result); \
-		$(call log-sum,Changes between commits and working tree); \
+		$(txt-diff); \
 		git diff ${CONFIG_NPM}; \
 		git diff ${CONFIG_PACKAGE}; \
 		$(newline); \
@@ -572,7 +573,7 @@ uninstall: ## Uninstall a package **
 		docker-compose run --rm ${SERVICE_APP} remove $$PACKAGE; \
 		$(newline); \
 		$(txt-result); \
-		$(call log-sum,Changes between commits and working tree); \
+		$(txt-diff); \
 		git diff ${CONFIG_NPM}; \
 		git diff ${CONFIG_PACKAGE}; \
 		$(newline); \
@@ -821,8 +822,7 @@ format: ## Format code automatically
 	@read -p "Would you like to show changes between commits? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
-			$(newline); \
-			$(call log-sum,Changes between commits and working tree); \
+			$(txt-diff); \
 			git diff; \
 		;; \
 		[nN] | [nN][oO]) \
@@ -921,7 +921,7 @@ version: ## Set the next release version **
 		$(call log-sum,The working tree status); \
 		git status ${CONFIG_ENV}; \
 		$(newline); \
-		$(call log-sum,Changes between commits and working tree); \
+		$(txt-diff); \
 		git diff ${CONFIG_ENV}; \
 		$(newline); \
 		$(call log-sum,Summary); \
@@ -941,7 +941,7 @@ release: ## Release new update
 	@$(call log-sum,The working tree status)
 	@git status ${CONFIG_AWS} ${CONFIG_NPM}
 	@$(newline)
-	@$(call log-sum,Changes between commits and working tree)
+	@$(txt-diff)
 	@git diff ${CONFIG_AWS}
 	@git diff ${CONFIG_NPM}
 	@$(newline)
