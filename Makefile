@@ -857,38 +857,37 @@ backup: BACKUP_NAME = ${APP_NAME}-${BACKUP_DATE}-${BACKUP_TIME}.${EXT_ARCHIVE}
 backup: ## Create a backup copy of the project
 	@$(call log-start,Creating a backup copy...)
 	@$(call log-step,[Step 1/2] Create a backup copy)
-	@zip -r -q ${FILE_BACKUP} . -x \
+	@zip -r -q ${FILE_BACKUP} ${DIR_CWD} -x \
 	.DS_Store \
-	/*.git/* \
-	"build/*" \
-	"coverage/*" \
-	"node_modules/*" \
-	"tmp/*";
+	"${DIR_GIT}/*" \
+	"${DIR_BUILD}/*" \
+	"${DIR_COVERAGE}/*" \
+	"${DIR_DEPENDENCIES}/*" \
+	"${DIR_TEMP}/*";
 	@$(call log-step,[Step 2/2] Upload the archive to the cloud storage)
 	@mv ${FILE_BACKUP} ${DIR_BACKUP}/${BACKUP_NAME}
 	@$(newline)
-	@echo "- Date     : ${BACKUP_DATE}"
-	@echo "- Time     : ${BACKUP_TIME}"
-	@echo "- Prefix   : ${APP_NAME}"
-	@echo "- Type     : ${EXT_ARCHIVE}"
-	@echo "- File     : ${BACKUP_NAME}"
-	@echo "- Location : ${DIR_BACKUP}"
+	@echo "Date     : ${BACKUP_DATE}"
+	@echo "Time     : ${BACKUP_TIME}"
+	@echo "Prefix   : ${APP_NAME}"
+	@echo "Type     : ${EXT_ARCHIVE}"
+	@echo "File     : ${BACKUP_NAME}"
+	@echo "Location : ${DIR_BACKUP}"
 	@$(newline)
-	@$(txt-done)
+	@$(call log-start,Listing the results...)
+	@$(call log-sum,Archived backup copies)
+	@ls ${DIR_BACKUP}
 	@$(newline)
+	@$(call log-sum,Summary)
+	@echo "The backup has been created and uploaded to the cloud storage."
 	@read -p "Would you like to show archived backup copies? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		[yY] | [yY][eE][sS]) \
-			$(newline); \
-			$(call log-sum,Archived backup copies); \
-			ls ${DIR_BACKUP}; \
-			open ${DIR_BACKUP}; \
+			$(call helper-finder,${DIR_BACKUP}); \
 		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
+		[nN] | [nN][oO] | *) \
+			$(txt-skipped); \
+			$(txt-done); \
 		;; \
 	esac
 
