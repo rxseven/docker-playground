@@ -28,6 +28,7 @@ log-bold = \e[1m$(1)\e[0m
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1))
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1))
 log-italic = \e[3m$(1)\e[0m
+log-result = $(call log-template,${ANSI_COLOR_MAGENTA},$(1))
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1))
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1))
 log-success = $(call log-template,${ANSI_COLOR_GREEN},$(1))
