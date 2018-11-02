@@ -179,6 +179,7 @@ define remove-build
 		rm -rf -v ${DIR_BUILD}; \
 	else \
 		echo "Skipped, no build artifacts found."; \
+		$(txt-continue); \
 	fi
 endef
 
@@ -198,6 +199,7 @@ define remove-artifacts
 		rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
 	else \
 		echo "Skipped, no artifacts found."; \
+		$(txt-continue); \
 	fi
 endef
 
@@ -207,6 +209,7 @@ define remove-temporary
 		[ -e "$$f" ] && \
 		rm -rf -v ${DIR_TEMP}/* || \
 		echo "Skipped, no temporary files found."; \
+		$(txt-continue); \
 		break; \
 	done
 endef
