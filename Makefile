@@ -61,7 +61,9 @@ endef
 
 # Finder helper
 define helper-finder
-	open $(1)
+	printf "Opening $(call log-bold,$(1)) in Finder...\n"; \
+	open $(1); \
+	$(txt-done)
 endef
 
 # Preview helper
@@ -768,10 +770,25 @@ open: ## Open the app in the default browser *
 	fi;
 
 .PHONY: finder
-finder: ## Open the project in Finder
-	@$(call log-start,Opening the project...)
-	@$(call helper-finder,${DIR_CWD})
-	@$(txt-done)
+finder: ## Open files and directories in Finder *
+	@echo "Available options:"
+	@printf "1. $(call log-bold,workspace) * : Open the working copy\n"
+	@printf "2. $(call log-bold,backup)      : Open archived backup copies\n"
+	@$(newline)
+	@$(txt-options)
+	@$(newline)
+	@read -p "Enter the option: " OPTION; \
+	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "workspace" ]]; then \
+		$(newline); \
+		$(call helper-finder,${DIR_CWD}); \
+	elif [[ "$$OPTION" == 2 || "$$OPTION" == "backup" ]]; then \
+		$(newline); \
+		$(call helper-finder,${DIR_BACKUP}); \
+	elif [ "$$OPTION" == 0 ]; then \
+		$(txt-skipped); \
+	else \
+		$(txt-opps); \
+	fi;
 
 .PHONY: shell
 shell: ## Run Bourne shell in the app container
