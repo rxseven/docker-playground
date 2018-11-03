@@ -7,6 +7,10 @@ SHELL := /bin/bash
 blank :=
 space := $(blank) $(blank)
 
+CASE_ANY = [nN] | [nN][oO] | *)
+CASE_NO  = [nN] | [nN][oO])
+CASE_YES = [yY] | [yY][eE][sS])
+
 # Date and time
 CURRENT_DATE = $$(date +'%d.%m.%Y')
 
