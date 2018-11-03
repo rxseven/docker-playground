@@ -340,7 +340,7 @@ build: ## Create an optimized production build
 			echo "Opening in Finder..."; \
 			open ./${DIR_BUILD}; \
 		;; \
-		[nN] | [nN][oO] | *) \
+		${CASE_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -406,7 +406,7 @@ test: ## Run tests *
 			${CASE_YES}) \
 				$(helper-coverage); \
 			;; \
-			[nN] | [nN][oO] | *) \
+			${CASE_ANY}) \
 				printf "Skipped, you can view the reports later by running $(call log-bold,report) command.\n"; \
 				$(txt-done); \
 			;; \
@@ -621,7 +621,7 @@ erase: ## Clean up build artifacts and temporary files
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO] | *) \
+		${CASE_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -645,7 +645,7 @@ refresh: ## Refresh (soft clean) the development environment
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO] | *) \
+		${CASE_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -673,7 +673,7 @@ clean: ## Clean up the development environment (including persistent data)
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO] | *) \
+		${CASE_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -725,7 +725,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO] | *) \
+		${CASE_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -816,7 +816,7 @@ format: ## Format code automatically
 			$(txt-diff); \
 			git diff; \
 		;; \
-		[nN] | [nN][oO] | *) \
+		${CASE_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -878,7 +878,7 @@ backup: ## Create a backup copy of the project
 		${CASE_YES}) \
 			$(call helper-finder,${DIR_BACKUP}); \
 		;; \
-		[nN] | [nN][oO] | *) \
+		${CASE_ANY}) \
 			$(txt-skipped); \
 			$(txt-done); \
 		;; \
