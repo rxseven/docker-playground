@@ -52,6 +52,7 @@ txt-done = $(call log-success,Done)
 txt-note = $(call log-underline,Note)
 txt-opps = echo "Opps! please try again."
 txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
+txt-processing = $(call log-progress,Processing...)
 txt-result = $(call log-result,Listing the results...)
 txt-skipped = echo "Skipped"
 txt-status = $(call log-sum,The working tree status)
