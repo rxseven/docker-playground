@@ -33,7 +33,7 @@ log-bold = \e[1m$(1)\e[0m
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1))
 log-info = $(call log-template,${ANSI_COLOR_WHITE},$(1))
 log-italic = \e[3m$(1)\e[0m
-log-progress = printf "\e[${ANSI_COLOR_GREEN}m$(1)\e[0m \n"
+log-process = printf "\e[${ANSI_COLOR_GREEN}m$(1)\e[0m \n"
 log-result = $(call log-template,${ANSI_COLOR_MAGENTA},$(1))
 log-start = $(call log-template,${ANSI_COLOR_MAGENTA},$(1))
 log-step = $(call log-template,${ANSI_COLOR_YELLOW},$(1))
@@ -52,7 +52,7 @@ txt-done = $(call log-success,Done)
 txt-note = $(call log-underline,Note)
 txt-opps = echo "Opps! please try again."
 txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
-txt-processing = $(call log-progress,Processing...)
+txt-processing = $(call log-process,Processing...)
 txt-result = $(call log-result,Listing the results...)
 txt-skipped = echo "Skipped"
 txt-status = $(call log-sum,The working tree status)
@@ -186,7 +186,7 @@ endef
 
 # Removing build artifacts helper
 define remove-build
-	$(call log-progress,Removing build artifacts...); \
+	$(call log-process,Removing build artifacts...); \
 	if [ -d "${DIR_BUILD}" ]; then \
 		rm -rf -v ${DIR_BUILD}; \
 	else \
@@ -197,7 +197,7 @@ endef
 
 # Removing code coverage reports helper
 define remove-coverage
-	$(call log-progress,Removing code coverage reports...); \
+	$(call log-process,Removing code coverage reports...); \
 	if [ -d "${DIR_COVERAGE}" ]; then \
 		rm -rf -v ${DIR_COVERAGE}; \
 	else \
@@ -212,7 +212,7 @@ define remove-artifacts
 		$(remove-build); \
 		$(remove-coverage); \
 	else \
-		$(call log-progress,Removing artifacts...); \
+		$(call log-process,Removing artifacts...); \
 		echo "Skipped, no artifacts found."; \
 		$(txt-continue); \
 	fi
@@ -220,7 +220,7 @@ endef
 
 # Removing temporary files helper
 define remove-temporary
-	$(call log-progress,Removing temporary files...); \
+	$(call log-process,Removing temporary files...); \
 	for f in ${DIR_TEMP}/*; do \
 		[ -e "$$f" ] && \
 		rm -rf -v ${DIR_TEMP}/* || \
