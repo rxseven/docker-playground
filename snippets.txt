@@ -353,3 +353,12 @@ case "$$CONFIRMATION" in \
 		printf "The package has been $(2) successfully$(,) please commit the changes.\n"; \
 	;; \
 esac; \
+
+--------------------------------------------------------------------------------
+
+.PHONY: dummy
+dummy: ##Dummy
+	@mkdir build coverage
+	@cd build && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+	@cd coverage && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+	@cd tmp && touch 001.txt 002.txt 003.txt 004.txt 005.txt
