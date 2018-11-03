@@ -98,7 +98,7 @@ define helper-test
 	if [ "$(2)" == "cleanup" ]; then \
 		$(remove-coverage); \
 	else \
-		echo "Skipped, this is not the case."; \
+		echo "Skipping, this is not the case."; \
 		$(txt-continue); \
 	fi; \
 	$(call log-step,[Step 2/5] Build the development image (if needed)); \
@@ -119,7 +119,7 @@ define helper-coverage
 	if [ -d "${DIR_COVERAGE}" ]; then \
 		$(call helper-browser,./${DIR_COVERAGE}/lcov-report/index.html); \
 	else \
-		printf "Skipped, no code coverage reports found.\n"; \
+		printf "Skipping, no code coverage reports found.\n"; \
 		printf "Run $(call log-bold,test) command with $(call log-bold,coverage) option to generate the reports.\n"; \
 	fi
 endef
@@ -192,7 +192,7 @@ define remove-build
 		rm -rf -v ${DIR_BUILD}; \
 		$(call log-complete,Removed successfully.); \
 	else \
-		echo "Skipped, no build artifacts found."; \
+		echo "Skipping, no build artifacts found."; \
 		$(txt-continue); \
 	fi
 endef
@@ -204,7 +204,7 @@ define remove-coverage
 		rm -rf -v ${DIR_COVERAGE}; \
 		$(call log-complete,Removed successfully.); \
 	else \
-		echo "Skipped, no code coverage reports found."; \
+		echo "Skipping, no code coverage reports found."; \
 		$(txt-continue); \
 	fi
 endef
@@ -216,7 +216,7 @@ define remove-artifacts
 		$(remove-coverage); \
 	else \
 		$(call log-process,Removing artifacts...); \
-		echo "Skipped, no artifacts found."; \
+		echo "Skipping, no artifacts found."; \
 		$(txt-continue); \
 	fi
 endef
@@ -227,7 +227,7 @@ define remove-temporary
 	for f in ${DIR_TEMP}/*; do \
 		[ -e "$$f" ] && \
 		(rm -rf -v ${DIR_TEMP}/* && $(call log-complete,Removed successfully.)) || \
-		(printf "Skipped, no temporary files found.\n" && $(txt-continue)); \
+		(printf "Skipping, no temporary files found.\n" && $(txt-continue)); \
 		break; \
 	done
 endef
@@ -319,7 +319,7 @@ up: ## Rebuild images for the development environment services
 		$(call helper-up,${SERVICE_APP}); \
 		$(txt-done); \
 	elif [[ "$$OPTION" == 3 || "$$OPTION" == "proxy" ]]; then \
-		printf "Skipped, $(call log-bold,${SERVICE_PROXY}) service uses an image.\n"; \
+		printf "Skipping, $(call log-bold,${SERVICE_PROXY}) service uses an image.\n"; \
 	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -417,7 +417,7 @@ test: ## Run tests *
 				$(helper-coverage); \
 			;; \
 			${CASE_ANY}) \
-				printf "Skipped, you can view the reports later by running $(call log-bold,report) command.\n"; \
+				printf "Skipping, you can view the reports later by running $(call log-bold,report) command.\n"; \
 				$(txt-done); \
 			;; \
 		esac; \
@@ -569,7 +569,7 @@ install: ## Install a package and any packages that it depends on **
 		$(newline); \
 		$(txt-done); \
 	else \
-		echo "Skipped, you did not enter the package name, please try again."; \
+		echo "Skipping, you did not enter the package name, please try again."; \
 	fi;
 
 .PHONY: uninstall
@@ -598,7 +598,7 @@ uninstall: ## Uninstall a package **
 		$(newline); \
 		$(txt-done); \
 	else \
-		echo "Skipped, you did not enter the package name, please try again."; \
+		echo "Skipping, you did not enter the package name, please try again."; \
 	fi;
 
 .PHONY: update
