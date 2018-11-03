@@ -336,7 +336,7 @@ build: ## Create an optimized production build
 	@printf "The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory.\n"
 	@read -p "Would you like to view the build artifacts in Finder? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
+		${CASE_YES}) \
 			echo "Opening in Finder..."; \
 			open ./${DIR_BUILD}; \
 		;; \
@@ -406,7 +406,7 @@ test: ## Run tests *
 		printf "Code coverage reports have been generated in $(call log-bold,${DIR_ROOT}${DIR_COVERAGE}) directory.\n"; \
 		read -p "Would you like to view the report visualization in the browser? " CONFIRMATION; \
 		case "$$CONFIRMATION" in \
-			[yY] | [yY][eE][sS]) \
+			${CASE_YES}) \
 				$(helper-coverage); \
 			;; \
 			[nN] | [nN][oO] | *) \
@@ -611,7 +611,7 @@ erase: ## Clean up build artifacts and temporary files
 	@$(newline)
 	@read -p "Remove build artifacts and temporary files? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
+		${CASE_YES}) \
 			$(newline); \
 			$(call log-start,Removing data...); \
 			$(call log-step,[Step 1/2] Remove build artifacts); \
@@ -640,7 +640,7 @@ refresh: ## Refresh (soft clean) the development environment
 	@$(newline)
 	@read -p "Refresh the development environment? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
+		${CASE_YES}) \
 			$(newline); \
 			$(call log-start,Refreshing the development environment...); \
 			$(call log-step,[Step 1/2] Stop running containers); \
@@ -671,7 +671,7 @@ clean: ## Clean up the development environment (including persistent data)
 	@$(newline)
 	@read -p "Clean up the development environment? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
+		${CASE_YES}) \
 			$(newline); \
 			$(call log-start,Cleaning up the development environment...); \
 			$(call log-step,[Step 1/2] Stop running containers); \
@@ -708,7 +708,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(newline)
 	@read -p "Reset the development environment and clean up unused data? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
+		${CASE_YES}) \
 			$(newline); \
 			$(call log-start,Resetting the development environment...); \
 			$(call log-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes); \
@@ -827,7 +827,7 @@ format: ## Format code automatically
 	@$(newline)
 	@read -p "Would you like to show changes between commits? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
+		${CASE_YES}) \
 			$(txt-diff); \
 			git diff; \
 		;; \
@@ -893,7 +893,7 @@ backup: ## Create a backup copy of the project
 	@echo "The backup has been created and uploaded to the cloud storage."
 	@read -p "Would you like to show archived backup copies? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		[yY] | [yY][eE][sS]) \
+		${CASE_YES}) \
 			$(call helper-finder,${DIR_BACKUP}); \
 		;; \
 		[nN] | [nN][oO] | *) \
