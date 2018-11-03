@@ -610,13 +610,14 @@ update: ## Install and update all the dependencies listed within package.json
 
 .PHONY: erase
 erase: ## Clean up artifacts and temporary files
-	@$(call log-start,This command will perform the following actions:)
+	@$(call log-start,Clean up artifacts and temporary files)
+	@$(txt-performing)
 	@echo "- Remove all artifacts"
 	@echo "- Remove all temporary files"
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Remove artifacts and temporary files? " CONFIRMATION; \
+	@read -p "Do you want to continue? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
