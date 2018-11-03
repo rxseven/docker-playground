@@ -340,11 +340,8 @@ build: ## Create an optimized production build
 			echo "Opening in Finder..."; \
 			open ./${DIR_BUILD}; \
 		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
+		[nN] | [nN][oO] | *) \
+			$(txt-skipped); \
 		;; \
 	esac
 	@$(txt-done)
@@ -624,11 +621,8 @@ erase: ## Clean up build artifacts and temporary files
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
+		[nN] | [nN][oO] | *) \
+			$(txt-skipped); \
 		;; \
 	esac
 
@@ -651,11 +645,8 @@ refresh: ## Refresh (soft clean) the development environment
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
+		[nN] | [nN][oO] | *) \
+			$(txt-skipped); \
 		;; \
 	esac
 
@@ -682,11 +673,8 @@ clean: ## Clean up the development environment (including persistent data)
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
+		[nN] | [nN][oO] | *) \
+			$(txt-skipped); \
 		;; \
 	esac
 
@@ -737,11 +725,8 @@ reset: ## Reset the development environment and clean up unused data
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
+		[nN] | [nN][oO] | *) \
+			$(txt-skipped); \
 		;; \
 	esac
 
@@ -831,11 +816,8 @@ format: ## Format code automatically
 			$(txt-diff); \
 			git diff; \
 		;; \
-		[nN] | [nN][oO]) \
-			$(txt-skipped) \
-		;; \
-		*) \
-			$(txt-confirm); \
+		[nN] | [nN][oO] | *) \
+			$(txt-skipped); \
 		;; \
 	esac
 	@$(newline)
