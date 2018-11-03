@@ -820,7 +820,6 @@ format: ## Format code automatically
 			$(txt-skipped); \
 		;; \
 	esac
-	@$(newline)
 	@$(txt-done)
 
 .PHONY: setup
