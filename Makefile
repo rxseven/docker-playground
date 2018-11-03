@@ -609,25 +609,26 @@ update: ## Install and update all the dependencies listed within package.json
 ##@ Cleanup:
 
 .PHONY: erase
-erase: ## Clean up build artifacts and temporary files
+erase: ## Clean up artifacts and temporary files
 	@$(call log-start,This command will perform the following actions:)
-	@echo "- Remove all build artifacts"
+	@echo "- Remove all artifacts"
 	@echo "- Remove all temporary files"
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Remove build artifacts and temporary files? " CONFIRMATION; \
+	@read -p "Remove artifacts and temporary files? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
 			$(call log-start,Removing data...); \
-			$(call log-step,[Step 1/2] Remove build artifacts); \
+			$(call log-step,[Step 1/2] Remove artifacts); \
 			$(remove-artifacts); \
 			$(call log-step,[Step 2/2] Remove temporary files); \
 			$(remove-temporary); \
 			$(newline); \
 			$(txt-result); \
 			$(sum-artifacts); \
+			$(newline); \
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
