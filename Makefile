@@ -190,6 +190,7 @@ define remove-build
 	$(call log-process,Removing build artifacts...); \
 	if [ -d "${DIR_BUILD}" ]; then \
 		rm -rf -v ${DIR_BUILD}; \
+		$(call log-complete,Removed successfully.); \
 	else \
 		echo "Skipped, no build artifacts found."; \
 		$(txt-continue); \
