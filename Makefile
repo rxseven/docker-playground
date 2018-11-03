@@ -704,9 +704,11 @@ reset: ## Reset the development environment and clean up unused data
 	@echo "- Remove the development image"
 	@echo "- Remove the production image"
 	@echo "- Remove the intermediate images"
-	@echo "- Remove all stopped containers (optional)"
-	@echo "- Remove unused images (optional)"
-	@echo "- Remove all unused local volumes (optional)"
+	@$(newline)
+	@echo "Optional:"
+	@echo "- Remove all stopped containers"
+	@echo "- Remove unused images"
+	@echo "- Remove all unused local volumes"
 	@echo "- Remove artifacts"
 	@echo "- Remove temporary files"
 	@$(newline)
@@ -731,15 +733,32 @@ reset: ## Reset the development environment and clean up unused data
 			docker image prune; \
 			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)); \
 			docker volume prune; \
-			$(call log-step,[Step 8/9] Remove artifacts); \
-			$(remove-artifacts); \
+			$(call log-step,[Step 8/9] Remove artifacts (optional)); \
+			read -p "${IF_CONTINUE} " CONFIRMATION; \
+			case "$$CONFIRMATION" in \
+				${CASE_YES}) \
+					$(remove-artifacts); \
+				;; \
+				${CASE_ANY}) \
+					$(txt-skipped); \
+				;; \
+			esac; \
 			$(call log-step,[Step 9/9] Remove temporary files); \
-			$(remove-temporary); \
+			read -p "${IF_CONTINUE} " CONFIRMATION; \
+			case "$$CONFIRMATION" in \
+				${CASE_YES}) \
+					$(remove-temporary); \
+				;; \
+				${CASE_ANY}) \
+					$(txt-skipped); \
+				;; \
+			esac; \
 			$(newline); \
 			$(txt-result); \
 			$(sum-docker); \
 			$(newline); \
 			$(sum-artifacts); \
+			$(newline); \
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
