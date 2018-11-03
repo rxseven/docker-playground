@@ -247,9 +247,9 @@ define sum-docker
 	docker image ls -a
 endef
 
-# Build artifacts summary
+# Artifacts summary
 define sum-artifacts
-	$(call log-sum,Build artifacts); \
+	$(call log-sum,Artifacts); \
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		echo "Opps! there are some artifacts left, please try again."; \
 	else \
