@@ -744,12 +744,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(txt-skipped); \
 		;; \
 	esac
-.PHONY: dummy
-dummy: ##Dummy
-	@mkdir build coverage
-	@cd build && touch 001.txt 002.txt 003.txt 004.txt 005.txt
-	@cd coverage && touch 001.txt 002.txt 003.txt 004.txt 005.txt
-	@cd tmp && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+
 ##@ Utilities:
 
 .PHONY: code
