@@ -12,6 +12,9 @@ CASE_ANY := [nN] | [nN][oO] | *
 CASE_NO  := [nN] | [nN][oO]
 CASE_YES := [yY] | [yY][eE][sS]
 
+# If statements
+IF_CONTINUE := Are you sure you want to continue? [y/N]
+
 # Date and time
 CURRENT_DATE = $$(date +'%d.%m.%Y')
 
@@ -617,7 +620,7 @@ erase: ## Clean up artifacts and temporary files
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Do you want to continue? " CONFIRMATION; \
+	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
@@ -645,7 +648,7 @@ refresh: ## Refresh (soft clean) the development environment
 	@echo "- Stop running containers"
 	@echo "- Remove containers and the default network"
 	@$(newline)
-	@read -p "Do you want to continue? " CONFIRMATION; \
+	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
@@ -674,7 +677,7 @@ clean: ## Clean up the development environment (including persistent data)
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove persistent data. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Do you want to continue? " CONFIRMATION; \
+	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
@@ -709,7 +712,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Do you want to continue? " CONFIRMATION; \
+	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
