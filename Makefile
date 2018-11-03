@@ -197,6 +197,7 @@ endef
 
 # Removing code coverage reports helper
 define remove-coverage
+	$(call log-progress,Removing code coverage reports...); \
 	if [ -d "${DIR_COVERAGE}" ]; then \
 		rm -rf -v ${DIR_COVERAGE}; \
 	else \
