@@ -49,6 +49,7 @@ txt-options = printf "* default option, press $(call log-bold,enter) key to cont
 txt-result = $(call log-result,Listing the results...)
 txt-skipped = echo "Skipped"
 txt-status = $(call log-sum,The working tree status)
+txt-summary = $(call log-sum,Summary)
 txt-warning = $(call log-underline,Warning)
 
 # Configuration helpers
@@ -327,7 +328,7 @@ build: ## Create an optimized production build
 	@$(call log-sum,Build artifacts)
 	@ls ${DIR_BUILD}
 	@$(newline)
-	@$(call log-sum,Summary)
+	@$(txt-summary)
 	@printf "The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory.\n"
 	@read -p "Would you like to view the build artifacts in Finder? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
@@ -397,7 +398,7 @@ test: ## Run tests *
 		$(call log-sum,Code coverage reports); \
 		ls ${DIR_COVERAGE}; \
 		$(newline); \
-		$(call log-sum,Summary); \
+		$(txt-summary); \
 		printf "Code coverage reports have been generated in $(call log-bold,${DIR_ROOT}${DIR_COVERAGE}) directory.\n"; \
 		read -p "Would you like to view the report visualization in the browser? " CONFIRMATION; \
 		case "$$CONFIRMATION" in \
@@ -481,7 +482,7 @@ typecheck: ## Run static type checking *
 		$(txt-status); \
 		git status ${DIR_TYPED}; \
 		$(newline); \
-		$(call log-sum,Summary); \
+		$(txt-summary); \
 		printf "The library definitions have been installed in $(call log-bold,./${DIR_TYPED}) directory.\n"; \
 		printf "Please commit the changes (if any).\n"; \
 		$(txt-done); \
@@ -552,7 +553,7 @@ install: ## Install a package and any packages that it depends on **
 		$(txt-status); \
 		git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
 		$(newline); \
-		$(call log-sum,Summary); \
+		$(txt-summary); \
 		printf "The package has been installed successfully$(,) please commit the changes (if any).\n"; \
 		$(newline); \
 		$(txt-done); \
@@ -581,7 +582,7 @@ uninstall: ## Uninstall a package **
 		$(txt-status); \
 		git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
 		$(newline); \
-		$(call log-sum,Summary); \
+		$(txt-summary); \
 		printf "The package has been uninstalled successfully$(,) please commit the changes (if any).\n"; \
 		$(newline); \
 		$(txt-done); \
@@ -884,7 +885,7 @@ backup: ## Create a backup copy of the project
 	@$(call log-sum,Archived backup copies)
 	@ls ${DIR_BACKUP}
 	@$(newline)
-	@$(call log-sum,Summary)
+	@$(txt-summary)
 	@echo "The backup has been created and uploaded to the cloud storage."
 	@read -p "Would you like to show archived backup copies? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
@@ -925,7 +926,7 @@ version: ## Set the next release version **
 		$(txt-diff); \
 		git diff ${CONFIG_ENV}; \
 		$(newline); \
-		$(call log-sum,Summary); \
+		$(txt-summary); \
 		printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today).\n"; \
 		printf "Please run $(call log-bold,release) command to prepare for the next release.\n"; \
 		$(txt-done); \
@@ -946,7 +947,7 @@ release: ## Release new update
 	@git diff ${CONFIG_AWS}
 	@git diff ${CONFIG_NPM}
 	@$(newline)
-	@$(call log-sum,Summary)
+	@$(txt-summary)
 	@printf "Please commit the changes and merge into $(call log-bold,master) branch.\n"
 	@$(txt-done)
 
