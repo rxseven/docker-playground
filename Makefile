@@ -52,6 +52,7 @@ txt-done = $(call log-success,Done)
 txt-note = $(call log-underline,Note)
 txt-opps = echo "Opps! please try again."
 txt-options = printf "* default option, press $(call log-bold,enter) key to continue / enter $(call log-bold,0) to cancel.\n"
+txt-performing = echo "This command will perform the following actions:"
 txt-processing = $(call log-process,Processing...)
 txt-result = $(call log-result,Listing the results...)
 txt-skipped = echo "Skipped"
@@ -639,7 +640,7 @@ erase: ## Clean up artifacts and temporary files
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
 	@$(call log-start,Refresh (soft clean) the development environment)
-	@echo "This command will perform the following actions:"
+	@$(txt-performing)
 	@echo "- Stop running containers"
 	@echo "- Remove containers and the default network"
 	@$(newline)
