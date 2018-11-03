@@ -699,7 +699,7 @@ reset: ## Reset the development environment and clean up unused data
 	@echo "- Remove all stopped containers (optional)"
 	@echo "- Remove unused images (optional)"
 	@echo "- Remove all unused local volumes (optional)"
-	@echo "- Remove build artifacts"
+	@echo "- Remove artifacts"
 	@echo "- Remove temporary files"
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
@@ -723,7 +723,7 @@ reset: ## Reset the development environment and clean up unused data
 			docker image prune; \
 			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)); \
 			docker volume prune; \
-			$(call log-step,[Step 8/9] Remove build artifacts); \
+			$(call log-step,[Step 8/9] Remove artifacts); \
 			$(remove-artifacts); \
 			$(call log-step,[Step 9/9] Remove temporary files); \
 			$(remove-temporary); \
