@@ -186,6 +186,7 @@ endef
 
 # Removing build artifacts helper
 define remove-build
+	$(call log-progress,Removing build artifacts...); \
 	if [ -d "${DIR_BUILD}" ]; then \
 		rm -rf -v ${DIR_BUILD}; \
 	else \
