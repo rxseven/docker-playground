@@ -202,6 +202,7 @@ define remove-coverage
 	$(call log-process,Removing code coverage reports...); \
 	if [ -d "${DIR_COVERAGE}" ]; then \
 		rm -rf -v ${DIR_COVERAGE}; \
+		$(call log-complete,Removed successfully.); \
 	else \
 		echo "Skipped, no code coverage reports found."; \
 		$(txt-continue); \
