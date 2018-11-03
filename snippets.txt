@@ -227,3 +227,129 @@ define hint-coverage
 	printf "Skipped, you can view the reports later by running $(call log-bold,report) command.\n"; \
 	$(txt-done)
 endef
+
+--------------------------------------------------------------------------------
+
+.PHONY: install
+install: ## Install a package and any packages that it depends on **
+	@read -p "Enter package name: " PACKAGE; \
+	if [ "$$PACKAGE" != "" ]; then \
+		$(newline); \
+		$(call log-start,Installing npm package...); \
+		$(call log-step,[Step 1/5] Build the development image (if needed)); \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies); \
+		$(call log-step,[Step 3/5] Install $$PACKAGE package in the persistent storage (volume)); \
+		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
+		$(call log-step,[Step 5/5] Remove the container); \
+		docker-compose run --rm ${SERVICE_APP} add $$PACKAGE; \
+		$(call helper-package,$$PACKAGE,install); \
+		$(txt-done); \
+	else \
+		echo "Skipped, you did not enter the package name, please try again."; \
+	fi;
+
+--------------------------------------------------------------------------------
+
+.PHONY: uninstall
+uninstall: ## Uninstall a package **
+	@if [[ `git diff ${CONFIG_NPM}` || `git diff ${CONFIG_PACKAGE}` ]]; then \
+		$(call log-danger,Unable to uninstall the package!); \
+		printf "$(call log-bold,${CONFIG_NPM}) and/or $(call log-bold,${CONFIG_PACKAGE}) have been modified.\n\n"; \
+		read -p "Would you like to see the changes? " CONFIRMATION; \
+		case "$$CONFIRMATION" in \
+			[yY] | [yY][eE][sS]) \
+				$(newline); \
+				$(txt-result); \
+				$(txt-diff); \
+				git diff ${CONFIG_NPM}; \
+				git diff ${CONFIG_PACKAGE}; \
+				$(newline); \
+				$(txt-status); \
+				git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
+			;; \
+		esac; \
+		$(newline); \
+		$(call log-sum,Summary); \
+		echo "Please commit the changes before uninstalling the package."; \
+		$(txt-skipped); \
+	else \
+		read -p "Enter package name: " PACKAGE; \
+		if [ "$$PACKAGE" != "" ]; then \
+			$(newline); \
+			$(call log-start,Uninstalling npm package...); \
+			$(call log-step,[Step 1/5] Build the development image (if needed)); \
+			$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies); \
+			$(call log-step,[Step 3/5] Uninstall $$PACKAGE package from the persistent storage (volume)); \
+			$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
+			$(call log-step,[Step 5/5] Remove the container); \
+			docker-compose run --rm ${SERVICE_APP} remove $$PACKAGE; \
+			$(call helper-package,$$PACKAGE,uninstall); \
+			$(txt-done); \
+		else \
+			echo "Skipped, you did not enter the package name, please try again."; \
+		fi; \
+	fi;
+
+--------------------------------------------------------------------------------
+
+# Upper
+
+
+define upper
+	ACTION=$(1); \
+	printf "$$(tr '[:lower:]' '[:upper:]' <<< $${ACTION:0:1})$${ACTION:1}\n"
+endef
+
+.PHONY: yo
+yo: ## Yo
+	@$(call upper,install)
+
+--------------------------------------------------------------------------------
+
+# Extract version from package.json (NPM) using bash / shell
+
+define helper-exist
+	NAME=$(1); \
+	if grep -q "\"$${NAME}\"" ${CONFIG_NPM}; then \
+		VERSION=$$(cat ${CONFIG_NPM} \
+			| grep $${NAME} \
+			| head -1 \
+			| awk -F: '{ print $$2 }' \
+			| sed 's/[",]//g'); \
+		echo $$VERSION; \
+	else \
+		echo "not exist"; \
+	fi;
+endef
+
+.PHONY: yo
+yo: ## Yo
+	@$(call helper-exist,axios)
+
+--------------------------------------------------------------------------------
+
+# Commit snippet
+
+read -p "Would you like to commit the changes? " CONFIRMATION; \
+case "$$CONFIRMATION" in \
+	[yY] | [yY][eE][sS]) \
+		$(newline); \
+		$(call log-start,Preparing for the commit...); \
+		git add ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
+		git status; \
+		$(call log-start,Committing the changes...); \
+		git commit -m "Install $(1) package"; \
+		$(newline); \
+		$(txt-result); \
+		$(call log-sum,The commit log); \
+		git log -1 --stat; \
+		$(newline); \
+		$(call log-sum,Summary); \
+		printf "The package has been $(2) successfully.\n"; \
+	;; \
+	[nN] | [nN][oO] | *) \
+		$(newline); \
+		$(call log-sum,Summary); \
+		printf "The package has been $(2) successfully$(,) please commit the changes.\n"; \
+	;; \
+esac; \
