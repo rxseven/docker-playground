@@ -638,11 +638,12 @@ erase: ## Clean up artifacts and temporary files
 
 .PHONY: refresh
 refresh: ## Refresh (soft clean) the development environment
-	@$(call log-start,This command will perform the following actions:)
+	@$(call log-start,Refresh (soft clean) the development environment)
+	@echo "This command will perform the following actions:"
 	@echo "- Stop running containers"
 	@echo "- Remove containers and the default network"
 	@$(newline)
-	@read -p "Refresh the development environment? " CONFIRMATION; \
+	@read -p "Do you want to continue? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
