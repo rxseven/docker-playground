@@ -207,7 +207,8 @@ endef
 # Removing artifacts helper
 define remove-artifacts
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
-		rm -rf -v ${DIR_BUILD} ${DIR_COVERAGE}; \
+		$(remove-build); \
+		$(remove-coverage); \
 	else \
 		echo "Skipped, no artifacts found."; \
 		$(txt-continue); \
