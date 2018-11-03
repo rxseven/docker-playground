@@ -665,7 +665,8 @@ refresh: ## Refresh (soft clean) the development environment
 
 .PHONY: clean
 clean: ## Clean up the development environment (including persistent data)
-	@$(call log-start,This command will perform the following actions:)
+	@$(call log-start,Clean up the development environment)
+	@$(txt-performing)
 	@echo "- Stop running containers"
 	@echo "- Remove containers"
 	@echo "- Remove the default network"
@@ -673,7 +674,7 @@ clean: ## Clean up the development environment (including persistent data)
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove persistent data. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Clean up the development environment? " CONFIRMATION; \
+	@read -p "Do you want to continue? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
