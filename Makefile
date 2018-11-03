@@ -46,7 +46,6 @@ log-underline = \e[4m$(1)\e[0m
 # Text and string helpers
 newline = echo ""
 headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
-txt-confirm = echo "Skipped, please enter y/yes or n/no"
 txt-continue = echo "Continue to the next step..."
 txt-diff = $(call log-sum,Changes between commits and working tree)
 txt-done = $(call log-success,Done)
