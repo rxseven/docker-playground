@@ -693,7 +693,7 @@ reset: ## Reset the development environment and clean up unused data
 	@echo "- Remove the development image"
 	@echo "- Remove the production image"
 	@echo "- Remove the intermediate images"
-	@echo "- Remove Remove all stopped containers (optional)"
+	@echo "- Remove all stopped containers (optional)"
 	@echo "- Remove unused images (optional)"
 	@echo "- Remove all unused local volumes (optional)"
 	@echo "- Remove build artifacts"
