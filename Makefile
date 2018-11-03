@@ -212,6 +212,7 @@ define remove-artifacts
 		$(remove-build); \
 		$(remove-coverage); \
 	else \
+		$(call log-progress,Removing artifacts...); \
 		echo "Skipped, no artifacts found."; \
 		$(txt-continue); \
 	fi
