@@ -225,7 +225,7 @@ define remove-temporary
 	$(call log-process,Removing temporary files...); \
 	for f in ${DIR_TEMP}/*; do \
 		[ -e "$$f" ] && \
-		rm -rf -v ${DIR_TEMP}/* || \
+		(rm -rf -v ${DIR_TEMP}/* && $(call log-complete,Removed successfully.)) || \
 		printf "Skipped, no temporary files found.\nContinue to the next step...\n"; \
 		break; \
 	done
