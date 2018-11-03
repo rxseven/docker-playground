@@ -224,7 +224,7 @@ define remove-temporary
 	for f in ${DIR_TEMP}/*; do \
 		[ -e "$$f" ] && \
 		rm -rf -v ${DIR_TEMP}/* || \
-		printf "Skipped, no temporary files found.\nContinue to the next step..."; \
+		printf "Skipped, no temporary files found.\nContinue to the next step...\n"; \
 		break; \
 	done
 endef
