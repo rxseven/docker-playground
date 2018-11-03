@@ -219,11 +219,11 @@ endef
 
 # Removing temporary files helper
 define remove-temporary
+	$(call log-progress,Removing temporary files...); \
 	for f in ${DIR_TEMP}/*; do \
 		[ -e "$$f" ] && \
 		rm -rf -v ${DIR_TEMP}/* || \
-		echo "Skipped, no temporary files found."; \
-		$(txt-continue); \
+		printf "Skipped, no temporary files found.\nContinue to the next step..."; \
 		break; \
 	done
 endef
