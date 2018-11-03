@@ -694,7 +694,8 @@ clean: ## Clean up the development environment (including persistent data)
 
 .PHONY: reset
 reset: ## Reset the development environment and clean up unused data
-	@$(call log-start,This command will perform the following actions:)
+	@$(call log-start,Reset the development environment and clean up unused data)
+	@$(txt-performing)
 	@echo "- Stop running containers"
 	@echo "- Remove containers, default network, and volumes attached to containers"
 	@echo "- Remove the development image"
@@ -708,7 +709,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "Reset the development environment and clean up unused data? " CONFIRMATION; \
+	@read -p "Do you want to continue? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
@@ -743,7 +744,12 @@ reset: ## Reset the development environment and clean up unused data
 			$(txt-skipped); \
 		;; \
 	esac
-
+.PHONY: dummy
+dummy: ##Dummy
+	@mkdir build coverage
+	@cd build && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+	@cd coverage && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+	@cd tmp && touch 001.txt 002.txt 003.txt 004.txt 005.txt
 ##@ Utilities:
 
 .PHONY: code
