@@ -180,10 +180,14 @@ endef
 # Starting the development environment helper
 define helper-start
 	$(call log-start,Starting the development environment...)
-	$(call log-step,[Step 1/4] Download base images (if needed))
-	$(call log-step,[Step 2/4] Build the development image (if needed))
-	$(call log-step,[Step 3/4] Create and start the development and reverse proxy containers)
-	$(call log-step,[Step 4/4] Start the development and reverse proxy servers)
+	$(call log-step,[Step 1/7] Stopping running containers (if any))
+	docker-compose stop
+	$(call log-step,[Step 2/7] Download base images (if needed))
+	$(call log-step,[Step 3/7] Build the development image (if needed))
+	$(call log-step,[Step 4/7] Create development and reverse proxy containers (if needed))
+	$(call log-step,[Step 5/7] Start the containers)
+	$(call log-step,[Step 6/7] Attach STDOUT/STDERR and forward signals)
+	$(call log-step,[Step 7/7] Start the development and reverse proxy servers)
 	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).)
 	docker-compose up
 endef
