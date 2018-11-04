@@ -328,6 +328,28 @@ yo: ## Yo
 
 --------------------------------------------------------------------------------
 
+# How to test if string exists in file with Bash?
+# https://stackoverflow.com/questions/4749330/how-to-test-if-string-exists-in-file-with-bash
+
+define helper-exist
+	@read -p "Enter the input: " INPUT; \
+	if [ "$$INPUT" != "" ]; then \
+		if grep -Fxq "$$INPUT" ${HOST_DNS}; then \
+			echo "found"; \
+		else \
+			echo "not found"; \
+		fi; \
+	else \
+		echo "Skipping"; \
+	fi;
+endef
+
+.PHONY: yo
+yo: ## Yo
+	@$(helper-exist)
+
+--------------------------------------------------------------------------------
+
 # Commit snippet
 
 read -p "Would you like to commit the changes? " CONFIRMATION; \
@@ -390,3 +412,18 @@ dummy: ##Dummy
 @$(newline)
 @printf "$(txt-note): This is most commonly used when you have just checked out code for a project,\nor when another developer on the project has added a new dependency that you need to pick up.\n"
 @$(newline)
+--------------------------------------------------------------------------------
+
+@$(newline)
+@$(call headline,Configuration files)
+@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
+@echo "NPM & Yarn                     : ${CONFIG_NPM}"
+@echo "Travis CI                      : ${CONFIG_CI}"
+@echo "Environment variables          : ${CONFIG_ENV}"
+
+@$(newline)
+@$(call headline,Files & Directories)
+@echo "Optimized production build     : ${DIR_BUILD}"
+@echo "Code coverage                  : ${DIR_COVERAGE}"
+@echo "Temporary                      : ${DIR_TEMP}"
+@echo "Treemap                        : ${FILE_TREEMAP}"
