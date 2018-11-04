@@ -67,7 +67,23 @@ txt-warning = $(call log-underline,Warning)
 # Configuration helpers
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
-set-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
+
+# Host helper
+define helper-host
+	if grep -Fxq "${HOST_IP}       $(1)" ${HOST_DNS}; then \
+		echo "Skipping, $(1) is already set."; \
+	else \
+		echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}; \
+		$(call log-complete,Set host name successfully.); \
+	fi
+endef
+
+# Image helper
+define helper-image
+	docker image inspect $(1) >/dev/null 2>&1 && \
+	(echo "Skipping, $(1) already exists.") || \
+	(docker pull $(1) && $(call log-complete,Downloaded successfully.))
+endef
 
 # Browser helper
 define helper-browser
@@ -891,22 +907,55 @@ format: ## Format code automatically
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies ***
 	@$(call log-start,Setting up the development environment...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running on the development environment)
-	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
-	@docker pull ${IMAGE_BASE_PROXY}
-	@$(call log-step,[Step 2/2] Set a custom domain for a self-signed SSL certificate)
-	@$(call set-host,${APP_DOMAIN_LOCAL})
-	@$(call set-host,${APP_DOMAIN_BUILD})
+	@$(call log-step,[Step 1/4] Install dependencies required for running on the development environment)
+	@$(call log-process,Checking local images...)
+	@$(call helper-image,${IMAGE_BASE_NGINX})
+	@$(call helper-image,${IMAGE_BASE_NODE})
+	@$(call helper-image,${IMAGE_BASE_PROXY})
+	@$(call log-step,[Step 2/4] Set custom host names for a self-signed SSL certificate)
+	@$(call log-process,Verifying host names...)
+	@$(call helper-host,${APP_DOMAIN_LOCAL})
+	@$(call helper-host,${APP_DOMAIN_BUILD})
+	@$(call log-step,[Step 3/4] Create a backup directory)
+	@if [ -d ${DIR_BACKUP} ]; then \
+  	echo "Skipping, the directory already exists."; \
+	else \
+		$(call log-process,Creating a backup directory...); \
+		mkdir -p ${DIR_BACKUP}; \
+		echo ${DIR_BACKUP}; \
+		$(call log-complete,Created backup directory successfully.); \
+	fi
+	@$(call log-step,[Step 4/4] Build the development image)
+	@docker-compose build ${SERVICE_APP}
+	@$(call log-complete,Built successfully.)
 	@$(newline)
 	@$(txt-result)
 	@$(call log-sum,Images)
 	@docker image ls
 	@$(newline)
-	@$(call log-sum,Local hosts)
+	@$(call log-sum,Host names)
 	@cat ${HOST_DNS}
 	@$(newline)
-	@$(txt-done)
+	@$(call log-sum,Backup directory)
+	@if [ -d ${DIR_BACKUP} ]; then \
+		echo ${DIR_BACKUP}; \
+	else \
+		echo "Opps! the directory did not create properly, please try again."; \
+	fi
+	@$(newline)
+	@$(call log-sum,Summary)
+	@echo "You are all set."
+		@read -p "Would you like to start the development environment right away? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		${CASE_YES}) \
+			$(newline); \
+			$(helper-start); \
+		;; \
+		${CASE_ANY}) \
+			$(txt-skipped); \
+			$(txt-done); \
+		;; \
+	esac
 
 .PHONY: backup
 backup: BACKUP_DATE = $$(date +'%d.%m.%Y')
