@@ -356,9 +356,37 @@ esac; \
 
 --------------------------------------------------------------------------------
 
+# Case variables
+
+CASE_ANY = [nN] | [nN][oO] | *)
+CASE_NO  = [nN] | [nN][oO])
+CASE_YES = [yY] | [yY][eE][sS])
+.PHONY: yo
+yo:
+	@read -p "Yo? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		${CASE_YES} \
+			echo "Yes"; \
+		;; \
+		${CASE_NO} \
+			echo "No"; \
+		;; \
+		*) \
+			echo "Enter"; \
+		;; \
+	esac
+
+--------------------------------------------------------------------------------
+
 .PHONY: dummy
 dummy: ##Dummy
 	@mkdir build coverage
 	@cd build && touch 001.txt 002.txt 003.txt 004.txt 005.txt
 	@cd coverage && touch 001.txt 002.txt 003.txt 004.txt 005.txt
 	@cd tmp && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+
+--------------------------------------------------------------------------------
+
+@$(newline)
+@printf "$(txt-note): This is most commonly used when you have just checked out code for a project,\nor when another developer on the project has added a new dependency that you need to pick up.\n"
+@$(newline)
