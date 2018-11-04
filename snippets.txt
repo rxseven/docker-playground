@@ -427,3 +427,17 @@ dummy: ##Dummy
 @echo "Code coverage                  : ${DIR_COVERAGE}"
 @echo "Temporary                      : ${DIR_TEMP}"
 @echo "Treemap                        : ${FILE_TREEMAP}"
+
+docker image inspect "node:latest" > /dev/null 2>&1 || echo "does not exist!"
+
+docker image inspect node:10.11.0-alpine >/dev/null 2>&1 && echo yes || echo no
+
+--------------------------------------------------------------------------------
+
+.PHONY: yo
+yo:
+	@if [ -d ${DIR_BACKUP} ]; then \
+  	echo "exist"; \
+	else \
+		echo "not exist"; \
+	fi
