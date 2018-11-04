@@ -61,6 +61,7 @@ txt-result = $(call log-result,Listing the results...)
 txt-skipped = echo "Skipped"
 txt-status = $(call log-sum,The working tree status)
 txt-summary = $(call log-sum,Summary)
+txt-version = printf "Makefile version ${MAKEFILE_VERSION}\n"
 txt-warning = $(call log-underline,Warning)
 
 # Configuration helpers
@@ -1139,6 +1140,8 @@ info: ## Show project configuration
 	@echo "Name                           : ${AUTHOR_NAME}"
 	@echo "Email                          : ${AUTHOR_EMAIL}"
 	@$(newline)
+	@$(txt-version)
+	@$(newline)
 
 .PHONY: status
 status: ## Show system status
@@ -1158,5 +1161,5 @@ help: ## Print usage
 	@printf "*   with options\n"
 	@printf "**  requires user input\n"
 	@printf "*** requires superuser access\n\n"
-	@printf "Makefile version ${MAKEFILE_VERSION}\n"
+	@$(txt-version)
 	@$(newline)
