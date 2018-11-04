@@ -71,7 +71,7 @@ set-host = echo "${HOST_IP}       $(1)" | sudo tee -a ${HOST_DNS}
 # Browser helper
 define helper-browser
 	printf "Opening $(call log-bold,$(1)) in the default browser...\n"; \
-	open -a ${BROWSER_DEFAULT} $(1); \
+	open -a ${BROWSER} $(1); \
 	$(txt-done)
 endef
 
@@ -1132,7 +1132,7 @@ info: ## Show project configuration
 	@echo "SSL port mapping               : ${PORT_MAPPING_SSL}"
 	@$(newline)
 	@$(call headline,Miscellaneous)
-	@echo "Default browser                : ${BROWSER_DEFAULT}"
+	@echo "Default browser                : ${BROWSER}"
 	@echo "License                        : ${IMAGE_LICENSE}"
 	@$(newline)
 	@$(call headline,Maintainer)
