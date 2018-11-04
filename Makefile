@@ -553,7 +553,6 @@ report: ## Show development statistics and reports *
 	@$(newline)
 	@read -p "Enter the option: " OPTION; \
 	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "coverage" ]]; then \
-		$(newline); \
 		$(helper-coverage); \
 	elif [[ "$$OPTION" == 2 || "$$OPTION" == "none" ]]; then \
 		echo "Sorry, this option is not available."; \
