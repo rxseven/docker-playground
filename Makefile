@@ -159,12 +159,16 @@ endef
 
 # Installing and updating helper
 define helper-update
-	$(call log-start,Updating dependencies...)
-	$(call log-step,[Step 1/5] Build the development image (if needed))
-	$(call log-step,[Step 2/5] Create and start a container for updating dependencies)
-	$(call log-step,[Step 3/5] Install and update dependencies in the persistent storage (volume))
-	$(call log-step,[Step 4/5] Update ${CONFIG_PACKAGE} (if necessary))
-	$(call log-step,[Step 5/5] Remove the container)
+	$(call log-start,Installing and updating dependencies...)
+	$(call log-step,[Step 1/8] Stop running containers (if any))
+	docker-compose stop
+	$(call log-step,[Step 2/8] Download base images (if needed))
+	$(call log-step,[Step 3/8] Build the development image (if needed))
+	$(call log-step,[Step 4/8] Create a container for updating dependencies)
+	$(call log-step,[Step 5/8] Start the container)
+	$(call log-step,[Step 6/8] Install and update dependencies in the persistent storage (volume))
+	$(call log-step,[Step 7/8] Update ${CONFIG_PACKAGE} (if necessary))
+	$(call log-step,[Step 8/8] Remove the container)
 	docker-compose run --rm ${SERVICE_APP} install
 endef
 
@@ -303,7 +307,13 @@ stop: ## Stop running containers without removing them
 
 .PHONY: run
 run: ## Update dependencies and start the development environment
+	@$(call log-start,Update dependencies and start the development environment)
+	@$(newline)
+	@$(call log-info,Part 1/2 : Install and update all the dependencies listed within package.json)
 	@$(helper-update)
+	@$(call log-complete,Updated dependencies successfully.)
+	@$(newline)
+	@$(call log-info,Part 2/2 : Start the development environment)
 	@$(helper-start)
 
 .PHONY: up
