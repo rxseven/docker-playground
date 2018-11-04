@@ -788,7 +788,7 @@ reset: ## Reset the development environment and clean up unused data
 					$(txt-skipped); \
 				;; \
 			esac; \
-			$(call log-step,[Step 9/9] Remove temporary files); \
+			$(call log-step,[Step 9/9] Remove temporary files (optional)); \
 			read -p "${IF_CONTINUE} " CONFIRMATION; \
 			case "$$CONFIRMATION" in \
 				${CASE_YES}) \
