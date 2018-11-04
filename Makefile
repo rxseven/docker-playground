@@ -170,6 +170,7 @@ define helper-update
 	$(call log-step,[Step 7/8] Update ${CONFIG_PACKAGE} (if necessary))
 	$(call log-step,[Step 8/8] Remove the container)
 	docker-compose run --rm ${SERVICE_APP} install
+	$(call log-complete,Updated dependencies successfully.)
 endef
 
 # Rebuding images helper
@@ -311,7 +312,6 @@ run: ## Update dependencies and start the development environment
 	@$(newline)
 	@$(call log-info,Part 1/2 : Install and update all the dependencies listed within package.json)
 	@$(helper-update)
-	@$(call log-complete,Updated dependencies successfully.)
 	@$(newline)
 	@$(call log-info,Part 2/2 : Start the development environment)
 	@$(helper-start)
@@ -626,7 +626,6 @@ uninstall: ## Uninstall a package **
 .PHONY: update
 update: ## Install and update all the dependencies listed within package.json
 	@$(helper-update)
-	@$(call log-complete,Updated dependencies successfully.)
 	@read -p "Would you like to start the development environment right away? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
