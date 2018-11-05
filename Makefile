@@ -203,13 +203,11 @@ endef
 
 # Release helper
 define helper-release
-	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
-	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS})
-	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_AWS})
-	$(call log-step,[Step 2/2] Configure ${CONFIG_NPM} for AWS Node.js deployment)
-	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_NPM})
-	
-	# Remove backup files after performing text transformations
+	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment); \
+	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS}); \
+	$(call set-json,ContainerPort,${PORT_EXPOSE_PROXY},$(blank),${CONFIG_AWS}); \
+	$(call log-step,[Step 2/2] Configure ${CONFIG_NPM} for AWS Node.js deployment); \
+	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_NPM}); \
 	rm *.${EXT_BACKUP}
 endef
 
@@ -1149,19 +1147,23 @@ version: ## Set a release version **
 .PHONY: release
 release: ## Release new update
 	@$(call log-start,Preparing for a new release...)
-	@$(helper-release)
-	@$(newline)
-	@$(txt-result)
-	@$(txt-status)
-	@git status ${CONFIG_AWS} ${CONFIG_NPM}
-	@$(newline)
-	@$(txt-diff)
-	@git diff ${CONFIG_AWS}
-	@git diff ${CONFIG_NPM}
-	@$(newline)
-	@$(txt-summary)
-	@printf "Please commit the changes and merge into $(call log-bold,master) branch.\n"
-	@$(txt-done)
+	@if [[ `git diff ${CONFIG_NPM}` && `git diff ${CONFIG_AWS}` ]]; then \
+		$(helper-release); \
+		$(newline); \
+		$(txt-result); \
+		$(txt-status); \
+		git status ${CONFIG_AWS} ${CONFIG_NPM}; \
+		$(newline); \
+		$(txt-diff); \
+		git diff ${CONFIG_AWS}; \
+		git diff ${CONFIG_NPM}; \
+		$(newline); \
+		$(txt-summary); \
+		printf "Please commit the changes and merge into $(call log-bold,master) branch.\n"; \
+		$(txt-done); \
+	else \
+		printf "Skipping, please run $(call log-bold,version) command before releasing the update.\n"; \
+	fi;
 
 ##@ Continuous Integration:
 
