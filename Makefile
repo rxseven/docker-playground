@@ -231,6 +231,7 @@ endef
 
 # Setting a release version helper
 define helper-version
+	TXT_INSTRUCTION="Skipping, please commit the changes before releasing the update."; \
 	$(call log-start,Set a release version); \
 	printf "The current version is $(call log-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"; \
 	$(newline); \
@@ -273,7 +274,38 @@ define helper-version
 				$(newline); \
 				$(txt-summary); \
 				printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today).\n"; \
-				printf "Please run $(call log-bold,release) command to prepare for the next release.\n"; \
+				read -p "Would you like to commit the changes? " CONFIRMATION; \
+				case "$$CONFIRMATION" in \
+					${CASE_YES}) \
+						$(newline); \
+						$(call log-start,Preparing for the commit...); \
+						git add ${CONFIG_ENV}; \
+						git status; \
+						read -p "${IF_CONTINUE} " CONFIRMATION; \
+						case "$$CONFIRMATION" in \
+							${CASE_YES}) \
+								$(newline); \
+								$(call log-start,Committing the changes...); \
+								git commit -m "Set release version to v$$VERSION"; \
+								$(call log-complete,Committed successfully.); \
+								$(newline); \
+								$(txt-result); \
+								$(call log-sum,The commit log); \
+								git log -1 --stat; \
+								$(newline); \
+								$(call log-sum,Summary); \
+								printf "Please run $(call log-bold,release) command to prepare for the next release.\n"; \
+							;; \
+							${CASE_ANY}) \
+								git reset HEAD ${CONFIG_ENV}; \
+								echo $$TXT_INSTRUCTION; \
+							;; \
+						esac; \
+					;; \
+					${CASE_ANY}) \
+						echo $$TXT_INSTRUCTION; \
+					;; \
+				esac; \
 				$(txt-done); \
 			else \
 				$(txt-skipped); \
