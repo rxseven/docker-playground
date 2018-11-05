@@ -657,17 +657,7 @@ uninstall: ## Uninstall a package **
 .PHONY: update
 update: ## Install and update all the dependencies listed within package.json
 	@$(helper-update)
-	@read -p "Would you like to start the development environment right away? " CONFIRMATION; \
-	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
-			$(newline); \
-			$(helper-start); \
-		;; \
-		${CASE_ANY}) \
-			$(txt-skipped); \
-		;; \
-	esac
-	@$(txt-done)
+	@$(helper-development)
 
 ##@ Cleanup:
 
