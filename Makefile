@@ -276,6 +276,14 @@ define remove-temporary
 	done
 endef
 
+# Git user settings
+define git-user
+	printf "Username : "; \
+	git config user.name; \
+	printf "Email    : "; \
+	git config user.email
+endef
+
 # Docker summary
 define sum-docker
 	$(call log-sum,Containers (including exited state)); \
@@ -912,16 +920,50 @@ format: ## Format code automatically
 .PHONY: setup
 setup: ## Setup the development environment and install dependencies ***
 	@$(call log-start,Setting up the development environment...)
-	@$(call log-step,[Step 1/4] Install dependencies required for running on the development environment)
+	@$(call log-step,[Step 1/5] Configure Git username and email address)
+	@if grep -Fxq "[user]" ${DIR_GIT}/config; then \
+		echo "Your username and email address are already set for this repository:"; \
+		$(newline); \
+		$(git-user); \
+	else \
+		echo "The following are your global Git user settings:"; \
+		$(newline); \
+		$(git-user); \
+		$(newline); \
+		printf "$(txt-note): You can change the username and email address associated with commits\nyou make in this repository. This will override your global Git configuration\nsettings in this one repository, but will not affect any other repositories.\n"; \
+	fi
+	@$(newline)
+	@read -p "Would you like to change the current settings? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		${CASE_YES}) \
+			read -p "Enter new username: " USERNAME; \
+			if [ "$$USERNAME" != "" ]; then \
+				git config user.name "$$USERNAME"; \
+			else \
+				$(txt-skipped); \
+			fi; \
+			read -p "Enter new email address: " EMAIL; \
+			if [ "$$EMAIL" != "" ]; then \
+				git config user.email "$$EMAIL"; \
+			else \
+				$(txt-skipped); \
+			fi; \
+			$(call log-complete,Configured successfully.); \
+		;; \
+		${CASE_ANY}) \
+			echo "Skipping, use the default configuration settings."; \
+		;; \
+	esac
+	@$(call log-step,[Step 2/5] Install dependencies required for running on the development environment)
 	@$(call log-process,Checking local images...)
 	@$(call helper-image,${IMAGE_BASE_NGINX})
 	@$(call helper-image,${IMAGE_BASE_NODE})
 	@$(call helper-image,${IMAGE_BASE_PROXY})
-	@$(call log-step,[Step 2/4] Set custom host names for a self-signed SSL certificate)
+	@$(call log-step,[Step 3/5] Set custom host names for a self-signed SSL certificate)
 	@$(call log-process,Verifying host names...)
 	@$(call helper-host,${APP_DOMAIN_LOCAL})
 	@$(call helper-host,${APP_DOMAIN_BUILD})
-	@$(call log-step,[Step 3/4] Create a backup directory)
+	@$(call log-step,[Step 4/5] Create a backup directory)
 	@if [ -d ${DIR_BACKUP} ]; then \
   	echo "Skipping, the directory already exists."; \
 	else \
@@ -930,11 +972,16 @@ setup: ## Setup the development environment and install dependencies ***
 		echo ${DIR_BACKUP}; \
 		$(call log-complete,Created backup directory successfully.); \
 	fi
-	@$(call log-step,[Step 4/4] Build the development image)
+	@$(call log-step,[Step 5/5] Build the development image)
 	@docker-compose build ${SERVICE_APP}
 	@$(call log-complete,Built successfully.)
 	@$(newline)
 	@$(txt-result)
+	@$(call log-sum,Git user settings)
+	@echo "This username and email address will be associated with commits you make in this repository:"
+	@$(newline)
+	@$(git-user)
+	@$(newline)
 	@$(call log-sum,Images)
 	@docker image ls
 	@$(newline)
