@@ -199,6 +199,21 @@ define helper-up
 	docker-compose build $(1)
 endef
 
+# Starting the development server helper
+define helper-development
+	read -p "Would you like to start the development environment right away? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		${CASE_YES}) \
+			$(newline); \
+			$(helper-start); \
+		;; \
+		${CASE_ANY}) \
+			$(txt-skipped); \
+			$(txt-done); \
+		;; \
+	esac
+endef
+
 # Starting the development environment helper
 define helper-start
 	$(call log-start,Starting the development environment...); \
