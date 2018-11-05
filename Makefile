@@ -918,7 +918,7 @@ format: ## Format code automatically
 	@$(txt-done)
 
 .PHONY: setup
-setup: ## Setup the development environment and install dependencies ***
+setup: ## Setup the development environment ***
 	@$(call log-start,Setting up the development environment...)
 	@$(call log-step,[Step 1/5] Configure Git username and email address)
 	@if grep -Fxq "[user]" ${DIR_GIT}/config; then \
