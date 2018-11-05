@@ -960,17 +960,7 @@ setup: ## Setup the development environment and install dependencies ***
 	@$(newline)
 	@$(call log-sum,Summary)
 	@echo "You are all set."
-		@read -p "Would you like to start the development environment right away? " CONFIRMATION; \
-	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
-			$(newline); \
-			$(helper-start); \
-		;; \
-		${CASE_ANY}) \
-			$(txt-skipped); \
-			$(txt-done); \
-		;; \
-	esac
+	@$(helper-development)
 
 .PHONY: backup
 backup: BACKUP_DATE = $$(date +'%d.%m.%Y')
