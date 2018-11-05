@@ -162,6 +162,45 @@ define helper-typecheck
 	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
+# Commit helper
+define helper-commit
+	read -p "Would you like to commit the changes? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		${CASE_YES}) \
+			$(newline); \
+			$(call log-start,Preparing for the commit...); \
+			git add $(1); \
+			git status; \
+			printf "The commit message will be \"$(2)\".\n"; \
+			read -p "${IF_CONTINUE} " CONFIRMATION; \
+			case "$$CONFIRMATION" in \
+				${CASE_YES}) \
+					$(newline); \
+					$(call log-start,Committing the changes...); \
+					git commit -m "$(2)"; \
+					$(call log-complete,Committed successfully.); \
+					$(newline); \
+					$(txt-result); \
+					$(call log-sum,The commit log); \
+					git log -1 --stat; \
+					$(newline); \
+					$(call log-sum,Summary); \
+					printf "$(4)\n"; \
+				;; \
+				${CASE_ANY}) \
+					$(newline); \
+					$(call log-start,Unstaging changes...); \
+					git reset HEAD $(1); \
+					echo $(3); \
+				;; \
+			esac; \
+		;; \
+		${CASE_ANY}) \
+			echo $(3); \
+		;; \
+	esac
+endef
+
 # Release helper
 define helper-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment)
@@ -231,7 +270,6 @@ endef
 
 # Setting a release version helper
 define helper-version
-	TXT_INSTRUCTION="Skipping, please commit the changes before releasing the update."; \
 	$(call log-start,Set a release version); \
 	printf "The current version is $(call log-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"; \
 	$(newline); \
@@ -254,6 +292,10 @@ define helper-version
 			$(newline); \
 			read -p "Enter a version number: " VERSION; \
 			if [ "$$VERSION" != "" ]; then \
+				GIT_CHANGES=${CONFIG_ENV}; \
+				GIT_COMMIT="Set release version to v$$VERSION"; \
+				TXT_INSTRUCTION="Skipping, please commit the changes before releasing the update."; \
+				TXT_SUMMARY="Please run $(call log-bold,release) command to prepare for the next release."; \
 				$(newline); \
 				$(call log-start,Processing...); \
 				$(call log-step,[Step 1/2] Set release date); \
@@ -274,38 +316,7 @@ define helper-version
 				$(newline); \
 				$(txt-summary); \
 				printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today).\n"; \
-				read -p "Would you like to commit the changes? " CONFIRMATION; \
-				case "$$CONFIRMATION" in \
-					${CASE_YES}) \
-						$(newline); \
-						$(call log-start,Preparing for the commit...); \
-						git add ${CONFIG_ENV}; \
-						git status; \
-						read -p "${IF_CONTINUE} " CONFIRMATION; \
-						case "$$CONFIRMATION" in \
-							${CASE_YES}) \
-								$(newline); \
-								$(call log-start,Committing the changes...); \
-								git commit -m "Set release version to v$$VERSION"; \
-								$(call log-complete,Committed successfully.); \
-								$(newline); \
-								$(txt-result); \
-								$(call log-sum,The commit log); \
-								git log -1 --stat; \
-								$(newline); \
-								$(call log-sum,Summary); \
-								printf "Please run $(call log-bold,release) command to prepare for the next release.\n"; \
-							;; \
-							${CASE_ANY}) \
-								git reset HEAD ${CONFIG_ENV}; \
-								echo $$TXT_INSTRUCTION; \
-							;; \
-						esac; \
-					;; \
-					${CASE_ANY}) \
-						echo $$TXT_INSTRUCTION; \
-					;; \
-				esac; \
+				$(call helper-commit,$$GIT_CHANGES,$$GIT_COMMIT,$$TXT_INSTRUCTION,$$TXT_SUMMARY); \
 				$(txt-done); \
 			else \
 				$(txt-skipped); \
