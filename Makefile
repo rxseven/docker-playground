@@ -918,11 +918,12 @@ format: ## Format code automatically
 	@$(txt-done)
 
 .PHONY: setup
+setup: GIT_CONFIG = ${DIR_GIT}/config
 setup: ## Setup the development environment ***
 	@$(call log-start,Setting up the development environment...)
 	@$(call log-step,[Step 1/5] Configure Git username and email address)
-	@if grep -Fxq "[user]" ${DIR_GIT}/config; then \
-		echo "Your username and email address are already set for this repository:"; \
+	@if grep -Fxq "[user]" ${GIT_CONFIG}; then \
+		echo "Your user settings are already set for this repository in ${GIT_CONFIG}:"; \
 		$(newline); \
 		$(git-user); \
 	else \
@@ -951,7 +952,7 @@ setup: ## Setup the development environment ***
 			$(call log-complete,Configured successfully.); \
 		;; \
 		${CASE_ANY}) \
-			echo "Skipping, use the default configuration settings."; \
+			echo "Skipping, use the current settings."; \
 		;; \
 	esac
 	@$(call log-step,[Step 2/5] Install dependencies required for running on the development environment)
@@ -978,7 +979,7 @@ setup: ## Setup the development environment ***
 	@$(newline)
 	@$(txt-result)
 	@$(call log-sum,Git user settings)
-	@echo "This username and email address will be associated with commits you make in this repository:"
+	@echo "The following information will be associated with commits you make in this repository:"
 	@$(newline)
 	@$(git-user)
 	@$(newline)
