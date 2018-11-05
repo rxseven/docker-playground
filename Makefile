@@ -200,8 +200,8 @@ define helper-up
 endef
 
 # Starting the development server helper
-define helper-development
-	read -p "Would you like to start the development environment right away? " CONFIRMATION; \
+define helper-devserver
+	read -p "Would you like to start the development server right away? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${CASE_YES}) \
 			$(newline); \
@@ -657,7 +657,7 @@ uninstall: ## Uninstall a package **
 .PHONY: update
 update: ## Install and update all the dependencies listed within package.json
 	@$(helper-update)
-	@$(helper-development)
+	@$(helper-devserver)
 
 ##@ Cleanup:
 
@@ -950,7 +950,7 @@ setup: ## Setup the development environment and install dependencies ***
 	@$(newline)
 	@$(call log-sum,Summary)
 	@echo "You are all set."
-	@$(helper-development)
+	@$(helper-devserver)
 
 .PHONY: backup
 backup: BACKUP_DATE = $$(date +'%d.%m.%Y')
