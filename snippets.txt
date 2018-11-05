@@ -175,3 +175,269 @@ docker container run --rm local/playground:git precommit || {
   exit 1
 }
 
+--------------------------------------------------------------------------------
+
+txt-subheadline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n"
+
+# Special characters
+define line
+	echo ""
+	echo "--------------------------------------------------------------------------------"
+	echo ""
+endef
+
+.PHONY: system
+system: ## Display system-wide information
+	@$(call log-start,Listing system-wide information...)
+	@$(newline)
+	@$(call txt-subheadline,Git)
+	@git --version
+	@$(line)
+	@$(call txt-subheadline,Bash)
+	@bash --version
+	@$(line)
+	@$(call txt-subheadline,Make)
+	@make --version
+	@$(line)
+	@$(call txt-subheadline,Docker)
+	@docker --version
+	@$(line)
+	@docker-compose --version
+	@$(line)
+	@$(call txt-subheadline,Node.js)
+	@node --version
+	@$(line)
+	@$(call txt-subheadline,npm)
+	@npm --version
+	@$(line)
+	@$(call txt-subheadline,Yarn)
+	@yarn --version
+	@$(line)
+
+--------------------------------------------------------------------------------
+
+txt-done = printf "\e[${ANSI_COLOR_GREEN}mDone\e[0m\n"
+
+txt-hint = $(call log-underline,Hint)
+
+--------------------------------------------------------------------------------
+
+# LCOV hint
+define hint-coverage
+	printf "Skipped, you can view the reports later by running $(call log-bold,report) command.\n"; \
+	$(txt-done)
+endef
+
+--------------------------------------------------------------------------------
+
+.PHONY: install
+install: ## Install a package and any packages that it depends on **
+	@read -p "Enter package name: " PACKAGE; \
+	if [ "$$PACKAGE" != "" ]; then \
+		$(newline); \
+		$(call log-start,Installing npm package...); \
+		$(call log-step,[Step 1/5] Build the development image (if needed)); \
+		$(call log-step,[Step 2/5] Create and start a container for installing dependencies); \
+		$(call log-step,[Step 3/5] Install $$PACKAGE package in the persistent storage (volume)); \
+		$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
+		$(call log-step,[Step 5/5] Remove the container); \
+		docker-compose run --rm ${SERVICE_APP} add $$PACKAGE; \
+		$(call helper-package,$$PACKAGE,install); \
+		$(txt-done); \
+	else \
+		echo "Skipped, you did not enter the package name, please try again."; \
+	fi;
+
+--------------------------------------------------------------------------------
+
+.PHONY: uninstall
+uninstall: ## Uninstall a package **
+	@if [[ `git diff ${CONFIG_NPM}` || `git diff ${CONFIG_PACKAGE}` ]]; then \
+		$(call log-danger,Unable to uninstall the package!); \
+		printf "$(call log-bold,${CONFIG_NPM}) and/or $(call log-bold,${CONFIG_PACKAGE}) have been modified.\n\n"; \
+		read -p "Would you like to see the changes? " CONFIRMATION; \
+		case "$$CONFIRMATION" in \
+			[yY] | [yY][eE][sS]) \
+				$(newline); \
+				$(txt-result); \
+				$(txt-diff); \
+				git diff ${CONFIG_NPM}; \
+				git diff ${CONFIG_PACKAGE}; \
+				$(newline); \
+				$(txt-status); \
+				git status ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
+			;; \
+		esac; \
+		$(newline); \
+		$(call log-sum,Summary); \
+		echo "Please commit the changes before uninstalling the package."; \
+		$(txt-skipped); \
+	else \
+		read -p "Enter package name: " PACKAGE; \
+		if [ "$$PACKAGE" != "" ]; then \
+			$(newline); \
+			$(call log-start,Uninstalling npm package...); \
+			$(call log-step,[Step 1/5] Build the development image (if needed)); \
+			$(call log-step,[Step 2/5] Create and start a container for uninstalling dependencies); \
+			$(call log-step,[Step 3/5] Uninstall $$PACKAGE package from the persistent storage (volume)); \
+			$(call log-step,[Step 4/5] Update ${CONFIG_NPM} and ${CONFIG_PACKAGE}); \
+			$(call log-step,[Step 5/5] Remove the container); \
+			docker-compose run --rm ${SERVICE_APP} remove $$PACKAGE; \
+			$(call helper-package,$$PACKAGE,uninstall); \
+			$(txt-done); \
+		else \
+			echo "Skipped, you did not enter the package name, please try again."; \
+		fi; \
+	fi;
+
+--------------------------------------------------------------------------------
+
+# Upper
+
+
+define upper
+	ACTION=$(1); \
+	printf "$$(tr '[:lower:]' '[:upper:]' <<< $${ACTION:0:1})$${ACTION:1}\n"
+endef
+
+.PHONY: yo
+yo: ## Yo
+	@$(call upper,install)
+
+--------------------------------------------------------------------------------
+
+# Extract version from package.json (NPM) using bash / shell
+
+define helper-exist
+	NAME=$(1); \
+	if grep -q "\"$${NAME}\"" ${CONFIG_NPM}; then \
+		VERSION=$$(cat ${CONFIG_NPM} \
+			| grep $${NAME} \
+			| head -1 \
+			| awk -F: '{ print $$2 }' \
+			| sed 's/[",]//g'); \
+		echo $$VERSION; \
+	else \
+		echo "not exist"; \
+	fi;
+endef
+
+.PHONY: yo
+yo: ## Yo
+	@$(call helper-exist,axios)
+
+--------------------------------------------------------------------------------
+
+# How to test if string exists in file with Bash?
+# https://stackoverflow.com/questions/4749330/how-to-test-if-string-exists-in-file-with-bash
+
+define helper-exist
+	@read -p "Enter the input: " INPUT; \
+	if [ "$$INPUT" != "" ]; then \
+		if grep -Fxq "$$INPUT" ${HOST_DNS}; then \
+			echo "found"; \
+		else \
+			echo "not found"; \
+		fi; \
+	else \
+		echo "Skipping"; \
+	fi;
+endef
+
+.PHONY: yo
+yo: ## Yo
+	@$(helper-exist)
+
+--------------------------------------------------------------------------------
+
+# Commit snippet
+
+read -p "Would you like to commit the changes? " CONFIRMATION; \
+case "$$CONFIRMATION" in \
+	[yY] | [yY][eE][sS]) \
+		$(newline); \
+		$(call log-start,Preparing for the commit...); \
+		git add ${CONFIG_NPM} ${CONFIG_PACKAGE}; \
+		git status; \
+		$(call log-start,Committing the changes...); \
+		git commit -m "Install $(1) package"; \
+		$(newline); \
+		$(txt-result); \
+		$(call log-sum,The commit log); \
+		git log -1 --stat; \
+		$(newline); \
+		$(call log-sum,Summary); \
+		printf "The package has been $(2) successfully.\n"; \
+	;; \
+	[nN] | [nN][oO] | *) \
+		$(newline); \
+		$(call log-sum,Summary); \
+		printf "The package has been $(2) successfully$(,) please commit the changes.\n"; \
+	;; \
+esac; \
+
+--------------------------------------------------------------------------------
+
+# Case variables
+
+CASE_ANY = [nN] | [nN][oO] | *)
+CASE_NO  = [nN] | [nN][oO])
+CASE_YES = [yY] | [yY][eE][sS])
+.PHONY: yo
+yo:
+	@read -p "Yo? " CONFIRMATION; \
+	case "$$CONFIRMATION" in \
+		${CASE_YES} \
+			echo "Yes"; \
+		;; \
+		${CASE_NO} \
+			echo "No"; \
+		;; \
+		*) \
+			echo "Enter"; \
+		;; \
+	esac
+
+--------------------------------------------------------------------------------
+
+.PHONY: dummy
+dummy: ##Dummy
+	@mkdir build coverage
+	@cd build && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+	@cd coverage && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+	@cd tmp && touch 001.txt 002.txt 003.txt 004.txt 005.txt
+
+--------------------------------------------------------------------------------
+
+@$(newline)
+@printf "$(txt-note): This is most commonly used when you have just checked out code for a project,\nor when another developer on the project has added a new dependency that you need to pick up.\n"
+@$(newline)
+--------------------------------------------------------------------------------
+
+@$(newline)
+@$(call headline,Configuration files)
+@echo "Amazon Web Services (AWS)      : ${CONFIG_AWS}"
+@echo "NPM & Yarn                     : ${CONFIG_NPM}"
+@echo "Travis CI                      : ${CONFIG_CI}"
+@echo "Environment variables          : ${CONFIG_ENV}"
+
+@$(newline)
+@$(call headline,Files & Directories)
+@echo "Optimized production build     : ${DIR_BUILD}"
+@echo "Code coverage                  : ${DIR_COVERAGE}"
+@echo "Temporary                      : ${DIR_TEMP}"
+@echo "Treemap                        : ${FILE_TREEMAP}"
+
+docker image inspect "node:latest" > /dev/null 2>&1 || echo "does not exist!"
+
+docker image inspect node:10.11.0-alpine >/dev/null 2>&1 && echo yes || echo no
+
+--------------------------------------------------------------------------------
+
+.PHONY: yo
+yo:
+	@if [ -d ${DIR_BACKUP} ]; then \
+  	echo "exist"; \
+	else \
+		echo "not exist"; \
+	fi
