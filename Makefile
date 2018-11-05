@@ -1147,7 +1147,7 @@ version: ## Set a release version **
 .PHONY: release
 release: ## Release new update
 	@$(call log-start,Preparing for a new release...)
-	@if [[ `git diff ${CONFIG_NPM}` && `git diff ${CONFIG_AWS}` ]]; then \
+	@if [[ `git diff ${CONFIG_ENV}` ]]; then \
 		$(helper-release); \
 		$(newline); \
 		$(txt-result); \
