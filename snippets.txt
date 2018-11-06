@@ -453,3 +453,11 @@ https://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-
 https://askubuntu.com/questions/29370/how-to-check-if-a-command-succeeded
 
 --------------------------------------------------------------------------------
+
+.PHONY: rai
+rai:
+	@if [[ $$(git diff --stat) != "" ]]; then \
+		echo "dirty"; \
+	else \
+		echo "clean"; \
+	fi;
