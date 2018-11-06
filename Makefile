@@ -214,14 +214,14 @@ endef
 # Installing and updating helper
 define helper-update
 	$(call log-start,Installing and updating dependencies...)
-	$(call log-step,[Step 1/8] Stop running containers (if any))
+	$(call log-step,[Step 1/8] Stop running containers *)
 	docker-compose stop
-	$(call log-step,[Step 2/8] Download base images (if needed))
-	$(call log-step,[Step 3/8] Build the development image (if needed))
+	$(call log-step,[Step 2/8] Download base images *)
+	$(call log-step,[Step 3/8] Build the development image *)
 	$(call log-step,[Step 4/8] Create a container for updating dependencies)
 	$(call log-step,[Step 5/8] Start the container)
 	$(call log-step,[Step 6/8] Install and update dependencies in the persistent storage (volume))
-	$(call log-step,[Step 7/8] Update ${CONFIG_PACKAGE} (if necessary))
+	$(call log-step,[Step 7/8] Update ${CONFIG_PACKAGE} *)
 	$(call log-step,[Step 8/8] Remove the container)
 	docker-compose run --rm ${SERVICE_APP} install
 	$(call log-complete,Updated dependencies successfully.)
