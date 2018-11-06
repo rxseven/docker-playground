@@ -1161,6 +1161,43 @@ backup: ## Create a backup copy of the project
 		;; \
 	esac
 
+##@ Branching & Merging:
+
+.PHONY: branch
+branch: ## Create a new Git branch *
+	@$(call log-start,Creating a new branch...)
+	@if [[ $$(git diff --stat) != "" ]]; then \
+		echo "Error: Your working tree is not clean."; \
+		$(newline); \
+		$(txt-result); \
+		$(txt-status); \
+		git status; \
+		$(newline); \
+		$(txt-summary); \
+		echo "Please commit your changes or stash them before creating a new branch."; \
+		echo "Aborting"; \
+	else \
+		$(call log-step,[Step 0/0] Create a new branch); \
+		@read -p "Enter branch name: " BRANCH; \
+		if [ "$$BRANCH" != "" ]; then \
+			git checkout -b feature/$$BRANCH feature/playground; \
+			git branch; \
+			$(call log-step,[Step 0/0] Publish the newly created branch to the remote repository); \
+			git push -u origin feature/$$BRANCH; \
+			$(newline); \
+			$(txt-result); \
+			$(log-sum,Local branches); \
+			git branch; \
+			$(txt-status); \
+			git status; \
+			$(txt-summary); \
+			echo "New branch has been created and published to the remote repository"; \
+			$(txt-done); \	
+		else \
+			echo "Skipping, you did not enter the branch name, please try again."; \
+		fi;	
+	fi
+
 ##@ Operations:
 
 .PHONY: version
