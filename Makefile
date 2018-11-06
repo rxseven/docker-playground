@@ -344,6 +344,9 @@ define helper-version
 	esac
 endef
 
+# Opening the project in the default code editor
+helper-code = code ${DIR_CWD}
+
 # Removing build artifacts helper
 define remove-build
 	$(call log-process,Removing build artifacts...); \
@@ -947,7 +950,7 @@ reset: ## Reset the development environment and clean up unused data
 .PHONY: code
 code: ## Open the project in the default code editor
 	@$(call log-start,Opening the project in ${EDITOR}...)
-	@code ${DIR_CWD}
+	@$(helper-code)
 	@$(txt-done)
 
 .PHONY: open
