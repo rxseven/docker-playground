@@ -251,9 +251,9 @@ define helper-devserver
 	esac
 endef
 
-# Booting the development environment helper
+# Starting the development environment helper
 define helper-start
-	$(call log-start,Booting the development environment...); \
+	$(call log-start,Start the development environment...); \
 	$(call log-step,[Step 1/8] Stop running containers *); \
 	docker-compose stop; \
 	$(call log-step,[Step 2/8] Build a development image *); \
@@ -270,7 +270,7 @@ define helper-start
 		docker-compose up --no-start \
 	); \
 	$(newline); \
-	$(call log-start,Running the containers...); \
+	$(call log-start,Starting the containers...); \
 	docker-compose up
 endef
 
