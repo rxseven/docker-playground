@@ -264,10 +264,13 @@ define helper-start
 	$(call log-step,[Step 7/8] Attach STDOUT/STDERR and forward signals); \
 	$(call log-step,[Step 8/8] Start the development and reverse proxy servers); \
 	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).); \
+	docker image inspect ${ENV_LOCAL}/${IMAGE_REPO}:latest >/dev/null 2>&1 || ( \
+		$(newline); \
+		$(call log-start,Building the development image$(,) this will take a moment...) && \
+		docker-compose up --no-start \
+	); \
 	$(newline); \
-	docker image inspect ${ENV_LOCAL}/${IMAGE_REPO}:latest >/dev/null 2>&1 && \
-	($(call log-start,Running the containers...)) || \
-	($(call log-start,Building the development image$(,) this will take a moment...)); \
+	$(call log-start,Running the containers...); \
 	docker-compose up
 endef
 
