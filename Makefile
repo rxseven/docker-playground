@@ -251,18 +251,23 @@ define helper-devserver
 	esac
 endef
 
-# Starting the development environment helper
+# Booting the development environment helper
 define helper-start
-	$(call log-start,Starting the development environment...); \
-	$(call log-step,[Step 1/7] Stop running containers (if any)); \
+	$(call log-start,Booting the development environment...); \
+	$(call log-step,[Step 1/8] Stop running containers *); \
 	docker-compose stop; \
-	$(call log-step,[Step 2/7] Download base images (if needed)); \
-	$(call log-step,[Step 3/7] Build the development image (if needed)); \
-	$(call log-step,[Step 4/7] Create the development and reverse proxy containers (if needed)); \
-	$(call log-step,[Step 5/7] Start the containers); \
-	$(call log-step,[Step 6/7] Attach STDOUT/STDERR and forward signals); \
-	$(call log-step,[Step 7/7] Start the development and reverse proxy servers); \
+	$(call log-step,[Step 2/8] Build a development image *); \
+	$(call log-step,[Step 3/8] Create a network *); \
+	$(call log-step,[Step 4/8] Create a volume for persisting dependencies *); \
+	$(call log-step,[Step 5/8] Create development and reverse proxy containers *); \
+	$(call log-step,[Step 6/8] Start the containers); \
+	$(call log-step,[Step 7/8] Attach STDOUT/STDERR and forward signals); \
+	$(call log-step,[Step 8/8] Start the development and reverse proxy servers); \
 	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).); \
+	$(newline); \
+	docker image inspect ${ENV_LOCAL}/${IMAGE_REPO}:latest >/dev/null 2>&1 && \
+	($(call log-start,Running the containers...)) || \
+	($(call log-start,Building the development image$(,) this will take a moment...)); \
 	docker-compose up
 endef
 
