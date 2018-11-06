@@ -68,6 +68,11 @@ txt-warning = $(call log-underline,Warning)
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
+# Check if the specified image exists
+define check-image
+	docker image inspect $(1) >/dev/null 2>&1
+endef
+
 # Host helper
 define helper-host
 	if grep -Fxq "${HOST_IP}       $(1)" ${HOST_DNS}; then \
@@ -213,18 +218,23 @@ endef
 
 # Installing and updating helper
 define helper-update
-	$(call log-start,Installing and updating dependencies...)
-	$(call log-step,[Step 1/8] Stop running containers *)
+	$(call log-start,Install and update dependencies...)
+	$(call log-step,[Step 1/7] Stop running containers *)
 	docker-compose stop
-	$(call log-step,[Step 2/8] Download base images *)
-	$(call log-step,[Step 3/8] Build the development image *)
-	$(call log-step,[Step 4/8] Create a container for updating dependencies)
-	$(call log-step,[Step 5/8] Start the container)
-	$(call log-step,[Step 6/8] Install and update dependencies in the persistent storage (volume))
-	$(call log-step,[Step 7/8] Update ${CONFIG_PACKAGE} *)
-	$(call log-step,[Step 8/8] Remove the container)
+	$(call log-step,[Step 2/7] Build the development image *)
+	$(call log-step,[Step 3/7] Create a container for updating dependencies)
+	$(call log-step,[Step 4/7] Start the container)
+	$(call log-step,[Step 5/7] Install and update dependencies in the persistent storage (volume))
+	$(call log-step,[Step 6/7] Update ${CONFIG_PACKAGE} *)
+	$(call log-step,[Step 7/7] Remove the container)
+	$(call check-image, ${IMAGE_DEVELOPMENT}) || ( \
+		$(newline); \
+		$(call log-start,Building the development image$(,) this will take a moment...) && \
+		docker-compose build ${SERVICE_APP}; \
+	); \
+	$(newline); \
+	$(call log-start,Installing dependencies...); \
 	docker-compose run --rm ${SERVICE_APP} install
-	$(call log-complete,Updated dependencies successfully.)
 endef
 
 # Rebuding images helper
@@ -264,7 +274,7 @@ define helper-start
 	$(call log-step,[Step 7/8] Attach STDOUT/STDERR and forward signals); \
 	$(call log-step,[Step 8/8] Start the development and reverse proxy servers); \
 	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).); \
-	docker image inspect ${ENV_LOCAL}/${IMAGE_REPO}:latest >/dev/null 2>&1 || ( \
+	$(call check-image, ${IMAGE_DEVELOPMENT}) || ( \
 		$(newline); \
 		$(call log-start,Building the development image$(,) this will take a moment...) && \
 		docker-compose up --no-start \
@@ -771,6 +781,7 @@ uninstall: ## Uninstall a package **
 .PHONY: update
 update: ## Install and update all the dependencies listed within package.json
 	@$(helper-update)
+	@$(newline)
 	@$(helper-devserver)
 
 ##@ Cleanup:
