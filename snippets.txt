@@ -461,3 +461,13 @@ rai:
 	else \
 		echo "clean"; \
 	fi;
+
+--------------------------------------------------------------------------------
+
+.PHONY: rai
+rai:
+	@if [ "$(docker container ls | grep playground-local-proxy)" ]; then \
+		echo "running"; \
+	else \
+		echo "not running."; \
+	fi
