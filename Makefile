@@ -454,8 +454,9 @@ stop: ## Stop running containers without removing them
 .PHONY: run
 run: ## Update dependencies and start the development environment
 	@$(call log-start,Update dependencies and start the development environment)
+	@printf "Install and update all the dependencies listed within $(call log-italic,package.json) and $(call log-italic,yarn.lock)\nbefore starting the development environment.\n"
 	@$(newline)
-	@$(call log-info,Part 1/2 : Install and update all the dependencies listed within package.json)
+	@$(call log-info,Part 1/2 : Install and update dependencies)
 	@$(helper-update)
 	@$(newline)
 	@$(call log-info,Part 2/2 : Start the development environment)
