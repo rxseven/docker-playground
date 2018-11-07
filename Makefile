@@ -108,14 +108,36 @@ endef
 # Preview helper
 define helper-preview
 	$(newline); \
-	$(call log-start,Running the production build...); \
-	$(call log-step,[Step 1/5] Download base images (if needed)); \
-	$(call log-step,[Step 2/5] Create an optimized production build); \
-	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
-	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
-	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
-	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_BUILD}).); \
-	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
+	$(call log-start,Run the production build...); \
+	$(call log-step,[Step 1/8] Stop running containers *); \
+	docker-compose stop; \
+	$(call log-step,[Step 2/8] Create an optimized production build *); \
+	$(call log-step,[Step 3/8] Build the production image tagged $(call log-bold,${IMAGE_NAME}) *); \
+	$(call log-step,[Step 4/8] Create a network *); \
+	$(call log-step,[Step 5/8] Create app and reverse proxy containers *); \
+	$(call log-step,[Step 6/8] Start the containers); \
+	$(call log-step,[Step 7/8] Attach STDOUT/STDERR and forward signals); \
+	$(call log-step,[Step 8/8] Start the web and reverse proxy servers); \
+	$(newline); \
+	$(call log-info,Information); \
+	printf "You can view the production build in the browser at:\n"; \
+	$(newline); \
+	printf "Local           : ${APP_URL_BUILD}\n"; \
+	printf "On your network : ${APP_URL_PROTOCAL}://$(get-ip)\n"; \
+	$(call check-image, ${IMAGE_NAME}) && ( \
+		if [ "$(1)" == "build" ]; then \
+			$(newline); \
+			$(call log-start,Rebuilding the production image$(,) this will take a moment...); \
+			docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up --build --no-start; \
+		fi; \
+	) || ( \
+		$(newline); \
+		$(call log-start,Building the production image$(,) this will take a moment...) && \
+		docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up --no-start \
+	); \
+	$(newline); \
+	$(call log-start,Starting the containers...); \
+	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up
 endef
 
 # Test helper
@@ -557,7 +579,7 @@ preview: ## Run the production build locally
 	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "run" ]]; then \
 		$(call helper-preview); \
 	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
-		$(call helper-preview,--build); \
+		$(call helper-preview,build); \
 	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
