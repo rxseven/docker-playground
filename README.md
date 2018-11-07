@@ -257,28 +257,6 @@ Once the analyzing process has finished and the report was generated, you will a
 
 **ISSUE**: running scripts on any Git hooks in a Docker container is NOT POSSIBLE at the moment. To utilize this feature you have to rely on **nvm**.
 
-[Back to top](#table-of-contents)
-
-## Running the Production Build Locally
-
-**1.** Run the following command to create an optimized production build and start a web server serving the app inside a container:
-
-```sh
-make preview
-```
-
-**2.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser, or run the command below to quickly launch the production app locally:
-
-```sh
-make open
-```
-
-> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
-
-> Tip: press `control + c` to stop the running container.
-
-[Back to top](#table-of-contents)
-
 ### Resetting the development environment
 
 If your development environment doesn’t work properly, you may need to reset the environment with the commands below:
@@ -306,6 +284,26 @@ make reset
 ```
 
 This command will remove containers, the default network, volumes attached to containers, and local images (including development, production, and intermediate ones).
+
+[Back to top](#table-of-contents)
+
+## Running the Production Build Locally
+
+**1.** Run the following command to create an optimized production build and start a web server serving the app inside a container:
+
+```sh
+make preview
+```
+
+**2.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser, or run the command below to quickly launch the production app locally:
+
+```sh
+make open
+```
+
+> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+
+> Tip: press `control + c` to stop the running container.
 
 [Back to top](#table-of-contents)
 
