@@ -11,7 +11,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 ## Table of Contents
 
 - [Live Demo](#live-demo)
-- [Development](#development)
+- [Configuring the Development Environment](#configuring-the-development-evnvironment)
 - [Running the Production Build Locally](#running-the-production-build-locally)
 - [Deploying a Single Docker Container to AWS Elastic Beanstalk](#Deploying-a-single-docker-container-to-aws-elastic-beanstalk)
 - [Available Scripts](#available-scripts)
@@ -37,7 +37,7 @@ Onigiri is hosted on Heroku at [https://onigiri-webapp.herokuapp.com](https://on
 
 [Back to top](#table-of-contents)
 
-## Development
+## Configuring the Development Environment
 
 ### Prerequisites
 
