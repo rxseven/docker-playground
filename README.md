@@ -49,7 +49,7 @@ Before getting started, you are required to have or install the following tools 
 - [GNU Bash](https://www.gnu.org/software/bash/) *(v3.2.57\*)*
 - [GNU Make](https://www.gnu.org/software/make/) *(v3.8.1\*)*
 
-> Note: if you are using Mac running macOS *(v10.12 Sierra\*)*, you are all set.
+> Note: if you are using Mac running [macOS](https://en.wikipedia.org/wiki/MacOS) *(v10.12 Sierra\*)*, you are all set.
 
 Optional, but nice to have:
 
@@ -252,6 +252,10 @@ make analyze
 Once the analyzing process has finished and the report was generated, you will automatically be redirected to the browser displaying the treemap visualization of how the space is used in your minified bundle.
 
 > Note: the production build and the treemap will be created/generated in the local `./build` and `./tmp` directories respectively.
+
+### Using Git hooks
+
+**ISSUE**: running scripts on any Git hooks in a Docker container is NOT POSSIBLE at the moment. To utilize this feature you have to rely on **nvm**.
 
 [Back to top](#table-of-contents)
 
@@ -491,7 +495,9 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 ## Development Workflow
 
 - Project bootstraping with Create React App
+- Development environment and app containerizing with Docker
 - Development server, live reloading, and assets bundling with Webpack
+- HTTP proxying with Nginx and self-signing SSL certificate with OpenSSL
 - JavaScript transpiling with Babel
 - CSS pre-processing and transforming with Sass, PostCSS, and CSS modules
 - JavaScript linting with ESLint
@@ -503,7 +509,6 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 - Code debugging with Visual Studio Code and Chrome Debugger
 - Pre-commit hooking with Husky and Lint-staged
 - CI/CD with GitHub, Travis CI, Coveralls, and Heroku
-- App deploying with Docker *(in progress)*
 
 > Link: the complete guidelines are available in [this project](https://github.com/rxseven/setup-react-app).
 
@@ -514,6 +519,7 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 ### Infrastructure
 
 - [Heroku](https://www.heroku.com/) - cloud platform as a service
+- [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) - orchestration service for deploying infrastructure
 - [mLab](https://mlab.com/) - database as a service for MongoDB
 
 ### Cloud computing and Platforms
@@ -528,6 +534,7 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 - [GitHub](https://github.com/) - web-based hosting service for version control using Git
 - [Travis CI](https://travis-ci.org/) - continuous integration
 - [Coveralls](https://coveralls.io/) - test coverage history and statistics
+- [Docker Hub](https://hub.docker.com) - cloud-based registry service for distributing container images
 
 [Back to top](#table-of-contents)
 
@@ -553,7 +560,7 @@ React & Redux starter kit with best practices bootstrapped with [Create React Ap
 
 ## Development Milestones
 
-- Setup container with [Docker](https://www.docker.com) *(in progress)*.
+- Setup Makefile *(in progress)*.
 - Refactor code with functional programming principles *(in progress)*.
 - Deploy the app on [DigitalOcean](https://www.digitalocean.com) or [Amazon Web Service (AWS)](https://aws.amazon.com).
 - Implement components in isolation with [Storybook](https://storybook.js.org).
