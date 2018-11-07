@@ -396,7 +396,7 @@ RELEASE_VERSION=<VERSION>
 
 **Dockerrun.aws.json**
 
-```yml
+```json
 "Name": "rxseven/onigiri-webapp:<TAG>"
 ```
 
