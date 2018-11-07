@@ -11,7 +11,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 ## Table of Contents
 
 - [Live Demo](#live-demo)
-- [Configuring the Development Environment](#configuring-the-development-evnvironment)
+- [Configuring the Development Environment](#configuring-the-development-environment)
 - [Running the Production Build Locally](#running-the-production-build-locally)
 - [Deploying a Single Docker Container to AWS Elastic Beanstalk](#Deploying-a-single-docker-container-to-aws-elastic-beanstalk)
 - [Available Scripts](#available-scripts)
