@@ -1380,7 +1380,7 @@ info: ## Show project configuration
 	@echo "Treemap                        : ${FILE_TREEMAP}"
 	@$(newline)
 	@$(call headline,Ports)
-	@echo "Development server             : ${PORT_EXPOSE_APP}"
+	@echo "Development server             : ${PORT_DEVSERVER}"
 	@echo "Reverse proxy server           : ${PORT_EXPOSE_PROXY}"
 	@echo "Unsecured HTTP port mapping    : ${PORT_MAPPING_HTTP}"
 	@echo "SSL port mapping               : ${PORT_MAPPING_SSL}"
