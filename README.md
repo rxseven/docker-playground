@@ -13,7 +13,6 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 - [Live Demo](#live-demo)
 - [Configuring the Development Environment](#configuring-the-development-environment)
 - [Running the Production Build Locally](#running-the-production-build-locally)
-- [Accessing localhost from any device on the same network](#accessing-localhost-from-any-device-on-the-same-network)
 - [Deploying a Single Docker Container to AWS Elastic Beanstalk](#Deploying-a-single-docker-container-to-aws-elastic-beanstalk)
 - [Available Scripts](#available-scripts)
 - [Features](#features)
@@ -298,29 +297,7 @@ make reset
 
 This command will remove containers, the default network, volumes attached to containers, and local images (including development, production, and intermediate ones).
 
-[Back to top](#table-of-contents)
-
-## Running the Production Build Locally
-
-**1.** Run the following command to create an optimized production build and start a web server serving the app inside a container:
-
-```sh
-make preview
-```
-
-**2.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser, or run the command below to quickly launch the production app locally:
-
-```sh
-make open
-```
-
-> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
-
-> Tip: press `control + c` to stop the running container.
-
-[Back to top](#table-of-contents)
-
-## Accessing localhost from any device on the same network
+### Accessing localhost from any device on the same network
 
 While you are developing the project or running the production build locally, you can open the app running inside a Docker container from any device on the same local network through the IP address of the host machine.
 
@@ -345,6 +322,26 @@ The value of `inet` is what we need.
 **4.** On a mobile device or any other computer, open `https://192.168.0.10` in the browser.
 
 > Note: this will only be available as long as you have the app running on the host.
+
+[Back to top](#table-of-contents)
+
+## Running the Production Build Locally
+
+**1.** Run the following command to create an optimized production build and start a web server serving the app inside a container:
+
+```sh
+make preview
+```
+
+**2.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser, or run the command below to quickly launch the production app locally:
+
+```sh
+make open
+```
+
+> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+
+> Tip: press `control + c` to stop the running container.
 
 [Back to top](#table-of-contents)
 
