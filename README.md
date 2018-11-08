@@ -46,16 +46,16 @@ Onigiri is hosted on Heroku at [https://onigiri-webapp.herokuapp.com](https://on
 
 Before getting started, you are required to have or install the following tools on your machine:
 
-- [Git](https://git-scm.com) *(v2.17.2\*)* - a version control system for tracking changes in source files.
-- [GNU Bash](https://www.gnu.org/software/bash/) *(v3.2.57\*)* - a Unix shell and command processor.
-- [GNU Make](https://www.gnu.org/software/make/) *(v3.8.1\*)* - a tool which controls the generation of executables and other non-source files.
+- [Git](https://git-scm.com) *(v2.17.2\*)*
+- [GNU Bash](https://www.gnu.org/software/bash/) *(v3.2.57\*)*
+- [GNU Make](https://www.gnu.org/software/make/) *(v3.8.1\*)*
 
 > Note: if you are using Mac running [macOS](https://en.wikipedia.org/wiki/MacOS) *(v10.12 Sierra\*)*, you are all set.
 
 Optional, but nice to have:
 
-- [Visual Studio Code](https://code.visualstudio.com)\** - a code editor redefined and optimized for building and debugging modern apps.
-- [Google Chrome](https://www.google.com/chrome/)\** - a fast, easy to use, and secure web browser.
+- [Visual Studio Code](https://code.visualstudio.com)\**
+- [Google Chrome](https://www.google.com/chrome/)\**
 
 #### Software as a Service
 
@@ -139,6 +139,16 @@ make open
 > Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
 
 > Tip: press `control + c` to stop the running containers.
+
+### Restarting the development servers
+
+Run the command below to restart the development servers:
+
+```sh
+make restart
+```
+
+This command will rebuild the image, create network and volume for persisting data, and restart the development servers.
 
 ### Running shell in a running container
 
@@ -344,22 +354,15 @@ The value of `inet` is what we need.
 
 ### Prerequisites
 
-#### Production environment
-
 - 64bit Amazon Linux AMI *(2018.03.0 v2.12.3\*)*
 - Docker Community Edition *(v18.06.1\*)*
 - Nginx *(v1.12.1\*)*
 
 > Note: for more information about **Single Container Docker** configuration, see [Elastic Beanstalk Supported Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html).
 
-#### Software as a Service
-
-- [GitHub](https://github.com)
-- [Travis CI](https://travis-ci.org)
-- [Docker ID](https://docs.docker.com/docker-id/)
-- [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/)
-
 ### Setup
+
+#### Infrastructure
 
 **1.** Create new [AWS Elastic Beanstalk environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.environments.html) and [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html).
 
@@ -389,31 +392,40 @@ A `Dockerrun.aws.json` file describes how to deploy a Docker container as an Ela
 
 > Note: for more information about single container Docker configuration, see [Single Container Docker Configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_image.html).
 
-**3.** On Travis CI’s repository settings screen, add two environment variables defining AWS IAM credentials as follows:
+### Continuous Integration
 
-- `AWS_ACCESS_KEY`
-- `AWS_SECRET_KEY`
+Travis CI can automatically deploy your application to Elastic Beanstalk after a successful build.
+
+**1.** On Travis CI’s repository settings screen, add two environment variables defining AWS IAM credentials as follows:
+
+- `AWS_ACCESS_KEY`: Encrypted AWS IAM access key ID
+- `AWS_SECRET_KEY`: Encrypted AWS IAM secret key
 
 > Note: for more information on defining variables in Travis CI’s repository settings, see [Environment Variables](https://docs.travis-ci.com/user/environment-variables#defining-variables-in-repository-settings).
 
-**4.** Open `.travis.yml` and add the following code under `deploy` section:
+**2.** Open `.travis.yml` and add the following code under `deploy` section:
 
 ```yml
 # Deploy to AWS Elastic Beanstalk
 - provider: elasticbeanstalk
-  region: "<REGION>"
+  access_key_id: ${AWS_ACCESS_KEY}
+  secret_access_key:
+    secure: ${AWS_SECRET_KEY}
   app: "onigiri-webapp"
   env: "docker-env"
-  bucket_name: "elasticbeanstalk-<REGION>-<ID>"
+  bucket_name: "<BUCKET_NAME>"
   bucket_path: "onigiri-webapp"
+  region: "<REGION>"
   skip_cleanup: true
   zip_file: ${BUILD_ZIP}
   on:
     branch: master
-  access_key_id: ${AWS_ACCESS_KEY}
-  secret_access_key:
-    secure: ${AWS_SECRET_KEY}
 ```
+
+Below is the list of parameters obtained from your Elastic Beanstalk app console:
+
+- `<REGION>`: The region the Elastic Beanstalk app is running on.
+- `<BUCKET_NAME>`: AWS S3 bucket name to upload the code of your app to.
 
 > Note: for more information on deploying application to Elastic Beanstalk, see [AWS Elastic Beanstalk Deployment](https://docs.travis-ci.com/user/deployment/elasticbeanstalk/).
 
@@ -431,23 +443,17 @@ RELEASE_VERSION=<VERSION>
 "Name": "rxseven/onigiri-webapp:<TAG>"
 ```
 
+You must provide the same value for `<VERSION>` and `<TAG>` e.g. `1.0.1.alpha-3`.
+
 **6.** Commit and push the changes to **GitHub**.
-
-### SSL
-
-- [Configuring HTTPS for Your Elastic Beanstalk Environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https.html)
-- [Create and Sign an X509 Certificate](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https-ssl.html)
-- [Configuring Your Application to Terminate HTTPS Connections at the Instance](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/https-singleinstance.html)
-
-TODO
 
 ### Deployment
 
 **1.** Create a pull request on GitHub and merge changes into `master` branch.
 
-**2.** Once `master` branch was merged, **Travis CI** will start building a production image, push the newly created image to **Docker Hub**, and deploy the app to the running **AWS EC2** instances automatically.
+**2.** Once `master` branch was merged, **Travis CI** will start building a production image, push the newly created image to **Docker Hub**, upload `Dockerrun.aws.json` file compressed in `build.zip` to [Amazon S3](https://aws.amazon.com/s3/) bucket specified in `.travis.yml` automatically.
 
-**3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, run a single Docker container, update web server environment, and finally deploy the app to live.
+**3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, create a single Docker container, update web server environment, and deploy the app version from the source bundle in **Amazon S3** bucket.
 
 [Back to top](#table-of-contents)
 
@@ -560,6 +566,8 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 
 - [Heroku](https://www.heroku.com/) - cloud platform as a service
 - [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) - orchestration service for deploying infrastructure
+- [AWS IAM](https://aws.amazon.com/iam/) - web service that helps you securely control access to AWS resources
+- [Amazon S3](https://aws.amazon.com/s3/) - object storage built to store and retrieve any amount of data from anywhere
 - [mLab](https://mlab.com/) - database as a service for MongoDB
 
 ### Cloud computing and Platforms
