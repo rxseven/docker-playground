@@ -13,6 +13,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 - [Live Demo](#live-demo)
 - [Configuring the Development Environment](#configuring-the-development-environment)
 - [Running the Production Build Locally](#running-the-production-build-locally)
+- [Accessing localhost from any device on the same network](#accessing-localhost-from-any-device-on-the-same-network)
 - [Deploying a Single Docker Container to AWS Elastic Beanstalk](#Deploying-a-single-docker-container-to-aws-elastic-beanstalk)
 - [Available Scripts](#available-scripts)
 - [Features](#features)
@@ -125,7 +126,7 @@ REACT_APP_STRIPE_KEY=[STRIPE_PUBLIC_KEY]
 make start
 ```
 
-This command will build a Docker image for development (if one doesn’t exist), create network and volume for persisting data, and start the development server (Webpack DevServer) along with reverse proxy server (Nginx).
+This command will build a Docker image for development (if one doesn’t already exist), create network and volume for persisting data, and start the development server (Webpack DevServer) along with reverse proxy server (Nginx).
 
 **2.** Open [https://onigiri-webapp.local](https://onigiri-webapp.local), or run the command below to quickly launch the app in the default browser:
 
@@ -157,7 +158,7 @@ make install
 make uninstall
 ```
 
-> Note: these commands will install/uninstall a package (and any packages that it depends on) in the persistent storage (volume) lather than the local `./node_module` directory on the host’s file system.
+> Note: these commands will install/uninstall a package (and any packages that it depends on) in the persistent storage (volume) lather than the local `./node_modules` directory on the host’s file system.
 
 ### Installing the dependencies listed within package.json
 
@@ -192,7 +193,7 @@ make test
 
 > Note: by default, when you run test in *watch mode*, Jest will only run the tests related to files changed (modified) since the last commit. This is an optimization designed to make your tests run fast regardless of how many tests in the project you have. However, you can also press `a` in the watch mode to force Jest to run all tests.
 
-> Note: code coverage reports will be generated in the local `./coverage` directory. This directory is listed in `.gitignore` file to ensure that it will not be tracked by Git.
+> Note: code coverage reports will be generated in the local `./coverage` directory. This directory is listed in `.gitignore` file to ensure that it will not be tracked by the source control.
 
 > Tip: press `control + c` to stop the running tests.
 
@@ -221,7 +222,7 @@ make typecheck
 3. Run a focus check
 4. Install and update the library definitions (libdef)
 
-> Note: the library definitions will be installed in the local `./flow-typed` directory and must be committed to the source control.
+> Note: the library definitions will be installed in the local `./flow-typed` directory and must be added to the source control.
 
 ### Formatting code automatically
 
@@ -239,7 +240,7 @@ Run the command below to build the app for production. It correctly bundles the 
 make build
 ```
 
-> Note: the production build will be created in the local `./build` directory. This directory is listed in `.gitignore` file to ensure that it will not be tracked by Git.
+> Note: the production build will be created in the local `./build` directory. This directory is listed in `.gitignore` file to ensure that it will not be tracked by the source control.
 
 ### Analyzing the bundle size
 
@@ -259,7 +260,7 @@ Once the analyzing process has finished and the report was generated, you will a
 
 ### Resetting the development environment
 
-If your development environment doesn’t work properly, you may need to reset the environment with the commands below:
+If your development environment doesn’t work properly, you may need to reset the environment with the available commands below:
 
 #### Refresh (soft clean)
 
@@ -307,6 +308,34 @@ make open
 
 [Back to top](#table-of-contents)
 
+## Accessing localhost from any device on the same network
+
+While you are developing the project or running the production build locally, you can open the app running inside a Docker container from any device on the same local network through the IP address of the host machine.
+
+**1.** Make sure that all devices are connecting to the same Wi-Fi router in your local network.
+
+**2.** [Start the development server](#starting-the-development-and-reverse-proxy-servers) or [run the production build](#running-the-production-build-locally).
+
+**3.** Open another Terminal window and get the IP address of the host machine by running the command below:
+
+```sh
+ifconfig
+```
+
+The output may look like this:
+
+```sh
+inet 192.168.1.10 netmask 0xffffff00 broadcast 192.168.1.255
+```
+
+The value of `inet` is what we need.
+
+**4.** On a mobile device or any other computer, open `https://192.168.0.10` in the browser.
+
+> Note: this will only be available as long as you have the app running on the host.
+
+[Back to top](#table-of-contents)
+
 ## Deploying a Single Docker Container to AWS Elastic Beanstalk
 
 [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) is an easy-to-use service offered from [Amazon Web Services](https://aws.amazon.com) for deploying and scaling web applications and services. You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from capacity provisioning, load balancing, auto-scaling to application health monitoring.
@@ -332,7 +361,7 @@ make open
 
 **1.** Create new [AWS Elastic Beanstalk environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.environments.html) and [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html).
 
-**2.** Create `Dockkerrun.aws.json` file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk.
+**2.** Create `Dockkerrun.aws.json` file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk:
 
 ```sh
 touch Dockkerrun.aws.json
@@ -400,15 +429,23 @@ RELEASE_VERSION=<VERSION>
 "Name": "rxseven/onigiri-webapp:<TAG>"
 ```
 
-**6.** Commit the changes and push to **GitHub**.
+**6.** Commit and push the changes to **GitHub**.
+
+### SSL
+
+- [Configuring HTTPS for Your Elastic Beanstalk Environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https.html)
+- [Create and Sign an X509 Certificate](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/configuring-https-ssl.html)
+- [Configuring Your Application to Terminate HTTPS Connections at the Instance](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/https-singleinstance.html)
+
+TODO
 
 ### Deployment
 
 **1.** Create a pull request on GitHub and merge changes into `master` branch.
 
-**2.** Once `master` branch has merged, **Travis CI** will build a production image, push the newly created image to **Docker Hub**, and deploy the app to running **AWS EC2** instances automatically.
+**2.** Once `master` branch was merged, **Travis CI** will start building a production image, push the newly created image to **Docker Hub**, and deploy the app to the running **AWS EC2** instances automatically.
 
-**3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, run a single Docker container, update web server environment, and deploy the latest updates.
+**3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, run a single Docker container, update web server environment, and finally deploy the app to live.
 
 [Back to top](#table-of-contents)
 
@@ -416,13 +453,15 @@ RELEASE_VERSION=<VERSION>
 
 Onigiri contains a lengthy `Makefile`, to automate setup, installation, run, build, test, and deployment.
 
-Most of the target names (script or task names) are standardized e.g. `make start`, `make install`, but some deserve explanation. The more we add fine-grained make targets, the more we need to describe what they do in text form.
+Most of the target names (script or task names) are standardized e.g. `make start`, `make install`, but some deserve explanation. The more we add fine-grained Make targets, the more we need to describe what they do in text form.
 
-Run the command below to print the usage and list all available scripts.
+Run the command below to print the usage and list all available scripts:
 
 ```sh
 make
 ```
+
+> Note: if you are not using Docker, all npm scripts are listed under `scripts` section in `package.json` file.
 
 [Back to top](#table-of-contents)
 
@@ -494,7 +533,8 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 
 - Project bootstraping with Create React App
 - Development environment and app containerizing with Docker
-- Development server, live reloading, and assets bundling with Webpack
+- JavaScript and assets bundling with Webpack
+- Development server and live reloading with Webpack DevServer
 - HTTP proxying with Nginx and self-signing SSL certificate with OpenSSL
 - JavaScript transpiling with Babel
 - CSS pre-processing and transforming with Sass, PostCSS, and CSS modules
@@ -506,7 +546,7 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 - Static type checking with Flow
 - Code debugging with Visual Studio Code and Chrome Debugger
 - Pre-commit hooking with Husky and Lint-staged
-- CI/CD with GitHub, Travis CI, Coveralls, and Heroku
+- CI/CD with GitHub, Travis CI, Coveralls, Heroku, and AWS Elastic Beanstalk
 
 > Link: the complete guidelines are available in [this project](https://github.com/rxseven/setup-react-app).
 
