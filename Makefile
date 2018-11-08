@@ -1382,7 +1382,7 @@ info: ## Show project configuration
 	@$(call headline,Ports)
 	@echo "Development server             : ${PORT_EXPOSE_APP}"
 	@echo "Reverse proxy server           : ${PORT_EXPOSE_PROXY}"
-	@echo "Unsecured HTTP port mapping    : ${PORT_MAPPING_DEFAULT}"
+	@echo "Unsecured HTTP port mapping    : ${PORT_MAPPING_HTTP}"
 	@echo "SSL port mapping               : ${PORT_MAPPING_SSL}"
 	@$(newline)
 	@$(call headline,Miscellaneous)
