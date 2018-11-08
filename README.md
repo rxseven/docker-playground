@@ -375,7 +375,10 @@ The value of `inet` is what we need.
 
 **2.** Create [Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html):
 
-Once new Elastic Beanstalk environment was created, Amazon S3 will automatically create a new Bucket for you.
+Once new Elastic Beanstalk environment was created, Amazon S3 will automatically create a new Bucket for you:
+
+- Bucket name: elasticbeanstalk-\<REGION\>-\<ID\>
+- Access: Not public
 
 **3.** Create [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html):
 
@@ -386,13 +389,15 @@ Once new Elastic Beanstalk environment was created, Amazon S3 will automatically
 
 #### Step 2/3 : Configuration
 
-Create `Dockkerrun.aws.json` file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk:
+**1.** Create `Dockkerrun.aws.json` file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk:
 
 ```sh
 touch Dockkerrun.aws.json
 ```
 
 A `Dockerrun.aws.json` file describes how to deploy a Docker container as an Elastic Beanstalk application. This JSON file is specific to Elastic Beanstalk.
+
+**2.** Add a deployment configuration:
 
 ```json
 {
@@ -414,14 +419,18 @@ Replace `<TAG>` with the same value of `RELEASE_VERSION` specified in `.env` fil
 
 > Note: for more information about single container Docker configuration, see [Single Container Docker Configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_image.html).
 
+**3.** Add new file, commit and push it to **GitHub**.
+
 #### Step 3/3 : Continuous Integration
 
 Travis CI can automatically deploy your application to Elastic Beanstalk after a successful build.
 
 **1.** On Travis CI’s repository settings screen, add two environment variables defining AWS IAM credentials as follows:
 
-- `AWS_ACCESS_KEY`: Encrypted AWS IAM access key ID
-- `AWS_SECRET_KEY`: Encrypted AWS IAM secret key
+- `AWS_ACCESS_KEY`: AWS IAM access key ID
+- `AWS_SECRET_KEY`: AWS IAM secret access key
+
+Those keys can be obtained from the AWS IAM console.
 
 > Note: for more information on defining variables in Travis CI’s repository settings, see [Environment Variables](https://docs.travis-ci.com/user/environment-variables#defining-variables-in-repository-settings).
 
@@ -433,10 +442,10 @@ Travis CI can automatically deploy your application to Elastic Beanstalk after a
   access_key_id: ${AWS_ACCESS_KEY}
   secret_access_key:
     secure: ${AWS_SECRET_KEY}
-  app: "onigiri-webapp"
-  env: "docker-env"
+  app: "<APP>"
+  env: "<ENV>"
   bucket_name: "<BUCKET_NAME>"
-  bucket_path: "onigiri-webapp"
+  bucket_path: "<APP>"
   region: "<REGION>"
   skip_cleanup: true
   zip_file: ${BUILD_ZIP}
@@ -444,10 +453,12 @@ Travis CI can automatically deploy your application to Elastic Beanstalk after a
     branch: master
 ```
 
-Below is the list of parameters obtained from your Elastic Beanstalk app console:
+Below is the list of parameters obtained from your Elastic Beanstalk and Amazon S3 consoles:
 
-- `<REGION>`: The region the Elastic Beanstalk app is running on.
-- `<BUCKET_NAME>`: AWS S3 bucket name to upload the code of your app to.
+- `<APP>`: App name.
+- `<ENV>`: Environment name which the app will be deployed to.
+- `<REGION>`: Region name which the app is running on.
+- `<BUCKET_NAME>`: Amazon S3 Bucket name to upload the code of your app to.
 
 > Note: for more information on deploying application to Elastic Beanstalk, see [AWS Elastic Beanstalk Deployment](https://docs.travis-ci.com/user/deployment/elasticbeanstalk/).
 
@@ -455,11 +466,11 @@ Below is the list of parameters obtained from your Elastic Beanstalk app console
 
 ### Deployment
 
-**1.** Create a pull request on GitHub and merge changes into `master` branch.
+**1.** Create a pull request on **GitHub** and merge changes into `master` branch.
 
-**2.** Once `master` branch was merged, **Travis CI** will start building a production image, push the newly created image to **Docker Hub**, upload `Dockerrun.aws.json` file compressed in `build.zip` to [Amazon S3](https://aws.amazon.com/s3/) bucket specified in `.travis.yml` automatically.
+**2.** Once `master` branch was merged, **Travis CI** will start building a production image, push the newly created image to **Docker Hub**, upload `Dockerrun.aws.json` file (compressed in `build.zip`) to **Amazon S3** Bucket specified in `.travis.yml`.
 
-**3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, create a single Docker container, update web server environment, and deploy the app version from the source bundle in **Amazon S3** bucket.
+**3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, create a single Docker container, update the web server environment, and deploy the app version from the source bundle in **Amazon S3** Bucket.
 
 [Back to top](#table-of-contents)
 
