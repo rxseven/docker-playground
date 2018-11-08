@@ -364,33 +364,23 @@ The value of `inet` is what we need.
 
 #### Step 1/3 : Infrastructure
 
-**1.** Create an [AWS Elastic Beanstalk application and environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.environments.html).
-
-**Environment information**
+**1.** Create an [AWS Elastic Beanstalk application and environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.environments.html):
 
 - Application name: onigiri-webapp
 - Environment tier: Web server environment
 - Domain: onigiri-webapp.\<REGION\>.elasticbeanstalk.com
 - Description: React & Redux webapp for collecting and organizing surveys.
-
-**Base configuration**
-
 - Preconfigured platform: Docker
 - Application code: Sample application
 
-**2.** Create [Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html).
+**2.** Create [Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html):
 
 Once new Elastic Beanstalk environment was created, Amazon S3 will automatically create a new Bucket for you.
 
-**3.** Create [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html).
-
-**User details**
+**3.** Create [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html):
 
 - User name: travis-ci
 - Access type: Programmatic access
-
-**Permissions**
-
 - Policy type: Attach existing policies directly
 - Policy name: AWSElasticBeanstalkFullAccess
 
