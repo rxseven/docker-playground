@@ -25,7 +25,7 @@ services:
         DEPENDENCY_PATH: ${CONTAINER_DEPENDENCIES}
         PORT_EXPOSE: ${PORT_DEVSERVER}
         WORKDIR: ${CONTAINER_WORKDIR}
-      context: .
+      context: ${DOCKERFILE_CONTEXT}
       dockerfile: ${DOCKERFILE_BASE}
     container_name: ${IMAGE_REPO}
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"
