@@ -151,14 +151,14 @@ make shell
 
 ### Installing & Uninstalling npm dependencies
 
-Run one of the following commands and enter a package name:
+Run one of the following commands, then enter a package name to manage dependencies with npm and Yarn:
 
 ```sh
 make install
 make uninstall
 ```
 
-> Note: these commands will install/uninstall a package (and any packages that it depends on) in the persistent storage (volume) lather than the local `./node_modules` directory on the host’s file system.
+> Note: these commands will (un)install a package (and any packages that it depends on) in the persistent storage (volume) lather than the local `./node_modules` directory on the host’s file system.
 
 ### Installing the dependencies listed within package.json
 
@@ -180,7 +180,7 @@ REACT_APP_GOOGLE_APP_ID=[GOOGLE_APP_ID]
 REACT_APP_STRIPE_KEY=[STRIPE_PUBLIC_KEY]
 ```
 
-**2.** Run the following command and enter the available options:
+**2.** Run the following command, then enter the available options to run tests with Jest and Enzyme:
 
 ```sh
 make test
@@ -199,7 +199,7 @@ make test
 
 ### Running code linting
 
-Run the following command and enter the available options:
+Run the following command, then enter the available options to run code (JavaScript or SCSS) linting with ESLint and Stylelint:
 
 ```sh
 make lint
@@ -211,7 +211,7 @@ make lint
 
 ### Running static type checking
 
-Run the following command and enter the available options:
+Run the following command, then enter the available options to catch JavaScript errors with Flow:
 
 ```sh
 make typecheck
