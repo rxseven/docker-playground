@@ -16,7 +16,7 @@ services:
     image: "${ENV_LOCAL}/${IMAGE_REPO}"
     volumes:
       - type: bind
-        source: .
+        source: ${DIR_CWD}
         target: ${CONTAINER_WORKDIR}
       - type: volume
         source: ${DIR_DEPENDENCIES}
