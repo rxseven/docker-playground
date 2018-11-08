@@ -1335,7 +1335,7 @@ info: ## Show project configuration
 	@$(newline)
 	@$(call headline,App)
 	@echo "Name                           : ${APP_NAME}"
-	@echo "Repository                     : ${APP_REPO}"
+	@echo "Repository                     : ${REPO_URL}"
 	@echo "Live URL                       : ${APP_URL_LIVE}"
 	@$(newline)
 	@$(call headline,Domain name & URLs)
