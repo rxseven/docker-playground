@@ -46,24 +46,24 @@ Onigiri is hosted on Heroku at [https://onigiri-webapp.herokuapp.com](https://on
 
 Before getting started, you are required to have or install the following tools on your machine:
 
-- [Git](https://git-scm.com) *(v2.17.2\*)*
-- [GNU Bash](https://www.gnu.org/software/bash/) *(v3.2.57\*)*
-- [GNU Make](https://www.gnu.org/software/make/) *(v3.8.1\*)*
+- [Git](https://git-scm.com) *(v2.17.2\*)* - a version control system for tracking changes in source files.
+- [GNU Bash](https://www.gnu.org/software/bash/) *(v3.2.57\*)* - a Unix shell and command processor.
+- [GNU Make](https://www.gnu.org/software/make/) *(v3.8.1\*)* - a tool which controls the generation of executables and other non-source files.
 
 > Note: if you are using Mac running [macOS](https://en.wikipedia.org/wiki/MacOS) *(v10.12 Sierra\*)*, you are all set.
 
 Optional, but nice to have:
 
-- [Visual Studio Code](https://code.visualstudio.com)\**
-- [Google Chrome](https://www.google.com/chrome/)\**
+- [Visual Studio Code](https://code.visualstudio.com)\** - a code editor redefined and optimized for building and debugging modern apps.
+- [Google Chrome](https://www.google.com/chrome/)\** - a fast, easy to use, and secure web browser.
 
 #### Software as a Service
 
 You also need to have to the following information:
 
-- [Facebook app ID](https://developers.facebook.com/docs/apps/)
-- [Google app ID](https://developers.google.com/identity/protocols/OAuth2)
-- [Stripe publishable key](https://stripe.com/docs/keys)
+- [Facebook app ID](https://developers.facebook.com/docs/apps/) - a unique key given to every app created for Facebook.
+- [Google app ID](https://developers.google.com/identity/protocols/OAuth2) - a unique application ID identifying the app in Google’s system.
+- [Stripe publishable key](https://stripe.com/docs/keys) - a key to identify your account with Stripe.
 
 #### Approach 1 : Container-based local development environment with Docker
 
@@ -98,7 +98,9 @@ cd onigiri-webapp
 make setup
 ```
 
-> This command will take a few minutes (depending on your hardware) to complete configuring the development environment on your machine.
+> Note: by running this command, you will be asking for the administrator password to allow the script to add custom host names for a self-signed SSL certificate in `/etc/hosts` file which requires the superuser privileges.
+
+> Note: this command will take a few minutes (depending on your hardware) to complete configuring the development environment.
 
 **4.** Open the project with your editor of choice or with Visual Studio Code:
 
@@ -118,7 +120,7 @@ REACT_APP_GOOGLE_APP_ID=[GOOGLE_APP_ID]
 REACT_APP_STRIPE_KEY=[STRIPE_PUBLIC_KEY]
 ```
 
-### Starting the development and reverse proxy servers
+### Starting the development servers
 
 **1.** Run the app by running the following command at the root of the project directory:
 
@@ -199,7 +201,7 @@ make test
 
 ### Running code linting
 
-Run the following command, then enter the available options to run code (JavaScript or SCSS) linting with ESLint and Stylelint:
+Run the following command, then enter the available options to run code (JavaScript or SCSS) linting with ESLint and/or Stylelint:
 
 ```sh
 make lint
@@ -314,7 +316,7 @@ While you are developing the project or running the production build locally, yo
 
 **1.** Make sure that all devices are connecting to the same Wi-Fi router in your local network.
 
-**2.** [Start the development server](#starting-the-development-and-reverse-proxy-servers) or [run the production build](#running-the-production-build-locally).
+**2.** [Start the development server](#starting-the-development-servers) or [run the production build](#running-the-production-build-locally).
 
 **3.** Open another Terminal window and get the IP address of the host machine by running the command below:
 
