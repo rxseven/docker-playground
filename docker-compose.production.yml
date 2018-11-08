@@ -8,7 +8,6 @@ services:
       args:
         BASE_NGINX: ${IMAGE_BASE_NGINX}
         BUILD_DIR: ${DIR_BUILD}
-        BUILD_RELEASE_VERSION: ${RELEASE_VERSION}
         LABEL_AUTHOR_EMAIL: ${AUTHOR_EMAIL}
         LABEL_AUTHOR_NAME: ${AUTHOR_NAME}
         LABEL_DESCRIPTION: ${IMAGE_DESCRIPTION}
@@ -19,6 +18,7 @@ services:
         PROXY_CONTAINER: ${PROXY_CONTAINER}
         PROXY_HOST: ${PROXY_HOST}
         RELEASE_DATE: ${RELEASE_DATE}
+        RELEASE_VERSION: ${RELEASE_VERSION}
       dockerfile: ${DOCKERFILE_PROD}
     environment:
       NODE_ENV: production
