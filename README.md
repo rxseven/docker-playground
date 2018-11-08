@@ -113,10 +113,10 @@ make code
 
 ```
 REACT_APP_API_URL=https://onigiri-api.herokuapp.com
-REACT_APP_WEB_URL=https://localhost:3000
-REACT_APP_FACEBOOK_APP_ID=[FACEBOOK_APP_ID]
-REACT_APP_GOOGLE_APP_ID=[GOOGLE_APP_ID]
-REACT_APP_STRIPE_KEY=[STRIPE_PUBLIC_KEY]
+REACT_APP_WEB_URL=https://onigiri-webapp.local
+REACT_APP_FACEBOOK_APP_ID=<FACEBOOK_APP_ID>
+REACT_APP_GOOGLE_APP_ID=<GOOGLE_APP_ID>
+REACT_APP_STRIPE_KEY=<STRIPE_PUBLIC_KEY>
 ```
 
 ### Starting the development servers
@@ -185,10 +185,10 @@ make update
 
 ```
 REACT_APP_API_URL=https://onigiri-api.herokuapp.com
-REACT_APP_WEB_URL=https://localhost:3000
-REACT_APP_FACEBOOK_APP_ID=[FACEBOOK_APP_ID]
-REACT_APP_GOOGLE_APP_ID=[GOOGLE_APP_ID]
-REACT_APP_STRIPE_KEY=[STRIPE_PUBLIC_KEY]
+REACT_APP_WEB_URL=https://onigiri-webapp.local
+REACT_APP_FACEBOOK_APP_ID=<FACEBOOK_APP_ID>
+REACT_APP_GOOGLE_APP_ID=<GOOGLE_APP_ID>
+REACT_APP_STRIPE_KEY=<STRIPE_PUBLIC_KEY>
 ```
 
 **2.** Run the following command, then enter the available options to run tests with Jest and Enzyme:
@@ -370,14 +370,14 @@ make open
 - Preconfigured platform: Docker
 - Application code: Sample application
 
-**2.** Create [Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html):
+**2.** Create an [Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html):
 
 Once new Elastic Beanstalk environment was created, Amazon S3 will automatically create a new Bucket for you:
 
 - Bucket name: elasticbeanstalk-\<REGION\>-\<ID\>
 - Access: Not public
 
-**3.** Create [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html):
+**3.** Create an [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html):
 
 - User name: travis-ci
 - Access type: Programmatic access
@@ -523,7 +523,7 @@ Password-base and OAuth *(via third-party services, [Facebook](https://developer
 - Collect response data *(via webhook)*
 - Update survey statistics
 
-> Link: full details on Onigiri’s features and technical information are available [here](https://onigiri-webapp.herokuapp.com/about).
+> Note: full details on Onigiri’s features and technical information are available [here](https://onigiri-webapp.herokuapp.com/about).
 
 [Back to top](#table-of-contents)
 
@@ -547,7 +547,7 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 - SendGrid, Stripe, Gravatar
 - [More...](https://github.com/rxseven/onigiri-api/blob/master/package.json)
 
-> Link: RESTful API for Onigiri built with Node.js can be found in [this repository](https://github.com/rxseven/onigiri-api).
+> Note: RESTful API for Onigiri built with Node.js can be found in [this repository](https://github.com/rxseven/onigiri-api).
 
 [Back to top](#table-of-contents)
 
@@ -570,7 +570,7 @@ Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-applic
 - Pre-commit hooking with Husky and Lint-staged
 - CI/CD with GitHub, Travis CI, Coveralls, Heroku, and AWS Elastic Beanstalk
 
-> Link: the complete guidelines are available in [this project](https://github.com/rxseven/setup-react-app).
+> Note: the complete guidelines are available in [this project](https://github.com/rxseven/setup-react-app).
 
 [Back to top](#table-of-contents)
 
