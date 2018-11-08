@@ -4,7 +4,7 @@ services:
   proxy:
     image: ${IMAGE_BASE_PROXY}
     ports:
-      - ${PORT_MAPPING_DEFAULT}
+      - ${PORT_MAPPING_HTTP}
       - ${PORT_MAPPING_SSL}
     restart: always
     volumes:
@@ -22,10 +22,10 @@ services:
         BINARY: ${CONTAINER_BIN}
         DEPENDENCY_LIST: ${CONFIG_NPM}
         DEPENDENCY_LOCK: ${CONFIG_PACKAGE}
-        MODULES: ${CONTAINER_MODULES}
-        PORT_EXPOSE: ${PORT_EXPOSE_APP}
+        DEPENDENCY_PATH: ${CONTAINER_DEPENDENCIES}
+        PORT_EXPOSE: ${PORT_DEVSERVER}
         WORKDIR: ${CONTAINER_WORKDIR}
-      context: .
+      context: ${DOCKERFILE_CONTEXT}
       dockerfile: ${DOCKERFILE_BASE}
     container_name: ${IMAGE_REPO}
     image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"

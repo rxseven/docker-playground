@@ -441,3 +441,33 @@ yo:
 	else \
 		echo "not exist"; \
 	fi
+
+--------------------------------------------------------------------------------
+# Check if Git working tree is dirty
+
+https://remarkablemark.org/blog/2017/10/12/check-git-dirty/
+https://stackoverflow.com/questions/3878624/how-do-i-programmatically-determine-if-there-are-uncommitted-changes
+
+# How to check if a command succeeded?
+
+https://askubuntu.com/questions/29370/how-to-check-if-a-command-succeeded
+
+--------------------------------------------------------------------------------
+
+.PHONY: rai
+rai:
+	@if [[ $$(git diff --stat) != "" ]]; then \
+		echo "dirty"; \
+	else \
+		echo "clean"; \
+	fi;
+
+--------------------------------------------------------------------------------
+
+.PHONY: rai
+rai:
+	@if [ "$(docker container ls | grep playground-local-proxy)" ]; then \
+		echo "running"; \
+	else \
+		echo "not running."; \
+	fi

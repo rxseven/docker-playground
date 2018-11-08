@@ -12,11 +12,11 @@ services:
     environment:
       NODE_ENV: development
       VIRTUAL_HOST: ${APP_DOMAIN}.${HOST_TLD}
-      VIRTUAL_PORT: ${PORT_EXPOSE_APP}
+      VIRTUAL_PORT: ${PORT_DEVSERVER}
     image: "${ENV_LOCAL}/${IMAGE_REPO}"
     volumes:
       - type: bind
-        source: .
+        source: ${DIR_CWD}
         target: ${CONTAINER_WORKDIR}
       - type: volume
         source: ${DIR_DEPENDENCIES}

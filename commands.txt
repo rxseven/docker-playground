@@ -6,6 +6,17 @@ sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keyc
 
 # OpenSSL
 
+# Installation
+# https://formulae.brew.sh/formula/openssl
+# https://medium.com/@hunk/self-assigned-ssl-with-docker-for-dev-domains-1396f71c0b77
+
+brew install openssl
+
+# Generating Self-signed SSL certificate
+# 1. Change playground.local to xxx.local
+# 2. Run the following command in ./config/nginx/certs
+# 3. openssl will create xxx.local.crt and xxx.local.key
+
 openssl req \
     -newkey rsa:2048 \
     -x509 \

@@ -65,14 +65,11 @@ txt-version = printf "Makefile version ${MAKEFILE_VERSION}\n"
 txt-warning = $(call log-underline,Warning)
 
 # Configuration helpers
-get-ip = $$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
 
-# Check if the specified image exists
-define check-image
-	docker image inspect $(1) >/dev/null 2>&1
-endef
+# Getting data helpers
+get-branch = $$(git branch | grep \* | cut -d ' ' -f2)
 
 # Host helper
 define helper-host
@@ -108,36 +105,14 @@ endef
 # Preview helper
 define helper-preview
 	$(newline); \
-	$(call log-start,Run the production build...); \
-	$(call log-step,[Step 1/8] Stop running containers *); \
-	docker-compose stop; \
-	$(call log-step,[Step 2/8] Create an optimized production build *); \
-	$(call log-step,[Step 3/8] Build the production image tagged $(call log-bold,${IMAGE_NAME}) *); \
-	$(call log-step,[Step 4/8] Create a network *); \
-	$(call log-step,[Step 5/8] Create app and reverse proxy containers *); \
-	$(call log-step,[Step 6/8] Start the containers); \
-	$(call log-step,[Step 7/8] Attach STDOUT/STDERR and forward signals); \
-	$(call log-step,[Step 8/8] Start the web and reverse proxy servers); \
-	$(newline); \
-	$(call log-info,Information); \
-	printf "You can view the production build in the browser at:\n"; \
-	$(newline); \
-	printf "Local           : ${APP_URL_BUILD}\n"; \
-	printf "On your network : ${APP_URL_PROTOCAL}://$(get-ip)\n"; \
-	$(call check-image, ${IMAGE_NAME}) && ( \
-		if [ "$(1)" == "build" ]; then \
-			$(newline); \
-			$(call log-start,Rebuilding the production image$(,) this will take a moment...); \
-			docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up --build --no-start; \
-		fi; \
-	) || ( \
-		$(newline); \
-		$(call log-start,Building the production image$(,) this will take a moment...) && \
-		docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up --no-start \
-	); \
-	$(newline); \
-	$(call log-start,Starting the containers...); \
-	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up
+	$(call log-start,Running the production build...); \
+	$(call log-step,[Step 1/5] Download base images (if needed)); \
+	$(call log-step,[Step 2/5] Create an optimized production build); \
+	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
+	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
+	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_BUILD}).); \
+	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
 # Test helper
@@ -219,7 +194,11 @@ define helper-commit
 					$(newline); \
 					$(call log-start,Unstaging changes...); \
 					git reset HEAD $(1); \
+					$(newline); \
+					$(call log-sum,Summary); \
 					echo $(3); \
+					$(newline); \
+					git status $(1); \
 				;; \
 			esac; \
 		;; \
@@ -234,30 +213,29 @@ define helper-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment); \
 	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS}); \
 	$(call set-json,ContainerPort,${PORT_PROXY},$(blank),${CONFIG_AWS}); \
+	echo "Set the image name to ${IMAGE_NAME}"; \
+	$(call log-complete,Configured successfully.); \
 	$(call log-step,[Step 2/2] Configure ${CONFIG_NPM} for AWS Node.js deployment); \
 	$(call set-json,version,${RELEASE_VERSION},$(,),${CONFIG_NPM}); \
+	echo "Set the version number to ${RELEASE_VERSION}"; \
+	$(call log-complete,Configured successfully.); \
 	rm *.${EXT_BACKUP}
 endef
 
 # Installing and updating helper
 define helper-update
-	$(call log-start,Install and update dependencies...)
-	$(call log-step,[Step 1/7] Stop running containers *)
+	$(call log-start,Installing and updating dependencies...)
+	$(call log-step,[Step 1/8] Stop running containers (if any))
 	docker-compose stop
-	$(call log-step,[Step 2/7] Build the development image *)
-	$(call log-step,[Step 3/7] Create a container for updating dependencies)
-	$(call log-step,[Step 4/7] Start the container)
-	$(call log-step,[Step 5/7] Install and update dependencies in the persistent storage (volume))
-	$(call log-step,[Step 6/7] Update ${CONFIG_PACKAGE} *)
-	$(call log-step,[Step 7/7] Remove the container)
-	$(call check-image, ${IMAGE_DEVELOPMENT}) || ( \
-		$(newline); \
-		$(call log-start,Building the development image$(,) this will take a moment...) && \
-		docker-compose build ${SERVICE_APP}; \
-	); \
-	$(newline); \
-	$(call log-start,Installing dependencies...); \
+	$(call log-step,[Step 2/8] Download base images (if needed))
+	$(call log-step,[Step 3/8] Build the development image (if needed))
+	$(call log-step,[Step 4/8] Create a container for updating dependencies)
+	$(call log-step,[Step 5/8] Start the container)
+	$(call log-step,[Step 6/8] Install and update dependencies in the persistent storage (volume))
+	$(call log-step,[Step 7/8] Update ${CONFIG_PACKAGE} (if necessary))
+	$(call log-step,[Step 8/8] Remove the container)
 	docker-compose run --rm ${SERVICE_APP} install
+	$(call log-complete,Updated dependencies successfully.)
 endef
 
 # Rebuding images helper
@@ -286,31 +264,16 @@ endef
 
 # Starting the development environment helper
 define helper-start
-	$(call log-start,Start the development environment...); \
-	$(call log-step,[Step 1/8] Stop running containers *); \
+	$(call log-start,Starting the development environment...); \
+	$(call log-step,[Step 1/7] Stop running containers (if any)); \
 	docker-compose stop; \
-	$(call log-step,[Step 2/8] Build a development image *); \
-	$(call log-step,[Step 3/8] Create a network *); \
-	$(call log-step,[Step 4/8] Create a volume for persisting dependencies *); \
-	$(call log-step,[Step 5/8] Create development and reverse proxy containers *); \
-	$(call log-step,[Step 6/8] Start the containers); \
-	$(call log-step,[Step 7/8] Attach STDOUT/STDERR and forward signals); \
-	$(call log-step,[Step 8/8] Start the development and reverse proxy servers); \
-	$(newline); \
-	$(call log-info,Information); \
-	printf "You can view $(call log-bold,${APP_NAME}) in the browser at:\n"; \
-	$(newline); \
-	printf "Local           : ${APP_URL_LOCAL}\n"; \
-	printf "On your network : ${APP_URL_PROTOCAL}://$(get-ip)\n"; \
-	$(newline); \
-	printf "$(txt-note): DO NOT use the URLs, IP addresses and ports generated by Webpack DevServer\nshowing in the output below. They can only be accessible inside a container and\nare not bound to the host machine.\n"; \
-	$(call check-image, ${IMAGE_DEVELOPMENT}) || ( \
-		$(newline); \
-		$(call log-start,Building the development image$(,) this will take a moment...) && \
-		docker-compose up --no-start \
-	); \
-	$(newline); \
-	$(call log-start,Starting the containers...); \
+	$(call log-step,[Step 2/7] Download base images (if needed)); \
+	$(call log-step,[Step 3/7] Build the development image (if needed)); \
+	$(call log-step,[Step 4/7] Create the development and reverse proxy containers (if needed)); \
+	$(call log-step,[Step 5/7] Start the containers); \
+	$(call log-step,[Step 6/7] Attach STDOUT/STDERR and forward signals); \
+	$(call log-step,[Step 7/7] Start the development and reverse proxy servers); \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).); \
 	docker-compose up
 endef
 
@@ -338,10 +301,6 @@ define helper-version
 			$(newline); \
 			read -p "Enter a version number: " VERSION; \
 			if [ "$$VERSION" != "" ]; then \
-				GIT_CHANGES=${CONFIG_ENV}; \
-				GIT_COMMIT="Set release version to v$$VERSION"; \
-				TXT_INSTRUCTION="Skipping, please commit the changes before releasing the update."; \
-				TXT_SUMMARY="Please run $(call log-bold,release) command to prepare for the next release."; \
 				$(newline); \
 				$(call log-start,Processing...); \
 				$(call log-step,[Step 1/2] Set release date); \
@@ -362,7 +321,7 @@ define helper-version
 				$(newline); \
 				$(txt-summary); \
 				printf "The next release will be $(call log-bold,v$$VERSION) on ${CURRENT_DATE} (today).\n"; \
-				$(call helper-commit,$$GIT_CHANGES,$$GIT_COMMIT,$$TXT_INSTRUCTION,$$TXT_SUMMARY); \
+				printf "Next, run $(call log-bold,release) command to release the update.\n"; \
 				$(txt-done); \
 			else \
 				$(txt-skipped); \
@@ -373,9 +332,6 @@ define helper-version
 		;; \
 	esac
 endef
-
-# Opening the project in the default code editor
-helper-code = code ${DIR_CWD}
 
 # Removing build artifacts helper
 define remove-build
@@ -497,9 +453,8 @@ stop: ## Stop running containers without removing them
 .PHONY: run
 run: ## Update dependencies and start the development environment
 	@$(call log-start,Update dependencies and start the development environment)
-	@printf "Install and update all the dependencies listed within $(call log-italic,package.json) and $(call log-italic,yarn.lock)\nbefore starting the development environment.\n"
 	@$(newline)
-	@$(call log-info,Part 1/2 : Install and update dependencies)
+	@$(call log-info,Part 1/2 : Install and update all the dependencies listed within package.json)
 	@$(helper-update)
 	@$(newline)
 	@$(call log-info,Part 2/2 : Start the development environment)
@@ -579,7 +534,7 @@ preview: ## Run the production build locally
 	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "run" ]]; then \
 		$(call helper-preview); \
 	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
-		$(call helper-preview,build); \
+		$(call helper-preview,--build); \
 	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -814,7 +769,6 @@ uninstall: ## Uninstall a package **
 .PHONY: update
 update: ## Install and update all the dependencies listed within package.json
 	@$(helper-update)
-	@$(newline)
 	@$(helper-devserver)
 
 ##@ Cleanup:
@@ -980,7 +934,7 @@ reset: ## Reset the development environment and clean up unused data
 .PHONY: code
 code: ## Open the project in the default code editor
 	@$(call log-start,Opening the project in ${EDITOR}...)
-	@$(helper-code)
+	@code ${DIR_CWD}
 	@$(txt-done)
 
 .PHONY: open
@@ -1191,43 +1145,6 @@ backup: ## Create a backup copy of the project
 		;; \
 	esac
 
-##@ Branching & Merging:
-
-.PHONY: branch
-branch: ## Create a new Git branch *
-	@$(call log-start,Creating a new branch...)
-	@if [[ $$(git diff --stat) != "" ]]; then \
-		echo "Error: Your working tree is not clean."; \
-		$(newline); \
-		$(txt-result); \
-		$(txt-status); \
-		git status; \
-		$(newline); \
-		$(txt-summary); \
-		echo "Please commit your changes or stash them before creating a new branch."; \
-		echo "Aborting"; \
-	else \
-		$(call log-step,[Step 0/0] Create a new branch); \
-		@read -p "Enter branch name: " BRANCH; \
-		if [ "$$BRANCH" != "" ]; then \
-			git checkout -b feature/$$BRANCH feature/playground; \
-			git branch; \
-			$(call log-step,[Step 0/0] Publish the newly created branch to the remote repository); \
-			git push -u origin feature/$$BRANCH; \
-			$(newline); \
-			$(txt-result); \
-			$(log-sum,Local branches); \
-			git branch; \
-			$(txt-status); \
-			git status; \
-			$(txt-summary); \
-			echo "New branch has been created and published to the remote repository"; \
-			$(txt-done); \	
-		else \
-			echo "Skipping, you did not enter the branch name, please try again."; \
-		fi;	
-	fi
-
 ##@ Operations:
 
 .PHONY: version
@@ -1235,6 +1152,9 @@ version: ## Set a release version **
 	@$(helper-version)
 
 .PHONY: release
+release: GIT_CHANGES     := ${CONFIG_ENV} ${CONFIG_AWS} ${CONFIG_NPM}
+release: GIT_COMMIT      := Set release version to v${RELEASE_VERSION}
+release: TXT_INSTRUCTION := Skipping, please commit the following changes before releasing the update:
 release: ## Release new update
 	@$(call log-start,Preparing for a new release...)
 	@if [[ `git diff ${CONFIG_ENV}` ]]; then \
@@ -1242,17 +1162,78 @@ release: ## Release new update
 		$(newline); \
 		$(txt-result); \
 		$(txt-status); \
-		git status ${CONFIG_AWS} ${CONFIG_NPM}; \
+		git status ${GIT_CHANGES}; \
 		$(newline); \
 		$(txt-diff); \
+		git diff ${CONFIG_ENV}; \
 		git diff ${CONFIG_AWS}; \
 		git diff ${CONFIG_NPM}; \
 		$(newline); \
 		$(txt-summary); \
-		printf "Please commit the changes and merge into $(call log-bold,master) branch.\n"; \
-		$(txt-done); \
+		echo "You are all set."; \
+		read -p "Would you like to commit the changes? " CONFIRMATION; \
+		case "$$CONFIRMATION" in \
+			${CASE_YES}) \
+				$(newline); \
+				$(call log-start,Preparing for the commit...); \
+				git add ${GIT_CHANGES}; \
+				git status; \
+				printf "The commit message will be \"${GIT_COMMIT}\".\n"; \
+				read -p "${IF_CONTINUE} " CONFIRMATION; \
+				case "$$CONFIRMATION" in \
+					${CASE_YES}) \
+						$(newline); \
+						$(call log-start,Committing the changes...); \
+						git commit -m "${GIT_COMMIT}"; \
+						$(call log-complete,Committed successfully.); \
+						$(newline); \
+						$(txt-result); \
+						$(call log-sum,The commit log); \
+						git log -1 --stat; \
+						$(newline); \
+						$(call log-sum,Summary); \
+						read -p "Would you like to push the changes to the remote repository? " CONFIRMATION; \
+						case "$$CONFIRMATION" in \
+							${CASE_YES}) \
+								$(newline); \
+								echo "Pushing..."; \
+								echo "TODO"; \
+								echo "Completed"; \
+								$(newline); \
+								read -p "Would you like to merge the changes into the main branch? " CONFIRMATION; \
+								case "$$CONFIRMATION" in \
+									${CASE_YES}) \
+										$(newline); \
+										@$(call helper-browser,${REPO_URL}/compare/${REPO_BRANCH_MAIN}...$(get-branch); \
+									;; \
+									${CASE_ANY}) \
+										printf "Skipping, please merge the changes into the main branch.\n"; \
+									;; \
+								esac; \
+							;; \
+							${CASE_ANY}) \
+								printf "Skipping, please push the changes and merge into the main branch.\n"; \
+							;; \
+						esac; \
+					;; \
+					${CASE_ANY}) \
+						$(newline); \
+						$(call log-start,Unstaging changes...); \
+						git reset HEAD ${GIT_CHANGES}; \
+						$(newline); \
+						$(call log-sum,Summary); \
+						echo ${TXT_INSTRUCTION}; \
+						$(newline); \
+						git status ${GIT_CHANGES}; \
+					;; \
+				esac; \
+			;; \
+			${CASE_ANY}) \
+				echo ${TXT_INSTRUCTION}; \
+			;; \
+		esac; \
 	else \
-		printf "Skipping, please run $(call log-bold,version) command before releasing the update.\n"; \
+		printf "Skipping, please run $(call log-bold,version) command before releasing any update.\n"; \
 	fi;
 
 ##@ Continuous Integration:
@@ -1335,7 +1316,7 @@ info: ## Show project configuration
 	@$(newline)
 	@$(call headline,App)
 	@echo "Name                           : ${APP_NAME}"
-	@echo "Repository                     : ${REPO_URL}"
+	@echo "Repository                     : ${APP_REPO}"
 	@echo "Live URL                       : ${APP_URL_LIVE}"
 	@$(newline)
 	@$(call headline,Domain name & URLs)
