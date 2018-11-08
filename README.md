@@ -65,7 +65,7 @@ You also need to have to the following information:
 - [Google app ID](https://developers.google.com/identity/protocols/OAuth2)
 - [Stripe publishable key](https://stripe.com/docs/keys)
 
-#### Approach 1 : Docker
+#### Approach 1 : Container-based local development environment with Docker
 
 To make the development and testing work easier, Onigiri has a `Dockerfile` for development usage, which is based on the official [Node.js](https://hub.docker.com/_/node/) image, prepared with essential and useful tools for better development experience with best practices.
 
@@ -74,7 +74,7 @@ Below is the list of tools and services required for developing and running the 
 - [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)*
 - [Docker ID account](https://docs.docker.com/docker-id/)
 
-#### Approach 2 : nvm
+#### Approach 2 : Local development environment with nvm
 
 Alternatively, if you would prefer not to use Docker, the following tools and libraries are required to be installed and configured on your machine:
 
