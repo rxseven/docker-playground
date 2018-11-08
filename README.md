@@ -362,11 +362,41 @@ The value of `inet` is what we need.
 
 ### Setup
 
-#### Infrastructure
+#### Step 1/3 : Infrastructure
 
-**1.** Create new [AWS Elastic Beanstalk environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.environments.html) and [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html).
+**1.** Create an [AWS Elastic Beanstalk application and environment](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/using-features.environments.html).
 
-**2.** Create `Dockkerrun.aws.json` file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk:
+**Environment information**
+
+- Application name: onigiri-webapp
+- Environment tier: Web server environment
+- Domain: onigiri-webapp.\<REGION\>.elasticbeanstalk.com
+- Description: React & Redux webapp for collecting and organizing surveys.
+
+**Base configuration**
+
+- Preconfigured platform: Docker
+- Application code: Sample application
+
+**2.** Create [Amazon S3 Bucket](https://docs.aws.amazon.com/AmazonS3/latest/user-guide/create-bucket.html).
+
+Once new Elastic Beanstalk environment was created, Amazon S3 will automatically create a new Bucket for you.
+
+**3.** Create [AWS IAM user](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html).
+
+**User details**
+
+- User name: travis-ci
+- Access type: Programmatic access
+
+**Permissions**
+
+- Policy type: Attach existing policies directly
+- Policy name: AWSElasticBeanstalkFullAccess
+
+#### Step 2/3 : Configuration
+
+Create `Dockkerrun.aws.json` file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk:
 
 ```sh
 touch Dockkerrun.aws.json
@@ -390,9 +420,11 @@ A `Dockerrun.aws.json` file describes how to deploy a Docker container as an Ela
 }
 ```
 
+Replace `<TAG>` with the same value of `RELEASE_VERSION` specified in `.env` file.
+
 > Note: for more information about single container Docker configuration, see [Single Container Docker Configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_image.html).
 
-### Continuous Integration
+#### Step 3/3 : Continuous Integration
 
 Travis CI can automatically deploy your application to Elastic Beanstalk after a successful build.
 
@@ -429,23 +461,7 @@ Below is the list of parameters obtained from your Elastic Beanstalk app console
 
 > Note: for more information on deploying application to Elastic Beanstalk, see [AWS Elastic Beanstalk Deployment](https://docs.travis-ci.com/user/deployment/elasticbeanstalk/).
 
-**5.** Update release version and image tag in the following files:
-
-**.env**
-
-```
-RELEASE_VERSION=<VERSION>
-```
-
-**Dockerrun.aws.json**
-
-```json
-"Name": "rxseven/onigiri-webapp:<TAG>"
-```
-
-You must provide the same value for `<VERSION>` and `<TAG>` e.g. `1.0.1.alpha-3`.
-
-**6.** Commit and push the changes to **GitHub**.
+**3.** Commit and push the changes to **GitHub**.
 
 ### Deployment
 
