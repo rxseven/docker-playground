@@ -213,7 +213,7 @@ All installed dependencies can be found in this directory, which is `/usr/src/ap
 ls
 ```
 
-> Note: if you cannot find the package listed in `package.json` file in `node_modules` directory, run `yarn` to (re)install the package.
+> Note: if you cannot find the packages listed in `package.json` file in `node_modules` directory, run `yarn` to (re)install the missing packages.
 
 ### Running tests
 
