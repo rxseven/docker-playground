@@ -60,9 +60,9 @@ Optional, but nice to have:
 
 You also need to have to the following information:
 
-- [Facebook app ID](https://developers.facebook.com/docs/apps/) - a unique key given to every app created for Facebook.
-- [Google app ID](https://developers.google.com/identity/protocols/OAuth2) - a unique application ID identifying the app in Google’s system.
-- [Stripe publishable key](https://stripe.com/docs/keys) - a key to identify your account with Stripe.
+- [Facebook app ID](https://developers.facebook.com/docs/apps/) - a unique key given to every app created for Facebook
+- [Google app ID](https://developers.google.com/identity/protocols/OAuth2) - a unique application ID identifying the app in Google’s system
+- [Stripe publishable key](https://stripe.com/docs/keys) - a key to identify your account with Stripe
 
 #### Approach 1 : Container-based local development environment with Docker
 
@@ -452,10 +452,10 @@ Those keys can be obtained from the AWS IAM console.
 
 Below is the list of parameters obtained from your Elastic Beanstalk and Amazon S3 consoles:
 
-- `<APP>`: App name.
-- `<ENV>`: Environment name which the app will be deployed to.
-- `<REGION>`: Region name which the app is running on.
-- `<BUCKET_NAME>`: Amazon S3 Bucket name to upload the code of your app to.
+- `<APP>`: App name
+- `<ENV>`: Environment name which the app will be deployed to
+- `<REGION>`: Region name which the app is running on
+- `<BUCKET_NAME>`: Amazon S3 Bucket name to upload the code of your app to
 
 > Note: for more information on deploying application to Elastic Beanstalk, see [AWS Elastic Beanstalk Deployment](https://docs.travis-ci.com/user/deployment/elasticbeanstalk/).
 
