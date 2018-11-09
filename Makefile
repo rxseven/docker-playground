@@ -1,7 +1,7 @@
 # Dependencies
 include .env
 
-# Common variables
+# Global variables
 SHELL := /bin/bash
 , := ,
 blank :=
