@@ -179,6 +179,42 @@ This command is used to install all dependencies for the project. This is most c
 make update
 ```
 
+### Accessing installed dependencies
+
+When the development container is creating, Docker creates a volume named `onigiri-webapp_node_modules` for persisting dependencies and bind to `/usr/src/app/node_modules` directory inside `onigiri-webapp-local` container. To verify that the volume exists, run the command below:
+
+```sh
+docker volume ls
+```
+
+This command will list all volumes on your virtual machine.
+
+In order to access the dependencies installed in `onigiri-webapp_node_modules` volume, you can access them via Unix shell in a running container:
+
+**1.** Run Unix shell in a running container:
+
+```sh
+make shell
+```
+
+This command will automatically change the directory to the working directory defined in `Dockerfile`, which is `/usr/src/app`.
+
+**2.** Change directory to `node_modules`:
+
+```sh
+cd node_modules
+```
+
+All installed dependencies can be found in this directory, which is `/usr/src/app/node_modules`.
+
+**3.** To list all installed dependencies, run this command:
+
+```sh
+ls
+```
+
+> Note: if you cannot find the package listed in `package.json` file in `node_modules` directory, run `yarn` to (re)install the package.
+
 ### Running tests
 
 **1.** Open `.env.test` file and add the configuration below:
