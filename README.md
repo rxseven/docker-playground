@@ -383,6 +383,8 @@ make open
 
 ## Deploying a containerized web application
 
+This section will demonstrate how to setup the Continuous Deployment (CD) workflow to deploy a single Docker container to AWS Elastic Beanstalk using Travis CI.
+
 [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) is an easy-to-use service offered from [Amazon Web Services](https://aws.amazon.com) for deploying and scaling web applications and services. You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from capacity provisioning, load balancing, auto-scaling to application health monitoring.
 
 ### Prerequisites
@@ -394,8 +396,6 @@ make open
 > Note: for more information about **Single Container Docker** configuration, see [Elastic Beanstalk Supported Platforms](https://docs.aws.amazon.com/elasticbeanstalk/latest/platforms/platforms-supported.html).
 
 ### Setup
-
-This section will demonstrate how to setup the Continuous Deployment (CD) workflow to deploy a single Docker container to AWS Elastic Beanstalk using Travis CI.
 
 #### Step 1/3 : Infrastructure
 
