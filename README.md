@@ -105,6 +105,8 @@ make setup
 
 > Note: this command will take a few minutes (depending on your hardware) to complete configuring the development environment.
 
+> Note: this command is not compatible with Windows platform!
+
 **4.** Open the project with your editor of choice or with Visual Studio Code:
 
 ```sh
@@ -510,6 +512,8 @@ Below is the list of parameters obtained from your Elastic Beanstalk and Amazon 
 **2.** Once `master` branch was merged, **Travis CI** will start building a production image, push the newly created image to **Docker Hub**, upload `Dockerrun.aws.json` file (compressed in `build.zip`) to **Amazon S3** Bucket specified in `.travis.yml`.
 
 **3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, create a single Docker container, update the web server environment, and deploy the app version from the source bundle in **Amazon S3** Bucket.
+
+> Note: the production image can be found on [Docker Hub](https://hub.docker.com/r/rxseven/onigiri-webapp/).
 
 [Back to top](#table-of-contents)
 
