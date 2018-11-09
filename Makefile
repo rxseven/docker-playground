@@ -31,7 +31,7 @@ ANSI_COLOR_WHITE := 37
 # Default goal
 .DEFAULT_GOAL := help
 
-# Log helpers
+# Loggers
 log-bold = \e[1m$(1)\e[0m
 log-complete = printf "\e[${ANSI_COLOR_GREEN}m$(1)\e[0m \n"
 log-danger = $(call log-template,${ANSI_COLOR_RED},$(1))
@@ -46,7 +46,7 @@ log-sum = $(call log-template,${ANSI_COLOR_CYAN},$(1))
 log-template = printf "\e[100m make \e[${1};49m $(2)\e[0m \n"
 log-underline = \e[4m$(1)\e[0m
 
-# Text and string helpers
+# Text and string
 newline = echo ""
 headline = printf "\e[${ANSI_COLOR_CYAN};49;1m$(1)\e[0m \n\n"
 txt-continue = echo "Continue to the next step..."
@@ -64,7 +64,7 @@ txt-summary = $(call log-sum,Summary)
 txt-version = printf "Makefile version ${MAKEFILE_VERSION}\n"
 txt-warning = $(call log-underline,Warning)
 
-# Configuration helpers
+# Getters and Setters
 get-ip = $$(ifconfig | sed -En 's/127.0.0.1//;s/.*inet (addr:)?(([0-9]*\.){3}[0-9]*).*/\2/p')
 set-json = sed -i.${EXT_BACKUP} 's|\(.*"$(1)"\): "\(.*\)"$(3).*|\1: '"\"$(2)\"$(3)|" $(4)
 set-env = sed -i.${EXT_BACKUP} 's;^$(1)=.*;$(1)='"$(2)"';' $(3)
@@ -74,7 +74,7 @@ define check-image
 	docker image inspect $(1) >/dev/null 2>&1
 endef
 
-# Host helper
+# Add host names
 define helper-host
 	if grep -Fxq "${HOST_IP}       $(1)" ${HOST_DNS}; then \
 		echo "Skipping, $(1) is already set."; \
@@ -84,28 +84,28 @@ define helper-host
 	fi
 endef
 
-# Image helper
+# Download image
 define helper-image
 	docker image inspect $(1) >/dev/null 2>&1 && \
 	(echo "Skipping, $(1) already exists.") || \
 	(docker pull $(1) && $(call log-complete,Downloaded successfully.))
 endef
 
-# Browser helper
+# Open a browser
 define helper-browser
 	printf "Opening $(call log-bold,$(1)) in the default browser...\n"; \
 	open -a ${BROWSER} $(1); \
 	$(txt-done)
 endef
 
-# Finder helper
+# Open Finder
 define helper-finder
 	printf "Opening $(call log-bold,$(1)) in Finder...\n"; \
 	open $(1); \
 	$(txt-done)
 endef
 
-# Preview helper
+# Run an optimized production build
 define helper-preview
 	$(newline); \
 	$(call log-start,Run the production build...); \
@@ -140,7 +140,7 @@ define helper-preview
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up
 endef
 
-# Test helper
+# Run tests
 define helper-test
 	$(call log-step,[Step 1/5] Remove the existing code coverage reports); \
 	if [ "$(2)" == "cleanup" ]; then \
@@ -162,7 +162,7 @@ define helper-test
 	${SERVICE_APP} test$(1)
 endef
 
-# Code coverage helper
+# Open code coverage reports
 define helper-coverage
 	if [ -d "${DIR_COVERAGE}" ]; then \
 		$(call helper-browser,./${DIR_COVERAGE}/lcov-report/index.html); \
@@ -172,7 +172,7 @@ define helper-coverage
 	fi
 endef
 
-# Linting helper
+# Run linting
 define helper-lint
 	$(call log-step,[Step 1/4] Build the development image (if needed)); \
 	$(call log-step,[Step 2/4] Create and start a container for running code linting); \
@@ -181,7 +181,7 @@ define helper-lint
 	docker-compose run --rm ${SERVICE_APP} lint$(1)
 endef
 
-# Static type checking helper
+# Run static type checking
 define helper-typecheck
 	$(call log-step,[Step 1/4] Build the development image (if needed)); \
 	$(call log-step,[Step 2/4] Create and start a container for running static type checking); \
@@ -190,7 +190,7 @@ define helper-typecheck
 	docker-compose run --rm ${SERVICE_APP} type$(1)
 endef
 
-# Commit helper
+# Commit changes
 define helper-commit
 	read -p "Would you like to commit the changes? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
@@ -229,7 +229,7 @@ define helper-commit
 	esac
 endef
 
-# Release helper
+# Release new application version
 define helper-release
 	$(call log-step,[Step 1/2] Configure ${CONFIG_AWS} for AWS Elastic Beanstalk deployment); \
 	$(call set-json,Name,${IMAGE_NAME},$(,),${CONFIG_AWS}); \
@@ -239,7 +239,7 @@ define helper-release
 	rm *.${EXT_BACKUP}
 endef
 
-# Installing and updating helper
+# Install and update dependencies
 define helper-update
 	$(call log-start,Install and update dependencies...)
 	$(call log-step,[Step 1/7] Stop running containers *)
@@ -260,7 +260,7 @@ define helper-update
 	docker-compose run --rm ${SERVICE_APP} install
 endef
 
-# Rebuding images helper
+# Rebuild image
 define helper-up
 	$(call log-step,[Step 1/3] Stop running containers (if ones exist)); \
 	docker-compose stop; \
@@ -269,7 +269,7 @@ define helper-up
 	docker-compose build $(1)
 endef
 
-# Starting the development server helper
+# Start development server
 define helper-devserver
 	read -p "Would you like to start the development server right away? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
@@ -284,7 +284,7 @@ define helper-devserver
 	esac
 endef
 
-# Starting the development environment helper
+# Start development environment
 define helper-start
 	$(call log-start,Start the development environment...); \
 	$(call log-step,[Step 1/8] Stop running containers *); \
@@ -314,7 +314,7 @@ define helper-start
 	docker-compose up
 endef
 
-# Setting a release version helper
+# Set a new release version
 define helper-version
 	$(call log-start,Set a release version); \
 	printf "The current version is $(call log-bold,v${RELEASE_VERSION}) (released on ${RELEASE_DATE})\n"; \
@@ -374,10 +374,10 @@ define helper-version
 	esac
 endef
 
-# Opening the project in the default code editor
+# Open code editor
 helper-code = code ${DIR_CWD}
 
-# Removing build artifacts helper
+# Remove build artifacts
 define remove-build
 	$(call log-process,Removing build artifacts...); \
 	if [ -d "${DIR_BUILD}" ]; then \
@@ -389,7 +389,7 @@ define remove-build
 	fi
 endef
 
-# Removing code coverage reports helper
+# Remove code coverage reports
 define remove-coverage
 	$(call log-process,Removing code coverage reports...); \
 	if [ -d "${DIR_COVERAGE}" ]; then \
@@ -401,7 +401,7 @@ define remove-coverage
 	fi
 endef
 
-# Removing artifacts helper
+# Remove artifacts
 define remove-artifacts
 	if [[ -d "${DIR_BUILD}" || -d "${DIR_COVERAGE}" ]]; then \
 		$(remove-build); \
@@ -413,7 +413,7 @@ define remove-artifacts
 	fi
 endef
 
-# Removing temporary files helper
+# Remove temporary files
 define remove-temporary
 	$(call log-process,Removing temporary files...); \
 	for f in ${DIR_TEMP}/*; do \
