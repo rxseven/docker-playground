@@ -29,7 +29,9 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 
 ## Live Demo
 
-Onigiri is hosted on Heroku at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
+### Production application
+
+**Onigiri** is hosted and running on **Heroku** at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
 
 > **App sleeping...** as Onigiri and its API run on a free plan, when an app on Heroku has only one web dyno and that dyno doesn’t receive any traffic in 1 hour, the dyno goes to sleep. When someone accesses the app, the dyno manager will automatically wake up the web dyno to run the web process type. **This causes a short delay for this first request**, but subsequent requests will perform normally. For more information, see [App Sleeping on Heroku](https://blog.heroku.com/app_sleeping_on_heroku).
 
@@ -37,7 +39,7 @@ Onigiri is hosted on Heroku at [https://onigiri-webapp.herokuapp.com](https://on
 
 ### Why Onigiri is not hosted and running on AWS?
 
-One of the purposes of creating this project is to use only the services that are free of charge. Sure, [AWS Free Tier](https://aws.amazon.com/free/) offers a free usage tier for 12 months but I am not eligible anymore.
+One of the purposes of creating this project is to use only the services that are free of charge. Sure, [AWS Free Tier](https://aws.amazon.com/free/) offers a free usage tier for 12 months but my account is not eligible anymore.
 
 [Back to top](#table-of-contents)
 
