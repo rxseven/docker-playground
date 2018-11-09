@@ -181,7 +181,7 @@ make update
 
 ### Accessing installed dependencies
 
-When the development container is creating, Docker creates a volume named `onigiri-webapp_node_modules` for persisting dependencies and bind to `/usr/src/app/node_modules` directory inside `onigiri-webapp-local` container. To verify that the volume exists, run the command below:
+When the development container is creating, Docker creates a volume named `onigiri-webapp_node_modules` for persisting dependencies and binds to `/usr/src/app/node_modules` directory inside `onigiri-webapp-local` container. To verify that the volume exists, run the command below:
 
 ```sh
 docker volume ls
