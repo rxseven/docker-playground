@@ -147,7 +147,7 @@ Run the command below to restart the development servers:
 make restart
 ```
 
-This command will rebuild the image, create network and volume for persisting data, and restart the development servers.
+This command will rebuild the image, recreate network and volume for persisting data, and restart the development servers.
 
 ### Running shell in a running container
 
