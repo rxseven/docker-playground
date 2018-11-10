@@ -133,16 +133,16 @@ define helper-preview
 		if [ "$(1)" == "build" ]; then \
 			$(newline); \
 			$(call log-start,Rebuilding the production image$(,) this will take a moment...); \
-			docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up --build --no-start; \
+			$(call helper-production,up --build --no-start); \
 		fi; \
 	) || ( \
 		$(newline); \
 		$(call log-start,Building the production image$(,) this will take a moment...) && \
-		docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up --no-start \
+		$(call helper-production,up --no-start) \
 	); \
 	$(newline); \
 	$(call log-start,Starting the containers...); \
-	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up
+	$(call helper-production,up)
 endef
 
 # Run tests
