@@ -1320,7 +1320,7 @@ info: ## Show project configuration
 	@echo "Live URL                       : ${URL_LIVE}"
 	@$(newline)
 	@$(call headline,Domain name & URLs)
-	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
+	@echo "Protocal                       : ${URL_PROTOCAL}"
 	@echo "Top level domain (TLD)         : ${HOST_TLD}"
 	@echo "Domain name                    : ${APP_DOMAIN}"
 	@echo "Development URL                : ${URL_LOCAL}"
