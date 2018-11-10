@@ -104,7 +104,7 @@ version: ## Set the next release version
   githooks:
     build:
       args:
-        BUSYBOX_VERSION: ${IMAGE_BASE_BUSYBOX}
+        BUSYBOX_VERSION: ${BASE_BUSYBOX}
       context: .
       dockerfile: Dockerfile.githooks
       target: githooks
