@@ -157,7 +157,7 @@ endef
 --------------------------------------------------------------------------------
 
 	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${BASE_NODE}
 	@docker pull ${IMAGE_BASE_PROXY}
 
   sudo -- sh -c -e echo "127.0.0.1       playground.prod" >> /etc/hosts

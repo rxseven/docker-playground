@@ -18,7 +18,7 @@ services:
   app:
     build:
       args:
-        BASE_NODE: ${IMAGE_BASE_NODE}
+        BASE_NODE: ${BASE_NODE}
         BINARY: ${CONTAINER_BIN}
         DEPENDENCY_LIST: ${CONFIG_NPM}
         DEPENDENCY_LOCK: ${CONFIG_PACKAGE}

@@ -1062,7 +1062,7 @@ setup: ## Setup the development environment ***
 	@$(call log-step,[Step 2/5] Install dependencies required for running on the development environment)
 	@$(call log-process,Checking local images...)
 	@$(call helper-image,${IMAGE_BASE_NGINX})
-	@$(call helper-image,${IMAGE_BASE_NODE})
+	@$(call helper-image,${BASE_NODE})
 	@$(call helper-image,${IMAGE_BASE_PROXY})
 	@$(call log-step,[Step 3/5] Set custom host names for a self-signed SSL certificate)
 	@$(call log-process,Verifying host names...)
@@ -1253,7 +1253,7 @@ ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-start,Configuring the CI environment...)
 	@$(call log-step,[Step 1/2] Install dependencies required for running on the CI environment)
 	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${BASE_NODE}
 	@$(call log-step,[Step 2/2] List downloaded base images)
 	@docker image ls
 	@$(txt-done)
@@ -1334,7 +1334,7 @@ info: ## Show project configuration
 	@$(newline)
 	@$(call headline,Base images)
 	@echo "NGINX                          : ${IMAGE_BASE_NGINX}"
-	@echo "Node.js                        : ${IMAGE_BASE_NODE}"
+	@echo "Node.js                        : ${BASE_NODE}"
 	@echo "Proxy                          : ${IMAGE_BASE_PROXY}"
 	@$(newline)
 	@$(call headline,Image & Container)
