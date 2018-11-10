@@ -1118,7 +1118,7 @@ setup: ## Setup the development environment ***
 	@$(call log-step,[Step 3/5] Set custom host names for a self-signed SSL certificate)
 	@$(call log-process,Verifying host names...)
 	@$(call helper-host,${DOMAIN_LOCAL})
-	@$(call helper-host,${APP_DOMAIN_BUILD})
+	@$(call helper-host,${DOMAIN_BUILD})
 	@$(call log-step,[Step 4/5] Create a backup directory)
 	@if [ -d ${DIR_BACKUP} ]; then \
   	echo "Skipping, the directory already exists."; \
