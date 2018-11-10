@@ -1009,7 +1009,7 @@ open: ## Open the app in the default browser *
 		echo "Sorry, the staging URL is not available."; \
 	elif [[ "$$OPTION" == 4 || "$$OPTION" == "live" ]]; then \
 		$(newline); \
-		$(call helper-browser,${APP_URL_LIVE}); \
+		$(call helper-browser,${URL_LIVE}); \
 	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -1342,7 +1342,7 @@ info: ## Show project configuration
 	@$(call headline,App)
 	@echo "Name                           : ${APP_NAME}"
 	@echo "Repository                     : ${REPO_URL}"
-	@echo "Live URL                       : ${APP_URL_LIVE}"
+	@echo "Live URL                       : ${URL_LIVE}"
 	@$(newline)
 	@$(call headline,Domain name & URLs)
 	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
