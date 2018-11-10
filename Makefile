@@ -127,7 +127,7 @@ define helper-preview
 	$(call log-info,Information); \
 	printf "You can view the production build in the browser at:\n"; \
 	$(newline); \
-	printf "Local           : ${APP_URL_BUILD}\n"; \
+	printf "Local           : ${URL_BUILD}\n"; \
 	printf "On your network : ${APP_URL_PROTOCAL}://$(get-ip)\n"; \
 	$(call check-image, ${IMAGE_NAME}) && ( \
 		if [ "$(1)" == "build" ]; then \
@@ -1004,7 +1004,7 @@ open: ## Open the app in the default browser *
 		$(call helper-browser,${APP_URL_LOCAL}); \
 	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
 		$(newline); \
-		$(call helper-browser,${APP_URL_BUILD}); \
+		$(call helper-browser,${URL_BUILD}); \
 	elif [[ "$$OPTION" == 3 || "$$OPTION" == "staging" ]]; then \
 		echo "Sorry, the staging URL is not available."; \
 	elif [[ "$$OPTION" == 4 || "$$OPTION" == "live" ]]; then \
@@ -1349,7 +1349,7 @@ info: ## Show project configuration
 	@echo "Top level domain (TLD)         : ${HOST_TLD}"
 	@echo "Domain name                    : ${APP_DOMAIN}"
 	@echo "Development URL                : ${APP_URL_LOCAL}"
-	@echo "Production build URL           : ${APP_URL_BUILD}"
+	@echo "Production build URL           : ${URL_BUILD}"
 	@$(newline)
 	@$(call headline,Host machine)
 	@echo "Hosts file                     : ${HOST_DNS}"

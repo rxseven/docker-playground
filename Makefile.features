@@ -111,7 +111,7 @@ define helper-preview
 	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
 	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
 	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
-	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_BUILD}).); \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${URL_BUILD}).); \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
@@ -953,7 +953,7 @@ open: ## Open the app in the default browser *
 		$(call helper-browser,${APP_URL_LOCAL}); \
 	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
 		$(newline); \
-		$(call helper-browser,${APP_URL_BUILD}); \
+		$(call helper-browser,${URL_BUILD}); \
 	elif [[ "$$OPTION" == 3 || "$$OPTION" == "staging" ]]; then \
 		echo "Sorry, the staging URL is not available."; \
 	elif [[ "$$OPTION" == 4 || "$$OPTION" == "live" ]]; then \
@@ -1324,7 +1324,7 @@ info: ## Show project configuration
 	@echo "Top level domain (TLD)         : ${HOST_TLD}"
 	@echo "Domain name                    : ${APP_DOMAIN}"
 	@echo "Development URL                : ${APP_URL_LOCAL}"
-	@echo "Production build URL           : ${APP_URL_BUILD}"
+	@echo "Production build URL           : ${URL_BUILD}"
 	@$(newline)
 	@$(call headline,Host machine)
 	@echo "Hosts file                     : ${HOST_DNS}"
