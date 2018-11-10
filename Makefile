@@ -1309,7 +1309,7 @@ ci-deploy: ## Create deployment configuration and build a production image
 	@zip ${BUILD_ZIP} ${CONFIG_AWS}
 	@$(call log-start,Building a production image (version ${RELEASE_VERSION}) for deployment...)
 	@$(call log-step,[Step 1/3] Build the image)
-	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} build ${SERVICE_APP}
+	@$(call helper-production,build ${SERVICE_APP})
 	@$(call log-step,[Step 2/3] Login to Docker Hub)
 	@echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
 	@$(call log-step,[Step 3/3] Push the image to Docker Hub)
