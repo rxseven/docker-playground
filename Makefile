@@ -105,6 +105,11 @@ define helper-finder
 	$(txt-done)
 endef
 
+# Create an optimized production build
+define helper-production
+	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} $(1)
+endef
+
 # Run an optimized production build
 define helper-preview
 	$(newline); \
