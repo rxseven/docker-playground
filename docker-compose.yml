@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   proxy:
-    image: ${IMAGE_BASE_PROXY}
+    image: ${BASE_PROXY}
     ports:
       - ${PORT_MAPPING_HTTP}
       - ${PORT_MAPPING_SSL}
@@ -18,7 +18,7 @@ services:
   app:
     build:
       args:
-        BASE_NODE: ${IMAGE_BASE_NODE}
+        BASE_NODE: ${BASE_NODE}
         BINARY: ${CONTAINER_BIN}
         DEPENDENCY_LIST: ${CONFIG_NPM}
         DEPENDENCY_LOCK: ${CONFIG_PACKAGE}
@@ -28,4 +28,4 @@ services:
       context: ${DOCKERFILE_CONTEXT}
       dockerfile: ${DOCKERFILE_BASE}
     container_name: ${IMAGE_REPO}
-    image: "${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}"
+    image: ${IMAGE_USERNAME}/${IMAGE_REPO}:${RELEASE_VERSION}

@@ -111,7 +111,7 @@ define helper-preview
 	$(call log-step,[Step 3/5] Build the production image tagged $(call log-bold,${IMAGE_NAME})); \
 	$(call log-step,[Step 4/5] Create and start the app and reverse proxy containers); \
 	$(call log-step,[Step 5/5] Start the web (for serving the app) and reverse proxy servers); \
-	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_BUILD}).); \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${URL_BUILD}).); \
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} up $(1)
 endef
 
@@ -273,7 +273,7 @@ define helper-start
 	$(call log-step,[Step 5/7] Start the containers); \
 	$(call log-step,[Step 6/7] Attach STDOUT/STDERR and forward signals); \
 	$(call log-step,[Step 7/7] Start the development and reverse proxy servers); \
-	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).); \
+	$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${URL_LOCAL}).); \
 	docker-compose up
 endef
 
@@ -441,7 +441,7 @@ restart: ## Rebuild and restart the development environment
 	@$(call log-step,[Step 5/7] Start the containers)
 	@$(call log-step,[Step 6/7] Attach STDOUT/STDERR and forward signals)
 	@$(call log-step,[Step 7/7] Start the development and reverse proxy servers)
-	@$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${APP_URL_LOCAL}).)
+	@$(call log-info,You can view $(call log-bold,${APP_NAME}) in the browser at $(call log-bold,${URL_LOCAL}).)
 	@docker-compose up --build
 
 .PHONY: stop
@@ -950,15 +950,15 @@ open: ## Open the app in the default browser *
 	@read -p "Enter the option: " OPTION; \
 	if [[ "$$OPTION" == "" || "$$OPTION" == 1 || "$$OPTION" == "dev" ]]; then \
 		$(newline); \
-		$(call helper-browser,${APP_URL_LOCAL}); \
+		$(call helper-browser,${URL_LOCAL}); \
 	elif [[ "$$OPTION" == 2 || "$$OPTION" == "build" ]]; then \
 		$(newline); \
-		$(call helper-browser,${APP_URL_BUILD}); \
+		$(call helper-browser,${URL_BUILD}); \
 	elif [[ "$$OPTION" == 3 || "$$OPTION" == "staging" ]]; then \
 		echo "Sorry, the staging URL is not available."; \
 	elif [[ "$$OPTION" == 4 || "$$OPTION" == "live" ]]; then \
 		$(newline); \
-		$(call helper-browser,${APP_URL_LIVE}); \
+		$(call helper-browser,${URL_LIVE}); \
 	elif [ "$$OPTION" == 0 ]; then \
 		$(txt-skipped); \
 	else \
@@ -1061,13 +1061,13 @@ setup: ## Setup the development environment ***
 	esac
 	@$(call log-step,[Step 2/5] Install dependencies required for running on the development environment)
 	@$(call log-process,Checking local images...)
-	@$(call helper-image,${IMAGE_BASE_NGINX})
-	@$(call helper-image,${IMAGE_BASE_NODE})
-	@$(call helper-image,${IMAGE_BASE_PROXY})
+	@$(call helper-image,${BASE_NGINX})
+	@$(call helper-image,${BASE_NODE})
+	@$(call helper-image,${BASE_PROXY})
 	@$(call log-step,[Step 3/5] Set custom host names for a self-signed SSL certificate)
 	@$(call log-process,Verifying host names...)
-	@$(call helper-host,${APP_DOMAIN_LOCAL})
-	@$(call helper-host,${APP_DOMAIN_BUILD})
+	@$(call helper-host,${DOMAIN_LOCAL})
+	@$(call helper-host,${DOMAIN_BUILD})
 	@$(call log-step,[Step 4/5] Create a backup directory)
 	@if [ -d ${DIR_BACKUP} ]; then \
   	echo "Skipping, the directory already exists."; \
@@ -1252,8 +1252,8 @@ ci-update: ## Install additional dependencies required for running on the CI env
 ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-start,Configuring the CI environment...)
 	@$(call log-step,[Step 1/2] Install dependencies required for running on the CI environment)
-	@docker pull ${IMAGE_BASE_NGINX}
-	@docker pull ${IMAGE_BASE_NODE}
+	@docker pull ${BASE_NGINX}
+	@docker pull ${BASE_NODE}
 	@$(call log-step,[Step 2/2] List downloaded base images)
 	@docker image ls
 	@$(txt-done)
@@ -1317,14 +1317,14 @@ info: ## Show project configuration
 	@$(call headline,App)
 	@echo "Name                           : ${APP_NAME}"
 	@echo "Repository                     : ${APP_REPO}"
-	@echo "Live URL                       : ${APP_URL_LIVE}"
+	@echo "Live URL                       : ${URL_LIVE}"
 	@$(newline)
 	@$(call headline,Domain name & URLs)
-	@echo "Protocal                       : ${APP_URL_PROTOCAL}"
-	@echo "Top level domain (TLD)         : ${HOST_TLD}"
-	@echo "Domain name                    : ${APP_DOMAIN}"
-	@echo "Development URL                : ${APP_URL_LOCAL}"
-	@echo "Production build URL           : ${APP_URL_BUILD}"
+	@echo "Protocal                       : ${URL_PROTOCAL}"
+	@echo "Top level domain (TLD)         : ${DOMAIN_TLD}"
+	@echo "Domain name                    : ${DOMAIN_NAME}"
+	@echo "Development URL                : ${URL_LOCAL}"
+	@echo "Production build URL           : ${URL_BUILD}"
 	@$(newline)
 	@$(call headline,Host machine)
 	@echo "Hosts file                     : ${HOST_DNS}"
@@ -1333,9 +1333,9 @@ info: ## Show project configuration
 	@echo "IP address                     : ${HOST_IP}"
 	@$(newline)
 	@$(call headline,Base images)
-	@echo "NGINX                          : ${IMAGE_BASE_NGINX}"
-	@echo "Node.js                        : ${IMAGE_BASE_NODE}"
-	@echo "Proxy                          : ${IMAGE_BASE_PROXY}"
+	@echo "NGINX                          : ${BASE_NGINX}"
+	@echo "Node.js                        : ${BASE_NODE}"
+	@echo "Proxy                          : ${BASE_PROXY}"
 	@$(newline)
 	@$(call headline,Image & Container)
 	@echo "Cloud-based registry service   : ${IMAGE_REGISTRY}"

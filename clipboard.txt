@@ -1,7 +1,7 @@
   test:
     build:
       args:
-        node_version: ${IMAGE_BASE_NODE}
+        node_version: ${BASE_NODE}
         workdir: ${WORKDIR}
       context: .
       dockerfile: Dockerfile
@@ -37,7 +37,7 @@ services:
   development:
     build:
       args:
-        NODE_VERSION: ${IMAGE_BASE_NODE}
+        NODE_VERSION: ${BASE_NODE}
         WORKDIR: ${WORKDIR}
       context: .
     container_name: "${IMAGE_REPO}-dev"
@@ -55,7 +55,7 @@ services:
   test:
     build:
       args:
-        NODE_VERSION: ${IMAGE_BASE_NODE}
+        NODE_VERSION: ${BASE_NODE}
         WORKDIR: ${WORKDIR}
       context: .
     command: test
@@ -74,8 +74,8 @@ services:
   production:
     build:
       args:
-        NGINX_VERSION: ${IMAGE_BASE_NGINX}
-        NODE_VERSION: ${IMAGE_BASE_NODE}
+        NGINX_VERSION: ${BASE_NGINX}
+        NODE_VERSION: ${BASE_NODE}
         WORKDIR: ${WORKDIR}
       context: .
       dockerfile: Dockerfile.production
