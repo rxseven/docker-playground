@@ -13,7 +13,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 - [Live Demo](#live-demo)
 - [Configuring the Development Environment](#configuring-the-development-environment)
 - [Running the Production Build Locally](#running-the-production-build-locally)
-- [Deploying a Single Docker Container to AWS Elastic Beanstalk](#Deploying-a-single-docker-container-to-aws-elastic-beanstalk)
+- [Deploying a containerized web application](#deploying-a-containerized-web-application)
 - [Available Scripts](#available-scripts)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
@@ -29,11 +29,17 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 
 ## Live Demo
 
-Onigiri is hosted on Heroku at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
+### Production application
+
+**Onigiri** is hosted and running on **Heroku** at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
 
 > **App sleeping...** as Onigiri and its API run on a free plan, when an app on Heroku has only one web dyno and that dyno doesn’t receive any traffic in 1 hour, the dyno goes to sleep. When someone accesses the app, the dyno manager will automatically wake up the web dyno to run the web process type. **This causes a short delay for this first request**, but subsequent requests will perform normally. For more information, see [App Sleeping on Heroku](https://blog.heroku.com/app_sleeping_on_heroku).
 
 > **Daily limit** as Onigiri runs on a free plan, and the free trial is already expired, at which point, **Onigiri is restricted to sending 100 emails per day**. For more information, see [SendGrid Pricing & Plans](https://www.sendgrid.com/pricing/).
+
+### Why Onigiri is not hosted and running on AWS?
+
+One of the purposes of creating this project is to use only the services that are free of charge. Sure, [AWS Free Tier](https://aws.amazon.com/free/) offers a free usage tier for 12 months but my account is not eligible anymore.
 
 [Back to top](#table-of-contents)
 
@@ -60,9 +66,9 @@ Optional, but nice to have:
 
 You also need to have to the following information:
 
-- [Facebook app ID](https://developers.facebook.com/docs/apps/) - a unique key given to every app created for Facebook.
-- [Google app ID](https://developers.google.com/identity/protocols/OAuth2) - a unique application ID identifying the app in Google’s system.
-- [Stripe publishable key](https://stripe.com/docs/keys) - a key to identify your account with Stripe.
+- [Facebook app ID](https://developers.facebook.com/docs/apps/) - a unique key given to every app created for Facebook
+- [Google app ID](https://developers.google.com/identity/protocols/OAuth2) - a unique application ID identifying the app in Google’s system
+- [Stripe publishable key](https://stripe.com/docs/keys) - a key to identify your account with Stripe
 
 #### Approach 1 : Container-based local development environment with Docker
 
@@ -100,6 +106,8 @@ make setup
 > Note: by running this command, you will be asking for the administrator password to allow the script to add custom host names for a self-signed SSL certificate in `/etc/hosts` file which requires the superuser privileges.
 
 > Note: this command will take a few minutes (depending on your hardware) to complete configuring the development environment.
+
+> Note: this command is not compatible with Windows platform!
 
 **4.** Open the project with your editor of choice or with Visual Studio Code:
 
@@ -147,7 +155,7 @@ Run the command below to restart the development servers:
 make restart
 ```
 
-This command will rebuild the image, create network and volume for persisting data, and restart the development servers.
+This command will rebuild the image, recreate network and volume for persisting data, and restart the development servers.
 
 ### Running shell in a running container
 
@@ -178,6 +186,42 @@ This command is used to install all dependencies for the project. This is most c
 ```sh
 make update
 ```
+
+### Accessing installed dependencies
+
+When the development container is creating, Docker creates a volume named `onigiri-webapp_node_modules` for persisting dependencies and binds to `/usr/src/app/node_modules` directory inside `onigiri-webapp-local` container. To verify that the volume exists, run the command below:
+
+```sh
+docker volume ls
+```
+
+This command will list all volumes on your virtual machine.
+
+In order to access the dependencies installed in `onigiri-webapp_node_modules` volume, you can access them via Unix shell in a running container:
+
+**1.** Run Unix shell in a running container:
+
+```sh
+make shell
+```
+
+This command will automatically change the directory to the working directory defined in `Dockerfile`, which is `/usr/src/app`.
+
+**2.** Change directory to `node_modules`:
+
+```sh
+cd node_modules
+```
+
+All installed dependencies can be found in this directory, which is `/usr/src/app/node_modules`.
+
+**3.** To list all installed dependencies, run this command:
+
+```sh
+ls
+```
+
+> Note: if you cannot find the packages listed in `package.json` file in `node_modules` directory, run `yarn` to (re)install the missing packages.
 
 ### Running tests
 
@@ -345,7 +389,9 @@ make open
 
 [Back to top](#table-of-contents)
 
-## Deploying a Single Docker Container to AWS Elastic Beanstalk
+## Deploying a containerized web application
+
+This section will demonstrate how to setup the Continuous Deployment (CD) workflow to deploy a single Docker container to AWS Elastic Beanstalk using Travis CI.
 
 [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) is an easy-to-use service offered from [Amazon Web Services](https://aws.amazon.com) for deploying and scaling web applications and services. You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from capacity provisioning, load balancing, auto-scaling to application health monitoring.
 
@@ -452,10 +498,10 @@ Those keys can be obtained from the AWS IAM console.
 
 Below is the list of parameters obtained from your Elastic Beanstalk and Amazon S3 consoles:
 
-- `<APP>`: App name.
-- `<ENV>`: Environment name which the app will be deployed to.
-- `<REGION>`: Region name which the app is running on.
-- `<BUCKET_NAME>`: Amazon S3 Bucket name to upload the code of your app to.
+- `<APP>`: App name
+- `<ENV>`: Environment name which the app will be deployed to
+- `<REGION>`: Region name which the app is running on
+- `<BUCKET_NAME>`: Amazon S3 Bucket name to upload the code of your app to
 
 > Note: for more information on deploying application to Elastic Beanstalk, see [AWS Elastic Beanstalk Deployment](https://docs.travis-ci.com/user/deployment/elasticbeanstalk/).
 
@@ -468,6 +514,8 @@ Below is the list of parameters obtained from your Elastic Beanstalk and Amazon 
 **2.** Once `master` branch was merged, **Travis CI** will start building a production image, push the newly created image to **Docker Hub**, upload `Dockerrun.aws.json` file (compressed in `build.zip`) to **Amazon S3** Bucket specified in `.travis.yml`.
 
 **3.** **Elastic Beanstalk** will then pull the production image from **Docker Hub**, create a single Docker container, update the web server environment, and deploy the app version from the source bundle in **Amazon S3** Bucket.
+
+> Note: the production image can be found on [Docker Hub](https://hub.docker.com/r/rxseven/onigiri-webapp/).
 
 [Back to top](#table-of-contents)
 

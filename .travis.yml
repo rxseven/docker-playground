@@ -28,7 +28,7 @@ services:
   - docker
 
 before_install:
-  # Install additional dependencies required for running on the CI environment
+  # Install and update dependencies required for running on the CI environment
   - make ci-update
 
 before_script:
