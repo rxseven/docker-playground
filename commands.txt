@@ -156,7 +156,7 @@ endef
 
 --------------------------------------------------------------------------------
 
-	@docker pull ${IMAGE_BASE_NGINX}
+	@docker pull ${BASE_NGINX}
 	@docker pull ${BASE_NODE}
 	@docker pull ${BASE_PROXY}
 

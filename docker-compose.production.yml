@@ -6,7 +6,7 @@ services:
   app:
     build:
       args:
-        BASE_NGINX: ${IMAGE_BASE_NGINX}
+        BASE_NGINX: ${BASE_NGINX}
         BUILD_DIR: ${DIR_BUILD}
         LABEL_AUTHOR_EMAIL: ${AUTHOR_EMAIL}
         LABEL_AUTHOR_NAME: ${AUTHOR_NAME}

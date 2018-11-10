@@ -74,7 +74,7 @@ services:
   production:
     build:
       args:
-        NGINX_VERSION: ${IMAGE_BASE_NGINX}
+        NGINX_VERSION: ${BASE_NGINX}
         NODE_VERSION: ${BASE_NODE}
         WORKDIR: ${WORKDIR}
       context: .
