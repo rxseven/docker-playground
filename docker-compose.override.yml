@@ -10,7 +10,7 @@ services:
         PACKAGE_YARN_VERSION: ${PACKAGE_YARN_VERSION}
     container_name: ${IMAGE_REPO}-${SUFFIX_LOCAL}
     environment:
-      NODE_ENV: development
+      NODE_ENV: ${ENV_DEVELOPMENT}
       VIRTUAL_HOST: ${DOMAIN_NAME}.${DOMAIN_TLD}
       VIRTUAL_PORT: ${PORT_DEVSERVER}
     image: ${ENV_LOCAL}/${IMAGE_REPO}
