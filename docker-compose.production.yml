@@ -19,7 +19,7 @@ services:
         PROXY_HOST: ${PROXY_HOST}
         RELEASE_DATE: ${RELEASE_DATE}
         RELEASE_VERSION: ${RELEASE_VERSION}
-      dockerfile: ${DOCKERFILE_PROD}
+      dockerfile: ${DOCKERFILE_PRODUCTION}
     environment:
       NODE_ENV: production
       VIRTUAL_HOST: ${DOMAIN_NAME}
