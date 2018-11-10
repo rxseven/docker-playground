@@ -1322,7 +1322,7 @@ info: ## Show project configuration
 	@$(call headline,Domain name & URLs)
 	@echo "Protocal                       : ${URL_PROTOCAL}"
 	@echo "Top level domain (TLD)         : ${HOST_TLD}"
-	@echo "Domain name                    : ${APP_DOMAIN}"
+	@echo "Domain name                    : ${DOMAIN_NAME}"
 	@echo "Development URL                : ${URL_LOCAL}"
 	@echo "Production build URL           : ${URL_BUILD}"
 	@$(newline)

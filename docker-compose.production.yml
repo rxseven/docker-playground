@@ -22,6 +22,6 @@ services:
       dockerfile: ${DOCKERFILE_PROD}
     environment:
       NODE_ENV: production
-      VIRTUAL_HOST: ${APP_DOMAIN}
+      VIRTUAL_HOST: ${DOMAIN_NAME}
       VIRTUAL_PORT: ${PORT_PROXY}
     restart: always
