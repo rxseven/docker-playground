@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   proxy:
-    image: ${IMAGE_BASE_PROXY}
+    image: ${BASE_PROXY}
     ports:
       - ${PORT_MAPPING_HTTP}
       - ${PORT_MAPPING_SSL}

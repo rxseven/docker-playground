@@ -1114,7 +1114,7 @@ setup: ## Setup the development environment ***
 	@$(call log-process,Checking local images...)
 	@$(call helper-image,${IMAGE_BASE_NGINX})
 	@$(call helper-image,${BASE_NODE})
-	@$(call helper-image,${IMAGE_BASE_PROXY})
+	@$(call helper-image,${BASE_PROXY})
 	@$(call log-step,[Step 3/5] Set custom host names for a self-signed SSL certificate)
 	@$(call log-process,Verifying host names...)
 	@$(call helper-host,${DOMAIN_LOCAL})
@@ -1360,7 +1360,7 @@ info: ## Show project configuration
 	@$(call headline,Base images)
 	@echo "NGINX                          : ${IMAGE_BASE_NGINX}"
 	@echo "Node.js                        : ${BASE_NODE}"
-	@echo "Proxy                          : ${IMAGE_BASE_PROXY}"
+	@echo "Proxy                          : ${BASE_PROXY}"
 	@$(newline)
 	@$(call headline,Image & Container)
 	@echo "Cloud-based registry service   : ${IMAGE_REGISTRY}"
