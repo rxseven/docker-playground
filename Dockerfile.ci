@@ -4,7 +4,7 @@ ARG BUILD_ENV=development
 
 # Development stage
 # Initialize a new build stage and set the base image
-FROM ${BASE_NODE} as ci
+FROM $BASE_NODE as ci
 
 # Specify build and environment variables
 ARG BUILD_ENV
@@ -12,14 +12,14 @@ ARG DEPENDENCY_LIST
 ARG DEPENDENCY_LOCK
 ARG DEPENDENCY_PATH
 ARG WORKDIR
-ENV NODE_ENV=${BUILD_ENV}
-ENV PATH ${DEPENDENCY_PATH}:${PATH}
+ENV NODE_ENV=$BUILD_ENV
+ENV PATH $DEPENDENCY_PATH:$PATH
 
 # Specify the working directory
-WORKDIR ${WORKDIR}
+WORKDIR $WORKDIR
 
 # Install and update app dependencies
-COPY ${DEPENDENCY_LIST} ${DEPENDENCY_LOCK} ./
+COPY $DEPENDENCY_LIST $DEPENDENCY_LOCK ./
 RUN yarn && yarn cache clean
 
 # Copy the entire contents from the host and add them to the container
