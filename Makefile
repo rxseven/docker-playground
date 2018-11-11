@@ -1322,7 +1322,7 @@ ci-coveralls: ## Send LCOV data (code coverage) to coveralls.io
 	@$(call log-start,Sending LCOV data to coveralls.io...)
 	@$(call log-step,[Step 1/2] Collect LCOV data from ${DATA_LCOV})
 	@$(call log-step,[Step 2/2] Send the data to coveralls.io)
-	@cat ${LCOV} | coveralls
+	@cat ${DATA_LCOV} | coveralls
 	@$(txt-done)
 
 .PHONY: ci-clean
