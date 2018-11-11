@@ -37,6 +37,8 @@ script:
   - make ci-scriptlint
   # Run stylesheet linting
   - make ci-stylelint
+  # Create an optimized production build
+  - make ci-build
 
 after_success:
   # Create code coverage reports (LCOV format)
