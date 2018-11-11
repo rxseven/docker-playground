@@ -12,8 +12,6 @@ cache:
 env:
   global:
     - BUILD_ZIP=build.zip
-    - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
-    - DOCKER_COMPOSE_VERSION=1.22.0
 
 addons:
   apt:
