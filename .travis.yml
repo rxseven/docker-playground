@@ -35,6 +35,8 @@ script:
   - make ci-test
   # Run JavaScript linting
   - make ci-scriptlint
+  # Run stylesheet linting
+  - make ci-stylelint
 
 after_success:
   # Create code coverage reports (LCOV format)
