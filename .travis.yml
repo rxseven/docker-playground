@@ -15,8 +15,7 @@ env:
     - BUILD_ZIP=build.zip
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
-    - LCOV_DATA=./coverage/lcov.info
-    - SCRIPTS_PATH=./scripts/ci
+    - LCOV=./coverage/lcov.info
 
 addons:
   apt:
@@ -45,32 +44,32 @@ after_success:
 
 deploy:
   # Create deployment configuration and build a production image
-  - provider: script
-    script: make ci-deploy
-    on:
+  - on:
       branch: master
+    provider: script
+    script: make ci-deploy
     skip_cleanup: true
   # Deploy to a production server 1 (Heroku)
-  - provider: heroku
-    app:
+  - app:
       master: docker-playground-react
     api_key:
-      secure: ${HEROKU_API_KEY}
+      secure: $HEROKU_API_KEY
+    provider: heroku
     skip_cleanup: true
   # Deploy to a production server 2 (AWS Elastic Beanstalk)
-  - provider: elasticbeanstalk
-    region: "ap-northeast-1"
+  - access_key_id: $AWS_ACCESS_KEY
     app: "docker-playground"
-    env: "docker-playground-env"
     bucket_name: "elasticbeanstalk-ap-northeast-1-413973540256"
     bucket_path: "docker-playground"
-    skip_cleanup: true
-    zip_file: ${BUILD_ZIP}
+    env: "docker-playground-env"
     on:
       branch: master
-    access_key_id: ${AWS_ACCESS_KEY}
+    provider: elasticbeanstalk
+    region: "ap-northeast-1"
     secret_access_key:
-      secure: ${AWS_SECRET_KEY}
+      secure: $AWS_SECRET_KEY
+    skip_cleanup: true
+    zip_file: $BUILD_ZIP
 
 after_script:
   # Send LCOV data to coveralls.io
@@ -92,11 +91,11 @@ after_script:
 notifications:
   # Default email notification settings
   email:
-    on_success: change
     on_failure: always
+    on_success: change
   # Send notifications to Slack channels about build results
   slack:
+    on_failure: always
+    on_success: always
     rooms:
       - secure: "hs+eOloJTwJniTLoac740Bka6feXA7ud+ZSVaG2n0qV/3B3mOOL/MXmZGbTHOKP4dOGdEzGfM4UU7aRcZTcMUeGZbIURrT97yn3CgiUJeWJNL6RpvRjmYVL3T44dJTDjRPnFyJEL/mLTbyLC3yw9+yf1aKTo/T2d2oja5a2g1tKWsTyDcXxs15jPz4dIBMgTE/oBFjOc/KQYs2O7IanJgOUXW515QwCjXO/hp3kPqefpYflywoQCyBFsoeAjlMvCE9HiMLr0wRv+rTWdeymbfRQ9BpseulDxK3Z8tTiquugcOsLCOYZ5IpWDGhLL4euWMRJK6P6XYWSwx4XbGKnBiYbD9uiO8L+UebZTTa1XOfI1tDaHlEpc9eDvlxV/qAzJ8uKUZ+Fq38DnBA6eAUEikBu7W1ScuIBZD35TosOaXWQiBAmmIL463uyI7y8vHStrKAlfnPbA5/5X9vIRuzPiuFPeYLoUgdZoIcVQ2KEtkrQrIhDMHvxf0RVGdfTW3+b2c9MPjL+NurCvKxIGXggF/613cMyBEVbrlFq49teBzdxQP44+vB2NVapKM1rkeHUGQeuZKNm9r2AjiTDzow9MmXOOMjbNDV+lfuSr9t7U6K0qxLSR+E3duplL25fNAUKr4Ab19oyT0KIucihmnJXVrLdrJY+tPsb0gaKXwp5OW9M="
-    on_success: always
-    on_failure: always

@@ -3,10 +3,10 @@ version: "3.7"
 services:
   app:
     build:
-      dockerfile: ${DOCKERFILE_CI}
+      dockerfile: $DOCKERFILE_CI
     command: test:coverage
-    container_name: ${CONTAINER_NAME_CI}
+    container_name: $CONTAINER_NAME_CI
     environment:
       CI: "true"
-      NODE_ENV: ${ENV_TEST}
-    image: ${ENV_CI}/${IMAGE_REPO}:${RELEASE_VERSION}
+      NODE_ENV: $ENV_TEST
+    image: $ENV_CI/$IMAGE_REPO:$RELEASE_VERSION

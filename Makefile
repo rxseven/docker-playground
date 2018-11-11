@@ -1298,7 +1298,7 @@ ci-coverage: ## Create code coverage data (LCOV format)
 	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
 	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 	@$(call log-step,[Step 2/2] Fix incorrect source paths in the LCOV file)
-	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV_DATA} --silent
+	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV} --silent
 	@$(txt-done)
 
 .PHONY: ci-deploy
@@ -1322,7 +1322,7 @@ ci-coveralls: ## Send LCOV data (code coverage) to coveralls.io
 	@$(call log-start,Sending LCOV data to coveralls.io...)
 	@$(call log-step,[Step 1/2] Collect LCOV data from /${DIR_COVERAGE}/${FILE_LCOV})
 	@$(call log-step,[Step 2/2] Send the data to coveralls.io)
-	@cat ${LCOV_DATA} | coveralls
+	@cat ${LCOV} | coveralls
 	@$(txt-done)
 
 .PHONY: ci-clean
