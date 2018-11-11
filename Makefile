@@ -1275,13 +1275,15 @@ ci-update: ## Install and update dependencies required for running on the CI env
 .PHONY: ci-setup
 ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-start,Configuring the CI environment...)
-	@$(call log-step,[Step 1/3] Install dependencies required for running on the CI environment)
+	@$(call log-step,[Step 1/4] Install dependencies required for running on the CI environment)
 	@docker pull ${BASE_NGINX}
 	@docker pull ${BASE_NODE}
-	@$(call log-step,[Step 2/3] List downloaded base images)
+	@$(call log-step,[Step 2/4] List downloaded base images)
 	@docker image ls
-	@$(call log-step,[Step 3/3] Build image for running containers on the CI environment)
+	@$(call log-step,[Step 3/4] Build image for running containers on the CI environment)
 	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} build ${SERVICE_APP}
+	@$(call log-step,[Step 4/4] List all images)
+	@docker image ls	
 	@$(txt-done)
 
 .PHONY: ci-test
