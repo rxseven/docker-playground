@@ -1297,7 +1297,7 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(call log-step,[Step 1/3] Create and start a container for running tests)
 	@$(call log-step,[Step 2/3] Run tests)
 	@$(call log-step,[Step 3/3] Generate code coverage reports)
-	@$(call helper-ci,run,--name ${CONTAINER_NAME_CI} -e NODE_ENV=${ENV_TEST},test:coverage)
+	@$(call helper-ci,run,--name ${CONTAINER_CI_TEST} -e NODE_ENV=${ENV_TEST},test:coverage)
 	@$(txt-done)
 
 .PHONY: ci-scriptlint
@@ -1331,7 +1331,7 @@ ci-build: ## Create an optimized production build
 ci-coverage: ## Create code coverage data (LCOV format)
 	@$(call log-start,Creating code coverage data...)
 	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
+	@docker cp ${CONTAINER_CI_TEST}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 	@$(call log-step,[Step 2/2] Fix incorrect source paths in the LCOV file)
 	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV} --silent
 	@$(txt-done)
