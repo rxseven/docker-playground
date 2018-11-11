@@ -34,7 +34,7 @@ script:
   # Run tests and generate code coverage reports
   - make ci-test
   # Run code linting
-  - make ci-lint
+  - make ci-scriptlint
 
 after_success:
   # Create code coverage reports (LCOV format)

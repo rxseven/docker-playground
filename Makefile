@@ -1300,8 +1300,8 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(call helper-ci,run,--name ${CONTAINER_NAME_CI} -e NODE_ENV=${ENV_TEST},test:coverage)
 	@$(txt-done)
 
-.PHONY: ci-lint
-ci-lint: ## Run code linting
+.PHONY: ci-scriptlint
+ci-scriptlint: ## Run code linting
 	@$(call log-start,Running code linting...)
 	@$(call log-step,[Step 1/3] Create and start a container for running code linting)
 	@$(call log-step,[Step 2/3] Run JavaScript linting)
