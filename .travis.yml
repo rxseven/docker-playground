@@ -33,6 +33,8 @@ before_script:
 script:
   # Run tests and generate code coverage reports
   - make ci-test
+  # Run code linting
+  - make ci-lint
 
 after_success:
   # Create code coverage reports (LCOV format)
