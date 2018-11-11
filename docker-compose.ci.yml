@@ -7,6 +7,5 @@ services:
     command: test:coverage
     container_name: $CONTAINER_NAME_CI
     environment:
-      CI: "true"
       NODE_ENV: $ENV_TEST
     image: $ENV_CI/$IMAGE_REPO:$RELEASE_VERSION
