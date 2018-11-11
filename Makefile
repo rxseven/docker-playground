@@ -105,6 +105,11 @@ define helper-finder
 	$(txt-done)
 endef
 
+# Build image for the CI environment
+define helper-ci
+	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} $(1) $(2) ${SERVICE_APP} $(3)
+endef
+
 # Create an optimized production build
 define helper-production
 	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_PRODUCTION} $(1)
