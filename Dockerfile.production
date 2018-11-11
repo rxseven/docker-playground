@@ -5,7 +5,7 @@ ARG BUILD_ENV=production
 
 # Build stage
 # Initialize a new build stage and set the base image for production build
-FROM ${BASE_NODE} as app
+FROM $BASE_NODE as app
 
 # Specify build and environment variables
 ARG BUILD_ENV
@@ -13,17 +13,17 @@ ARG DEPENDENCY_LIST
 ARG DEPENDENCY_LOCK
 ARG LABEL_INTERMEDIATE
 ARG WORKDIR
-ENV NODE_ENV=${BUILD_ENV}
+ENV NODE_ENV=$BUILD_ENV
 ENV NPM_CONFIG_LOGLEVEL=warn
 
 # Add metadata to an image
-LABEL stage=${LABEL_INTERMEDIATE}
+LABEL stage=$LABEL_INTERMEDIATE
 
 # Specify the working directory
-WORKDIR ${WORKDIR}
+WORKDIR $WORKDIR
 
 # Install and update dependencies
-COPY ${DEPENDENCY_LIST} ${DEPENDENCY_LOCK} ./
+COPY $DEPENDENCY_LIST $DEPENDENCY_LOCK ./
 RUN yarn && yarn cache clean
 
 # Create an optimized production build
@@ -34,7 +34,7 @@ RUN yarn build
 
 # Serve stage
 # Initialize a new build stage and set the base image for production build
-FROM ${BASE_NGINX}
+FROM $BASE_NGINX
 
 # Specify build and environment variables
 ARG BUILD_DIR
@@ -50,23 +50,23 @@ ARG PROXY_HOST
 ARG RELEASE_DATE
 ARG RELEASE_VERSION
 ARG WORKDIR
-ENV NODE_ENV=${BUILD_ENV}
+ENV NODE_ENV=$BUILD_ENV
 
 # Add metadata to an image
-LABEL description=${LABEL_DESCRIPTION}
-LABEL license=${LABEL_LICENSE}
-LABEL maintainer="${LABEL_AUTHOR_NAME} <${LABEL_AUTHOR_EMAIL}>"
-LABEL release-date=${RELEASE_DATE}
-LABEL version=${RELEASE_VERSION}
+LABEL description=$LABEL_DESCRIPTION
+LABEL license=$LABEL_LICENSE
+LABEL maintainer="$LABEL_AUTHOR_NAME <$LABEL_AUTHOR_EMAIL>"
+LABEL release-date=$RELEASE_DATE
+LABEL version=$RELEASE_VERSION
 
 # Customize web server configuration
-COPY ${PROXY_HOST}/${PROXY_CONFIG} ${PROXY_CONTAINER}/${PROXY_CONFIG}
+COPY $PROXY_HOST/$PROXY_CONFIG $PROXY_CONTAINER/$PROXY_CONFIG
 
 # Copy the optimized production build from the build stage for hosting SPA
-COPY --from=app ${WORKDIR}/${BUILD_DIR} /usr/share/nginx/html
+COPY --from=app $WORKDIR/$BUILD_DIR /usr/share/nginx/html
 
 # Specify network ports
-EXPOSE ${PORT_EXPOSE}
+EXPOSE $PORT_EXPOSE
 
 # Start a web server
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
