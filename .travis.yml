@@ -77,7 +77,7 @@ after_script:
   # Send LCOV data to coveralls.io
   - make ci-coveralls
   # List images, containers, networks, and volumes
-  - docker image ls -a
+  - docker image ls
   - docker container ls -a
   - docker network ls
   - docker volume ls
