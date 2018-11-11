@@ -16,7 +16,6 @@ env:
     - DOCKER_COMPOSE_REPO=https://github.com/docker/compose/releases/download
     - DOCKER_COMPOSE_VERSION=1.22.0
     - LCOV_DATA=./coverage/lcov.info
-    - SCRIPTS_PATH=./scripts/ci
 
 addons:
   apt:
