@@ -1309,6 +1309,15 @@ ci-scriptlint: ## Run JavaScript linting
 	@$(call helper-ci,run,--rm,lint:script)
 	@$(txt-done)
 
+.PHONY: ci-stylelint
+ci-stylelint: ## Run stylesheet linting
+	@$(call log-start,Running stylesheet linting...)
+	@$(call log-step,[Step 1/3] Create and start a container for running stylesheet linting)
+	@$(call log-step,[Step 2/3] Run stylesheet linting)
+	@$(call log-step,[Step 3/3] Remove the container when the process finishes)
+	@$(call helper-ci,run,--rm,lint:stylesheet)
+	@$(txt-done)
+
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage data (LCOV format)
 	@$(call log-start,Creating code coverage data...)
