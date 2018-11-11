@@ -5,4 +5,5 @@ services:
     build:
       dockerfile: $DOCKERFILE_CI
     command: test:coverage
+    container_name: $CONTAINER_NAME_CI
     image: $ENV_CI/$IMAGE_REPO:$RELEASE_VERSION
