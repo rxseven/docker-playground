@@ -1297,7 +1297,7 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(call log-step,[Step 1/3] Create and start a container for running tests)
 	@$(call log-step,[Step 2/3] Run tests)
 	@$(call log-step,[Step 3/3] Generate code coverage reports)
-	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} run --name ${CONTAINER_NAME_CI} -e NODE_ENV=${ENV_TEST} ${SERVICE_APP} test:coverage
+	@$(call helper-ci,run,--name ${CONTAINER_NAME_CI} -e NODE_ENV=${ENV_TEST},test:coverage)
 	@$(txt-done)
 
 .PHONY: ci-coverage
