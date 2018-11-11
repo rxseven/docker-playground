@@ -1287,11 +1287,10 @@ ci-setup: ## Setup the CI environment and install required dependencies
 .PHONY: ci-test
 ci-test: ## Run tests and generate code coverage reports
 	@$(call log-start,Running tests...)
-	@$(call log-step,[Step 1/4] Build an image based on the CI environment)
-	@$(call log-step,[Step 2/4] Create and start a container for running tests)
-	@$(call log-step,[Step 3/4] Run tests and generate code coverage reports)
-	@$(call log-step,[Step 4/4] Remove the container when the process finishes)
-	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} up ${SERVICE_APP}
+	@$(call log-step,[Step 1/3] Create and start a container for running tests)
+	@$(call log-step,[Step 2/3] Run tests and generate code coverage reports)
+	@$(call log-step,[Step 3/3] Remove the container when the process finishes)
+	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} run -e NODE_ENV=${ENV_TEST} ${SERVICE_APP} test:coverage
 	@$(txt-done)
 
 .PHONY: ci-coverage
