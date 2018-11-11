@@ -4,7 +4,7 @@ ARG BUILD_ENV=development
 
 # Development stage
 # Initialize a new build stage and set the base image
-FROM $BASE_NODE as development
+FROM $BASE_NODE
 
 # Specify build and environment variables
 ARG BINARY
