@@ -1301,9 +1301,9 @@ ci-test: ## Run tests and generate code coverage reports
 	@$(txt-done)
 
 .PHONY: ci-scriptlint
-ci-scriptlint: ## Run code linting
-	@$(call log-start,Running code linting...)
-	@$(call log-step,[Step 1/3] Create and start a container for running code linting)
+ci-scriptlint: ## Run JavaScript linting
+	@$(call log-start,Running JavaScript linting...)
+	@$(call log-step,[Step 1/3] Create and start a container for running JavaScript linting)
 	@$(call log-step,[Step 2/3] Run JavaScript linting)
 	@$(call log-step,[Step 3/3] Remove the container when the process finishes); \
 	@$(call helper-ci,run,--rm,lint:script)
