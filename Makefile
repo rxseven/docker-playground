@@ -1265,11 +1265,11 @@ release: ## Release new update
 .PHONY: ci-update
 ci-update: ## Install and update dependencies required for running on the CI environment
 	@$(call log-start,Installing and updating additional dependencies...)
-	@$(call log-step,[Step 1/1] Update Docker Compose to v${DOCKER_COMPOSE_VERSION})
-	@sudo rm ${BINARY_PATH}/docker-compose
-	@curl -L ${DOCKER_COMPOSE_REPO}/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+	@$(call log-step,[Step 1/1] Update Docker Compose to v${PACKAGE_COMPOSE_VERSION})
+	@sudo rm ${CONTAINER_BIN}/docker-compose
+	@curl -L ${PACKAGE_COMPOSE_REPO}/${PACKAGE_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
 	@chmod +x docker-compose
-	@sudo mv docker-compose ${BINARY_PATH}
+	@sudo mv docker-compose ${CONTAINER_BIN}
 	@$(txt-done)
 
 .PHONY: ci-setup
@@ -1320,9 +1320,9 @@ ci-deploy: ## Create deployment configuration and build a production image
 .PHONY: ci-coveralls
 ci-coveralls: ## Send LCOV data (code coverage) to coveralls.io
 	@$(call log-start,Sending LCOV data to coveralls.io...)
-	@$(call log-step,[Step 1/2] Collect LCOV data from /${DIR_COVERAGE}/${FILE_LCOV})
+	@$(call log-step,[Step 1/2] Collect LCOV data from ${DATA_LCOV})
 	@$(call log-step,[Step 2/2] Send the data to coveralls.io)
-	@cat ${LCOV} | coveralls
+	@cat ${DATA_LCOV} | coveralls
 	@$(txt-done)
 
 .PHONY: ci-clean
