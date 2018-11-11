@@ -1286,7 +1286,7 @@ ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-step,[Step 2/4] List downloaded base images)
 	@docker image ls
 	@$(call log-step,[Step 3/4] Build image for running containers on the CI environment)
-	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} build ${SERVICE_APP}
+	@$(call helper-ci,build)
 	@$(call log-step,[Step 4/4] List all images)
 	@docker image ls	
 	@$(txt-done)
