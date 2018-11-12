@@ -76,10 +76,13 @@ deploy:
 after_script:
   # Send LCOV data to coveralls.io
   - make ci-coveralls
-  # List images, containers, networks, and volumes
+  # List images
   - docker image ls
+  # List containers (including exited state)
   - docker container ls -a
+  # List networks
   - docker network ls
+  # List volumes
   - docker volume ls
 
 notifications:
