@@ -41,7 +41,7 @@ script:
   - make ci-build
 
 after_success:
-  # Create code coverage reports (LCOV format)
+  # Create code coverage data (LCOV format)
   - make ci-coverage
 
 deploy:
