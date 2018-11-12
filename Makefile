@@ -343,7 +343,7 @@ define helper-version
 			$(call log-step,[Step 3/4] Remove the production image); \
 			docker image rm ${IMAGE_NAME}; \
 			$(call log-step,[Step 4/4] Remove the intermediate images); \
-			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			docker image prune --filter label=stage=${IMAGE_INTERMEDIATE} --force; \
 			$(call log-complete,Cleaned up successfully.); \
 			$(newline); \
 			read -p "Enter a version number: " VERSION; \
@@ -944,7 +944,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 3/9] Remove the production image); \
 			docker image rm ${IMAGE_NAME}; \
 			$(call log-step,[Step 4/9] Remove the intermediate images); \
-			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			docker image prune --filter label=stage=${IMAGE_INTERMEDIATE} --force; \
 			$(call log-step,[Step 5/9] Remove all stopped containers (optional)); \
 			docker container prune; \
 			$(call log-step,[Step 6/9] Remove unused images (optional)); \
@@ -1404,7 +1404,7 @@ info: ## Show project configuration
 	@echo "Tag                            : ${RELEASE_VERSION}"
 	@echo "Name                           : ${IMAGE_NAME}"
 	@echo "Description                    : ${IMAGE_DESCRIPTION}"
-	@echo "Intermediate image             : ${IMAGE_LABEL_INTERMEDIATE}"
+	@echo "Intermediate image             : ${IMAGE_INTERMEDIATE}"
 	@echo "Temporary path                 : ${CONTAINER_TEMP}"
 	@echo "Working directory              : ${CONTAINER_WORKDIR}"
 	@$(newline)
