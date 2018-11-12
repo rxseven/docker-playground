@@ -1045,12 +1045,12 @@ finder: ## Open files and directories in Finder *
 .PHONY: shell
 shell: ## Run Bourne shell in the app container
 	@$(call log-start,Running Bourne shell in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
+	@docker container exec -it ${IMAGE_REPO}-${ENV_LOCAL} sh
 
 .PHONY: bash
 bash: ## Run Bash in the app container
 	@$(call log-start,Running Bash in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} bash
+	@docker container exec -it ${IMAGE_REPO}-${ENV_LOCAL} bash
 
 .PHONY: format
 format: ## Format code automatically
