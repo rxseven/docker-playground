@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   proxy:
-    container_name: $IMAGE_REPO-$SUFFIX_PROXY
+    container_name: $IMAGE_REPO-$SERVICE_PROXY
   app:
     build:
       args:
