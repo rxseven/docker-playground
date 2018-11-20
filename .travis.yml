@@ -30,16 +30,6 @@ before_script:
   # Setup the CI environment and install required dependencies
   - make ci-setup
 
-script:
-  # Run tests and generate code coverage reports
-  - make ci-test
-  # Run JavaScript linting
-  - make ci-scriptlint
-  # Run stylesheet linting
-  - make ci-stylelint
-  # Create an optimized production build
-  - make ci-build
-
 after_success:
   # Create code coverage data (LCOV format)
   - make ci-coverage
