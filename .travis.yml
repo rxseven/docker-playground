@@ -30,14 +30,15 @@ before_script:
   # Setup the CI environment and install required dependencies
   - make ci-setup
 
-jobs:
-  include:
-    - stage: "Tests"
-      name: "Unit Tests"
-      script: make ci-test
-    - stage: "Linting"
-      name: "JavaScript Linting"
-      script: make ci-scriptlint
+script:
+  # Run tests and generate code coverage reports
+  - make ci-test
+  # Run JavaScript linting
+  - make ci-scriptlint
+  # Run stylesheet linting
+  - make ci-stylelint
+  # Create an optimized production build
+  - make ci-build
 
 after_success:
   # Create code coverage data (LCOV format)
