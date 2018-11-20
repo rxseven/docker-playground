@@ -43,7 +43,7 @@ jobs:
     - name: "Stylesheet linting"
       script: make ci-stylelint
       # Create an optimized production build
-    - name: "Create an optimized production build"
+    - name: "Production build tests"
       script: make ci-build
 
 after_success:
