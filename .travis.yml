@@ -35,6 +35,9 @@ jobs:
     - stage: "Tests"
       name: "Unit Tests"
       script: make ci-test
+    - stage: "Linting"
+      name: "JavaScript Linting"
+      script: make ci-scriptlint
 
 after_success:
   # Create code coverage data (LCOV format)
