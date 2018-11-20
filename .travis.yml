@@ -40,6 +40,22 @@ script:
   # Create an optimized production build
   - make ci-build
 
+jobs:
+  include:
+    - stage: "Tests, Linting, and Build"
+      # Run unit tests and generate code coverage reports
+      name: "Unit tests"
+      script: make ci-test
+      # Run JavaScript linting
+    - name: "JavaScript linting"
+      script: make ci-scriptlint
+      # Run stylesheet linting
+    - name: "Stylesheet linting"
+      script: make ci-stylelint
+      # Create an optimized production build
+    - name: "Create an optimized production build"
+      script: make ci-build
+
 after_success:
   # Create code coverage data (LCOV format)
   - make ci-coverage
