@@ -117,7 +117,7 @@ docker-compose.yml
 docker-compose up
 ```
 
-This command will create and start `onigiri-proxy` container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy), and also will create and start `onigiri` container running a web server (serving static Onigiri app) based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
+This command will create and start `onigiri-proxy` container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) and `onigiri` container running a web server (serving static Onigiri app) based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
 
 > Note: Onigiri API
 
