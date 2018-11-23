@@ -1336,7 +1336,7 @@ ci-coverage: ## Create code coverage data (LCOV format)
 	@echo "-----"
 	@ls ${DIR_ROOT}
 	@$(call log-step,[Step 2/2] Fix incorrect source paths in the LCOV file)
-	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${DIR_ROOT} --silent
+	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${DATA_LCOV} --silent
 	@$(txt-done)
 
 .PHONY: ci-deploy
