@@ -29,22 +29,19 @@ before_install:
 before_script:
   # Setup the CI environment and install required dependencies
   - make ci-setup
+script:
+  # Run tests and generate code coverage reports
+  - make ci-test
+  # Run JavaScript linting
+  - make ci-scriptlint
+  # Run stylesheet linting
+  - make ci-stylelint
+  # Create an optimized production build
+  - make ci-build
 
-jobs:
-  include:
-    - stage: "Tests, Linting, and Build"
-      # Run unit tests and generate code coverage reports
-      name: "Unit tests"
-      script: make ci-test
-      # Run JavaScript linting
-    - name: "JavaScript linting"
-      script: make ci-scriptlint
-      # Run stylesheet linting
-    - name: "Stylesheet linting"
-      script: make ci-stylelint
-      # Create an optimized production build
-    - name: "Production build tests"
-      script: make ci-build
+after_success:
+  # Create code coverage data (LCOV format)
+  - make ci-coverage
 
 deploy:
   # Create deployment configuration and build a production image
@@ -76,8 +73,6 @@ deploy:
     zip_file: $BUILD_ZIP
 
 after_script:
-  # Create code coverage data (LCOV format)
-  - make ci-coverage
   # Send LCOV data to coveralls.io
   - make ci-coveralls
   # List images
