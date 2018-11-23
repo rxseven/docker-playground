@@ -11,6 +11,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 ## Table of Contents
 
 - [Live Demo](#live-demo)
+- [Running Containerized Onigiri Locally](#running-containerized-onigiri-locally)
 - [Configuring the Development Environment](#configuring-the-development-environment)
 - [Running the Production Build Locally](#running-the-production-build-locally)
 - [Deploying a containerized web application](#deploying-a-containerized-web-application)
@@ -31,7 +32,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 
 ### Production application
 
-**Onigiri** is hosted and running on **Heroku** at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
+**Onigiri** is running on **Heroku** at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
 
 > **App sleeping...** as Onigiri and its API run on a free plan, when an app on Heroku has only one web dyno and that dyno doesn’t receive any traffic in 1 hour, the dyno goes to sleep. When someone accesses the app, the dyno manager will automatically wake up the web dyno to run the web process type. **This causes a short delay for this first request**, but subsequent requests will perform normally. For more information, see [App Sleeping on Heroku](https://blog.heroku.com/app_sleeping_on_heroku).
 
@@ -40,6 +41,89 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 ### Why Onigiri is not hosted and running on AWS?
 
 One of the purposes of creating this project is to use only the services that are free of charge. Sure, [AWS Free Tier](https://aws.amazon.com/free/) offers a free usage tier for 12 months but my account is not eligible anymore.
+
+[Back to top](#table-of-contents)
+
+## Running Containerized Onigiri Locally
+
+TODO: Intro, containerized concept
+
+**0.** Create new project:
+
+```sh
+mkdir onigiri-webapp && cd onigiri-webapp
+```
+
+**0.** Copy `onigiri-webapp.crt` and `onigiri-webapp.key` from GitHub and paste in the project's root directory.
+
+TODO
+
+**0.** Add host name:
+
+```sh
+sudo nano /etc/hosts
+```
+
+Enter superuser password, then add:
+
+```
+127.0.0.1 onigiri-webapp
+```
+
+**0.** Create Docker Compose file:
+
+```sh
+touch docker-compose.yml
+```
+
+Add the content below to `docker-compose.yml`:
+
+```yml
+version: "3.7"
+
+services:
+  proxy:
+    container_name: onigiri-proxy
+    image: jwilder/nginx-proxy:latest
+    ports:
+      - 443:443
+    volumes:
+      - type: bind
+        source: /var/run/docker.sock
+        target: /tmp/docker.sock
+        read_only: true
+      - type: bind
+        source: ./
+        target: /etc/nginx/certs
+  app:
+    container_name: onigiri
+    environment:
+      VIRTUAL_HOST: onigiri-webapp
+      VIRTUAL_PORT: 80
+    image: rxseven/onigiri-webapp:1.0.0-alpha.12
+```
+
+TODO: project structure:
+
+```
+onigiri-webapp.crt
+onigiri-webapp.key
+docker-compose.yml
+```
+
+**0.** Run the following command to start running the app:
+
+```sh
+docker-compose up
+```
+
+This command will create and start `onigiri-proxy` container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy), and also will create and start `onigiri` container running a web server (serving static Onigiri app) based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
+
+> Note: Onigiri API
+
+**0.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser.
+
+> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
 
 [Back to top](#table-of-contents)
 
@@ -74,14 +158,14 @@ You also need to have to the following information:
 
 To make the development and testing work easier, Onigiri has a `Dockerfile` for development usage, which is based on the official [Node.js](https://hub.docker.com/_/node/) image, prepared with essential and useful tools for better development experience with best practices.
 
-Below is the list of tools and services required for developing and running the containerized app on your machine:
+Below is the list of tools and services required for developing and running the containerized app:
 
 - [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)*
 - [Docker ID account](https://docs.docker.com/docker-id/)
 
 #### Approach 2 : Local development environment with nvm
 
-Alternatively, if you would prefer not to use Docker, the following tools and libraries are required to be installed and configured on your machine:
+Alternatively, if you would prefer not to use Docker, below is the list of tools and services required for developing and running the containerized app:
 
 - [nvm](https://github.com/creationix/nvm/releases/tag/v0.33.5) *(v0.33.5\*)* and [Node.js](https://nodejs.org/en/blog/release/v8.9.3/) *(v8.9.3\*)*
 - [npm](https://github.com/npm/npm/releases/tag/v5.5.1) *(v5.5.1\*)* or [Yarn](https://github.com/yarnpkg/yarn/releases/tag/v1.3.2) *(v1.3.2\*)*
@@ -189,7 +273,7 @@ make update
 
 ### Accessing installed dependencies
 
-When the development container is creating, Docker creates a volume named `onigiri-webapp_node_modules` for persisting dependencies and binds to `/usr/src/app/node_modules` directory inside `onigiri-webapp-local` container. To verify that the volume exists, run the command below:
+When the development container is being created, Docker creates a volume named `onigiri-webapp_node_modules` for persisting dependencies and binds to `/usr/src/app/node_modules` directory inside `onigiri-webapp-local` container. To verify that the volume exists, run the command below:
 
 ```sh
 docker volume ls
@@ -213,7 +297,7 @@ This command will automatically change the directory to the working directory de
 cd node_modules
 ```
 
-All installed dependencies can be found in this directory, which is `/usr/src/app/node_modules`.
+All installed dependencies can be found in this directory, `/usr/src/app/node_modules`.
 
 **3.** To list all installed dependencies, run this command:
 
