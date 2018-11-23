@@ -36,7 +36,6 @@ jobs:
       # Run unit tests and generate code coverage reports
       name: "Unit tests"
       script: make ci-test
-      if: branch = master
       # Run JavaScript linting
     - name: "JavaScript linting"
       script: make ci-scriptlint
