@@ -46,10 +46,6 @@ jobs:
     - name: "Production build tests"
       script: make ci-build
 
-after_success:
-  # Create code coverage data (LCOV format)
-  - make ci-coverage
-
 deploy:
   # Create deployment configuration and build a production image
   - on:
@@ -80,6 +76,8 @@ deploy:
     zip_file: $BUILD_ZIP
 
 after_script:
+  # Create code coverage data (LCOV format)
+  - make ci-coverage
   # Send LCOV data to coveralls.io
   - make ci-coveralls
   # List images
