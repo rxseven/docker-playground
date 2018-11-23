@@ -58,7 +58,7 @@ txt-options = printf "* default option, press $(call log-bold,enter) key to cont
 txt-performing = echo "This command will perform the following actions:"
 txt-processing = $(call log-process,Processing...)
 txt-result = $(call log-result,Listing the results...)
-txt-skipped = echo "Skipped"
+txt-skipped = echo "Skipping"
 txt-status = $(call log-sum,The working tree status)
 txt-summary = $(call log-sum,Summary)
 txt-version = printf "Makefile version ${MAKEFILE_VERSION}\n"
@@ -103,6 +103,11 @@ define helper-finder
 	printf "Opening $(call log-bold,$(1)) in Finder...\n"; \
 	open $(1); \
 	$(txt-done)
+endef
+
+# Build image for the CI environment
+define helper-ci
+	docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} $(1) $(2) ${SERVICE_APP} $(3)
 endef
 
 # Create an optimized production build
@@ -162,7 +167,7 @@ define helper-test
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
 	-f ${COMPOSE_TEST} run \
-	--name ${IMAGE_REPO}-${SUFFIX_TEST} \
+	--name ${IMAGE_REPO}-${ENV_TEST} \
 	--rm \
 	${SERVICE_APP} test$(1)
 endef
@@ -338,7 +343,7 @@ define helper-version
 			$(call log-step,[Step 3/4] Remove the production image); \
 			docker image rm ${IMAGE_NAME}; \
 			$(call log-step,[Step 4/4] Remove the intermediate images); \
-			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			docker image prune --filter label=stage=${IMAGE_INTERMEDIATE} --force; \
 			$(call log-complete,Cleaned up successfully.); \
 			$(newline); \
 			read -p "Enter a version number: " VERSION; \
@@ -939,7 +944,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 3/9] Remove the production image); \
 			docker image rm ${IMAGE_NAME}; \
 			$(call log-step,[Step 4/9] Remove the intermediate images); \
-			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			docker image prune --filter label=stage=${IMAGE_INTERMEDIATE} --force; \
 			$(call log-step,[Step 5/9] Remove all stopped containers (optional)); \
 			docker container prune; \
 			$(call log-step,[Step 6/9] Remove unused images (optional)); \
@@ -1040,12 +1045,12 @@ finder: ## Open files and directories in Finder *
 .PHONY: shell
 shell: ## Run Bourne shell in the app container
 	@$(call log-start,Running Bourne shell in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
+	@docker container exec -it ${IMAGE_REPO}-${ENV_LOCAL} sh
 
 .PHONY: bash
 bash: ## Run Bash in the app container
 	@$(call log-start,Running Bash in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} bash
+	@docker container exec -it ${IMAGE_REPO}-${ENV_LOCAL} bash
 
 .PHONY: format
 format: ## Format code automatically
@@ -1275,30 +1280,60 @@ ci-update: ## Install and update dependencies required for running on the CI env
 .PHONY: ci-setup
 ci-setup: ## Setup the CI environment and install required dependencies
 	@$(call log-start,Configuring the CI environment...)
-	@$(call log-step,[Step 1/2] Install dependencies required for running on the CI environment)
+	@$(call log-step,[Step 1/4] Install dependencies required for running on the CI environment)
 	@docker pull ${BASE_NGINX}
 	@docker pull ${BASE_NODE}
-	@$(call log-step,[Step 2/2] List downloaded base images)
+	@$(call log-step,[Step 2/4] List downloaded base images)
 	@docker image ls
+	@$(call log-step,[Step 3/4] Build image for running containers on the CI environment)
+	@$(call helper-ci,build)
+	@$(call log-step,[Step 4/4] List all images)
+	@docker image ls	
 	@$(txt-done)
 
 .PHONY: ci-test
 ci-test: ## Run tests and generate code coverage reports
 	@$(call log-start,Running tests...)
-	@$(call log-step,[Step 1/4] Build an image based on the CI environment)
-	@$(call log-step,[Step 2/4] Create and start a container for running tests)
-	@$(call log-step,[Step 3/4] Run tests and generate code coverage reports)
-	@$(call log-step,[Step 4/4] Remove the container when the process finishes)
-	@docker-compose -f ${COMPOSE_BASE} -f ${COMPOSE_CI} up ${SERVICE_APP}
+	@$(call log-step,[Step 1/3] Create and start a container for running tests)
+	@$(call log-step,[Step 2/3] Run tests)
+	@$(call log-step,[Step 3/3] Generate code coverage reports)
+	@$(call helper-ci,run,--name ${CONTAINER_CI_TEST} -e NODE_ENV=${ENV_TEST},test:coverage)
+	@$(txt-done)
+
+.PHONY: ci-scriptlint
+ci-scriptlint: ## Run JavaScript linting
+	@$(call log-start,Running JavaScript linting...)
+	@$(call log-step,[Step 1/3] Create and start a container for running JavaScript linting)
+	@$(call log-step,[Step 2/3] Run JavaScript linting)
+	@$(call log-step,[Step 3/3] Remove the container when the process finishes)
+	@$(call helper-ci,run,--rm,lint:script)
+	@$(txt-done)
+
+.PHONY: ci-stylelint
+ci-stylelint: ## Run stylesheet linting
+	@$(call log-start,Running stylesheet linting...)
+	@$(call log-step,[Step 1/3] Create and start a container for running stylesheet linting)
+	@$(call log-step,[Step 2/3] Run stylesheet linting)
+	@$(call log-step,[Step 3/3] Remove the container when the process finishes)
+	@$(call helper-ci,run,--rm,lint:stylesheet)
+	@$(txt-done)
+
+.PHONY: ci-build
+ci-build: ## Create an optimized production build
+	@$(call log-start,Creating an optimized production build...)
+	@$(call log-step,[Step 1/3] Create and start a container for building the app)
+	@$(call log-step,[Step 2/3] Create an optimized production build)
+	@$(call log-step,[Step 3/3] Remove the container when the process finishes)
+	@$(call helper-ci,run,--rm,build)
 	@$(txt-done)
 
 .PHONY: ci-coverage
 ci-coverage: ## Create code coverage data (LCOV format)
 	@$(call log-start,Creating code coverage data...)
 	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
+	@docker cp ${CONTAINER_CI_TEST}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 	@$(call log-step,[Step 2/2] Fix incorrect source paths in the LCOV file)
-	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV} --silent
+	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${DATA_LCOV} --silent
 	@$(txt-done)
 
 .PHONY: ci-deploy
@@ -1369,7 +1404,7 @@ info: ## Show project configuration
 	@echo "Tag                            : ${RELEASE_VERSION}"
 	@echo "Name                           : ${IMAGE_NAME}"
 	@echo "Description                    : ${IMAGE_DESCRIPTION}"
-	@echo "Intermediate image             : ${IMAGE_LABEL_INTERMEDIATE}"
+	@echo "Intermediate image             : ${IMAGE_INTERMEDIATE}"
 	@echo "Temporary path                 : ${CONTAINER_TEMP}"
 	@echo "Working directory              : ${CONTAINER_WORKDIR}"
 	@$(newline)

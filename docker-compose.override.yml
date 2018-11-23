@@ -2,13 +2,13 @@ version: "3.7"
 
 services:
   proxy:
-    container_name: $IMAGE_REPO-$SUFFIX_LOCAL-$SUFFIX_PROXY
+    container_name: $IMAGE_REPO-$ENV_LOCAL-$SERVICE_PROXY
   app:
     build:
       args:
         PACKAGE_GLIBC_VERSION: $PACKAGE_GLIBC_VERSION
         PACKAGE_YARN_VERSION: $PACKAGE_YARN_VERSION
-    container_name: $IMAGE_REPO-$SUFFIX_LOCAL
+    container_name: $IMAGE_REPO-$ENV_LOCAL
     environment:
       NODE_ENV: $ENV_DEVELOPMENT
       VIRTUAL_HOST: $DOMAIN_NAME.$DOMAIN_TLD

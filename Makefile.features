@@ -132,7 +132,7 @@ define helper-test
 	-f ${COMPOSE_BASE} \
 	-f ${COMPOSE_DEVELOPMENT} \
 	-f ${COMPOSE_TEST} run \
-	--name ${IMAGE_REPO}-${SUFFIX_TEST} \
+	--name ${IMAGE_REPO}-${ENV_TEST} \
 	--rm \
 	${SERVICE_APP} test$(1)
 endef
@@ -296,7 +296,7 @@ define helper-version
 			$(call log-step,[Step 3/4] Remove the production image); \
 			docker image rm ${IMAGE_NAME}; \
 			$(call log-step,[Step 4/4] Remove the intermediate images); \
-			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			docker image prune --filter label=stage=${IMAGE_INTERMEDIATE} --force; \
 			$(call log-complete,Cleaned up successfully.); \
 			$(newline); \
 			read -p "Enter a version number: " VERSION; \
@@ -888,7 +888,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 3/9] Remove the production image); \
 			docker image rm ${IMAGE_NAME}; \
 			$(call log-step,[Step 4/9] Remove the intermediate images); \
-			docker image prune --filter label=stage=${IMAGE_LABEL_INTERMEDIATE} --force; \
+			docker image prune --filter label=stage=${IMAGE_INTERMEDIATE} --force; \
 			$(call log-step,[Step 5/9] Remove all stopped containers (optional)); \
 			docker container prune; \
 			$(call log-step,[Step 6/9] Remove unused images (optional)); \
@@ -989,12 +989,12 @@ finder: ## Open files and directories in Finder *
 .PHONY: shell
 shell: ## Run Bourne shell in the app container
 	@$(call log-start,Running Bourne shell in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} sh
+	@docker container exec -it ${IMAGE_REPO}-${ENV_LOCAL} sh
 
 .PHONY: bash
 bash: ## Run Bash in the app container
 	@$(call log-start,Running Bash in the app container...)
-	@docker container exec -it ${IMAGE_REPO}-${SUFFIX_LOCAL} bash
+	@docker container exec -it ${IMAGE_REPO}-${ENV_LOCAL} bash
 
 .PHONY: format
 format: ## Format code automatically
@@ -1271,7 +1271,7 @@ ci-test: ## Run tests and generate code coverage reports
 ci-coverage: ## Create code coverage data (LCOV format)
 	@$(call log-start,Creating code coverage data...)
 	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	@docker cp ${CONTAINER_NAME_CI}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
+	@docker cp ${CONTAINER_CI_TEST}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
 	@$(call log-step,[Step 2/2] Fix incorrect source paths in the LCOV file)
 	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${LCOV} --silent
 	@$(txt-done)
@@ -1344,7 +1344,7 @@ info: ## Show project configuration
 	@echo "Tag                            : ${RELEASE_VERSION}"
 	@echo "Name                           : ${IMAGE_NAME}"
 	@echo "Description                    : ${IMAGE_DESCRIPTION}"
-	@echo "Intermediate image             : ${IMAGE_LABEL_INTERMEDIATE}"
+	@echo "Intermediate image             : ${IMAGE_INTERMEDIATE}"
 	@echo "Temporary path                 : ${CONTAINER_TEMP}"
 	@echo "Working directory              : ${CONTAINER_WORKDIR}"
 	@$(newline)

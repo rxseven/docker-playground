@@ -23,6 +23,10 @@ services:
   - docker
 
 before_install:
+  # Turn off non-blocking mode
+  - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); fcntl.fcntl(sys.stdout, fcntl.F_SETFL, flags&~os.O_NONBLOCK);'
+  # Check whether non-blocking mode is set
+  - python -c 'import os,sys,fcntl; flags = fcntl.fcntl(sys.stdout, fcntl.F_GETFL); print(flags&os.O_NONBLOCK);'
   # Install and update dependencies required for running on the CI environment
   - make ci-update
 
@@ -33,9 +37,15 @@ before_script:
 script:
   # Run tests and generate code coverage reports
   - make ci-test
+  # Run JavaScript linting
+  - make ci-scriptlint
+  # Run stylesheet linting
+  - make ci-stylelint
+  # Create an optimized production build
+  - make ci-build
 
 after_success:
-  # Create code coverage reports (LCOV format)
+  # Create code coverage data (LCOV format)
   - make ci-coverage
 
 deploy:
@@ -70,6 +80,14 @@ deploy:
 after_script:
   # Send LCOV data to coveralls.io
   - make ci-coveralls
+  # List images
+  - docker image ls
+  # List containers (including exited state)
+  - docker container ls -a
+  # List networks
+  - docker network ls
+  # List volumes
+  - docker volume ls
 
 notifications:
   # Default email notification settings
