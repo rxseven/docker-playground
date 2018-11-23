@@ -1331,10 +1331,7 @@ ci-build: ## Create an optimized production build
 ci-coverage: ## Create code coverage data (LCOV format)
 	@$(call log-start,Creating code coverage data...)
 	@$(call log-step,[Step 1/2] Copy LCOV data from the container\'s file system to the CI\'s)
-	@ls ${DIR_ROOT}
 	@docker cp ${CONTAINER_CI_TEST}:${CONTAINER_WORKDIR}/${DIR_COVERAGE} ${DIR_ROOT}
-	@echo "-----"
-	@ls ${DIR_ROOT}
 	@$(call log-step,[Step 2/2] Fix incorrect source paths in the LCOV file)
 	@yarn replace ${CONTAINER_WORKDIR} ${TRAVIS_BUILD_DIR} ${DATA_LCOV} --silent
 	@$(txt-done)
