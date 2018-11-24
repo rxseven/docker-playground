@@ -46,37 +46,48 @@ One of the purposes of creating this project is to use only the services that ar
 
 ## Running Containerized Onigiri Locally
 
-TODO: Intro, containerized concept
+The optimized production version of Onigiri was built, packed into a standardized Docker image, and distributed to [Docker Hub](https://hub.docker.com/r/rxseven/onigiri-webapp), allowing you to easily download and run the container-based application anywhere, even on your personal laptop.
 
-**0.** Create new project:
+> Onigiri was built in the **production environment** (see line 5 in [`scripts/build.js`](https://github.com/rxseven/onigiri-webapp/blob/master/scripts/build.js)), this means that all environment variables specified in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production) were used when building the app. Therefore, all API calls will be sending to the production [Onigiri API](https://github.com/rxseven/onigiri-api) running on [https://onigiri-api.herokuapp.com](https://onigiri-api.herokuapp.com).
 
-```sh
-mkdir onigiri-webapp && cd onigiri-webapp
-```
+To run Onigiri locally, follow the instruction below:
 
-**0.** Copy `onigiri-webapp.crt` and `onigiri-webapp.key` from GitHub and paste in the project's root directory.
-
-TODO
-
-**0.** Add host name:
+**1.** Create new project directory:
 
 ```sh
-sudo nano /etc/hosts
+mkdir onigiri && cd onigiri
 ```
 
-Enter superuser password, then add:
+**2.** Create `ssl` directory inside the project’s root directory:
+
+```sh
+mkdir ssl && cd ..
+```
+
+**3.** Copy a self-signed certificate, `onigiri-webapp.crt` and `onigiri-webapp.key` from [`src/config/nginx/certs`](https://github.com/rxseven/onigiri-webapp/tree/master/src/config/nginx/certs) and paste into `ssl` directory:
 
 ```
-127.0.0.1 onigiri-webapp
+onigiri
+└── ssl
+    ├── onigiri-webapp.crt
+    └── onigiri-webapp.key
 ```
 
-**0.** Create Docker Compose file:
+An SSL certificate is a digital certificate that authenticates the identity of your app. Once that certificate is installed on your web server, your app has established a secure session with the web server via an HTTPS connections.
+
+In later steps, we will configure a custom domain name in `/etc/hosts` and use HTTPS with a self-signed certificate to allow the browser to connect to the app securely.
+
+> For development and testing, you can create and sign a certificate yourself with open source tools like [OpenSSL](https://www.openssl.org). **Self-signed certificates** are free and easy to create, but cannot be used for front-end decryption on public sites.
+
+> **Requiring HTTPS for Facebook Login** : From October 6, 2018, all Facebook apps are required to use HTTPS, even running in the development environment. For more information see [Facebook Developer News](https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/).
+
+**4.** Create Docker Compose file in the project’s root directory:
 
 ```sh
 touch docker-compose.yml
 ```
 
-Add the content below to `docker-compose.yml`:
+Then, add the content below to the newly created file:
 
 ```yml
 version: "3.7"
@@ -93,35 +104,49 @@ services:
         target: /tmp/docker.sock
         read_only: true
       - type: bind
-        source: ./
+        source: ./ssl
         target: /etc/nginx/certs
   app:
-    container_name: onigiri
+    container_name: onigiri-app
     environment:
       VIRTUAL_HOST: onigiri-webapp
       VIRTUAL_PORT: 80
     image: rxseven/onigiri-webapp:1.0.0-alpha.12
 ```
 
-TODO: project structure:
+Now, your final project structure should look like this:
 
 ```
-onigiri-webapp.crt
-onigiri-webapp.key
-docker-compose.yml
+onigiri
+├── ssl
+│   ├── onigiri-webapp.crt
+│   └── onigiri-webapp.key
+└── docker-compose.yml
 ```
 
-**0.** Run the following command to start running the app:
+**5.** Add a custom host name to `/etc/hosts`:
+
+```sh
+sudo nano /etc/hosts
+```
+
+Enter superuser password, then add the line below at the end of the existing list:
+
+```
+127.0.0.1 onigiri-webapp
+```
+
+**6.** Run the following command to run the app on your local machine:
 
 ```sh
 docker-compose up
 ```
 
-This command will create and start `onigiri-proxy` container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) and `onigiri` container running a web server (serving static Onigiri app) based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
+This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) and **onigiri-app** container running a web server based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
 
-> Note: Onigiri API
+**7.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser.
 
-**0.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser.
+HTTPS connections from the browser goes to reverse proxy servers on the outer border of the host network. Reverse proxy server (running in **onigiri-proxy** container) then proxies the incoming requests on port 443 (HTTPS) towards the actual web server (running in **onigiri-app** container) which proxies the requests to the actual Onigiri app running on port 80 (HTTP).
 
 > Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
 
