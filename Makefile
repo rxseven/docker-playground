@@ -15,8 +15,8 @@ IF_ANY := *
 IF_NO := [nN] | [nN][oO]
 IF_YES := [yY] | [yY][eE][sS]
 
-# If statements
-IF_CONTINUE := Are you sure you want to continue? [y/N]
+# Confirmation messages
+CONFIRM_CONTINUE := Are you sure you want to continue? [y/N]
 
 # ANSI Colors
 ANSI_COLOR_BLACK := 30
@@ -210,7 +210,7 @@ define helper-commit
 			git add $(1); \
 			git status; \
 			printf "The commit message will be \"$(2)\".\n"; \
-			read -p "${IF_CONTINUE} " CONFIRMATION; \
+			read -p "${CONFIRM_CONTINUE} " CONFIRMATION; \
 			case "$$CONFIRMATION" in \
 				${IF_YES}) \
 					$(newline); \
@@ -838,7 +838,7 @@ erase: ## Clean up artifacts and temporary files
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "${IF_CONTINUE} " CONFIRMATION; \
+	@read -p "${CONFIRM_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${IF_YES}) \
 			$(newline); \
@@ -866,7 +866,7 @@ refresh: ## Refresh (soft clean) the development environment
 	@echo "- Stop running containers"
 	@echo "- Remove containers and the default network"
 	@$(newline)
-	@read -p "${IF_CONTINUE} " CONFIRMATION; \
+	@read -p "${CONFIRM_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${IF_YES}) \
 			$(newline); \
@@ -895,7 +895,7 @@ clean: ## Clean up the development environment (including persistent data)
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove persistent data. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "${IF_CONTINUE} " CONFIRMATION; \
+	@read -p "${CONFIRM_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${IF_YES}) \
 			$(newline); \
@@ -932,7 +932,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(newline)
 	@printf "$(txt-warning): You are about to permanently remove files. You will not be able to recover them. $(call log-bold,This operation cannot be undone.)\n"
 	@$(newline)
-	@read -p "${IF_CONTINUE} " CONFIRMATION; \
+	@read -p "${CONFIRM_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
 		${IF_YES}) \
 			$(newline); \
@@ -952,7 +952,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 7/9] Remove all unused local volumes (optional)); \
 			docker volume prune; \
 			$(call log-step,[Step 8/9] Remove artifacts (optional)); \
-			read -p "${IF_CONTINUE} " CONFIRMATION; \
+			read -p "${CONFIRM_CONTINUE} " CONFIRMATION; \
 			case "$$CONFIRMATION" in \
 				${IF_YES}) \
 					$(remove-artifacts); \
@@ -962,7 +962,7 @@ reset: ## Reset the development environment and clean up unused data
 				;; \
 			esac; \
 			$(call log-step,[Step 9/9] Remove temporary files (optional)); \
-			read -p "${IF_CONTINUE} " CONFIRMATION; \
+			read -p "${CONFIRM_CONTINUE} " CONFIRMATION; \
 			case "$$CONFIRMATION" in \
 				${IF_YES}) \
 					$(remove-temporary); \
