@@ -181,9 +181,11 @@ You also need to have to the following information:
 
 #### Approach 1 : Container-based local development environment with Docker
 
-To make the development and testing work easier, Onigiri has a `Dockerfile` for development usage, which is based on the official [Node.js](https://hub.docker.com/_/node/) image, prepared with essential and useful tools for better development experience with best practices.
+Creating a simple and reliable local development environment is essential to developer productivity as well as on-boarding new team members.
 
-Below is the list of tools and services required for developing and running the containerized app:
+Onigiri has pre-confiured Docker images prepared with essential and useful tools in order to provide a consistent development experience with best practices for you and your team, and have developers create and run containers from those images locally. **Your team is then developing in an identical environment to the one in which the code is going to run.** This will reduce the risk that something different locally will result in an issue in production.
+
+Below is the list of tools and services required for developing and running Onigiri:
 
 - [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)*
 - [Docker ID account](https://docs.docker.com/docker-id/)
