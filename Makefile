@@ -1,11 +1,14 @@
 # Dependencies
 include .env
 
-# Global variables
+# Configuration
 SHELL := /bin/bash
+
+# Global variables
 , := ,
-blank :=
-space := $(blank) $(blank)
+BLANK :=
+SPACE := $(BLANK) $(BLANK)
+CURRENT_DATE = $$(date +'%d.%m.%Y')
 
 # Condition cases
 CASE_ANY := [nN] | [nN][oO] | *
@@ -14,9 +17,6 @@ CASE_YES := [yY] | [yY][eE][sS]
 
 # If statements
 IF_CONTINUE := Are you sure you want to continue? [y/N]
-
-# Date and time
-CURRENT_DATE = $$(date +'%d.%m.%Y')
 
 # ANSI Colors
 ANSI_COLOR_BLACK := 30
