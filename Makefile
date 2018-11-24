@@ -18,7 +18,7 @@ IF_YES := [yY] | [yY][eE][sS]
 # Confirmation messages
 CONFIRM_CONTINUE := Are you sure you want to continue? [y/N]
 
-# ANSI Colors
+# ANSI color codes
 ANSI_COLOR_BLACK := 30
 ANSI_COLOR_BLUE := 34
 ANSI_COLOR_CYAN := 36
