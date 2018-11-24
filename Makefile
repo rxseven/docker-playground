@@ -11,9 +11,9 @@ SPACE := $(BLANK) $(BLANK)
 CURRENT_DATE = $$(date +'%d.%m.%Y')
 
 # Condition cases
-CASE_ANY := [nN] | [nN][oO] | *
-CASE_NO  := [nN] | [nN][oO]
-CASE_YES := [yY] | [yY][eE][sS]
+IF_ANY := *
+IF_NO := [nN] | [nN][oO]
+IF_YES := [yY] | [yY][eE][sS]
 
 # If statements
 IF_CONTINUE := Are you sure you want to continue? [y/N]
@@ -204,7 +204,7 @@ endef
 define helper-commit
 	read -p "Would you like to commit the changes? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(newline); \
 			$(call log-start,Preparing for the commit...); \
 			git add $(1); \
@@ -212,7 +212,7 @@ define helper-commit
 			printf "The commit message will be \"$(2)\".\n"; \
 			read -p "${IF_CONTINUE} " CONFIRMATION; \
 			case "$$CONFIRMATION" in \
-				${CASE_YES}) \
+				${IF_YES}) \
 					$(newline); \
 					$(call log-start,Committing the changes...); \
 					git commit -m "$(2)"; \
@@ -225,7 +225,7 @@ define helper-commit
 					$(call log-sum,Summary); \
 					printf "$(4)\n"; \
 				;; \
-				${CASE_ANY}) \
+				${IF_ANY}) \
 					$(newline); \
 					$(call log-start,Unstaging changes...); \
 					git reset HEAD $(1); \
@@ -233,7 +233,7 @@ define helper-commit
 				;; \
 			esac; \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			echo $(3); \
 		;; \
 	esac
@@ -283,11 +283,11 @@ endef
 define helper-devserver
 	read -p "Would you like to start the development server right away? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(newline); \
 			$(helper-start); \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 			$(txt-done); \
 		;; \
@@ -333,7 +333,7 @@ define helper-version
 	$(newline); \
 	read -p "Would you like to clean up the development environment? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(newline); \
 			$(call log-start,Cleaning up the development environment...); \
 			$(call log-step,[Step 1/4] Stop and remove containers$(,) default network$(,) and volumes); \
@@ -378,7 +378,7 @@ define helper-version
 				$(txt-skipped); \
 			fi; \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -567,11 +567,11 @@ build: ## Create an optimized production build
 	@printf "The production build has been created successfully in $(call log-bold,./${DIR_BUILD}) directory.\n"
 	@read -p "Would you like to view the build artifacts in Finder? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			echo "Opening in Finder..."; \
 			open ./${DIR_BUILD}; \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -634,10 +634,10 @@ test: ## Run tests *
 		printf "Code coverage reports have been generated in $(call log-bold,${DIR_ROOT}${DIR_COVERAGE}) directory.\n"; \
 		read -p "Would you like to view the report visualization in the browser? " CONFIRMATION; \
 		case "$$CONFIRMATION" in \
-			${CASE_YES}) \
+			${IF_YES}) \
 				$(helper-coverage); \
 			;; \
-			${CASE_ANY}) \
+			${IF_ANY}) \
 				printf "Skipping, you can view the reports later by running $(call log-bold,report) command.\n"; \
 				$(txt-done); \
 			;; \
@@ -840,7 +840,7 @@ erase: ## Clean up artifacts and temporary files
 	@$(newline)
 	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(newline); \
 			$(call log-start,Removing data...); \
 			$(call log-step,[Step 1/2] Remove artifacts); \
@@ -854,7 +854,7 @@ erase: ## Clean up artifacts and temporary files
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -868,7 +868,7 @@ refresh: ## Refresh (soft clean) the development environment
 	@$(newline)
 	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(newline); \
 			$(call log-start,Refreshing the development environment...); \
 			$(call log-step,[Step 1/2] Stop running containers); \
@@ -879,7 +879,7 @@ refresh: ## Refresh (soft clean) the development environment
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -897,7 +897,7 @@ clean: ## Clean up the development environment (including persistent data)
 	@$(newline)
 	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(newline); \
 			$(call log-start,Cleaning up the development environment...); \
 			$(call log-step,[Step 1/2] Stop running containers); \
@@ -908,7 +908,7 @@ clean: ## Clean up the development environment (including persistent data)
 			$(sum-docker); \
 			$(txt-done); \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -934,7 +934,7 @@ reset: ## Reset the development environment and clean up unused data
 	@$(newline)
 	@read -p "${IF_CONTINUE} " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(newline); \
 			$(call log-start,Resetting the development environment...); \
 			$(call log-step,[Step 1/9] Stop and remove containers$(,) default network$(,) and volumes); \
@@ -954,20 +954,20 @@ reset: ## Reset the development environment and clean up unused data
 			$(call log-step,[Step 8/9] Remove artifacts (optional)); \
 			read -p "${IF_CONTINUE} " CONFIRMATION; \
 			case "$$CONFIRMATION" in \
-				${CASE_YES}) \
+				${IF_YES}) \
 					$(remove-artifacts); \
 				;; \
-				${CASE_ANY}) \
+				${IF_ANY}) \
 					$(txt-skipped); \
 				;; \
 			esac; \
 			$(call log-step,[Step 9/9] Remove temporary files (optional)); \
 			read -p "${IF_CONTINUE} " CONFIRMATION; \
 			case "$$CONFIRMATION" in \
-				${CASE_YES}) \
+				${IF_YES}) \
 					$(remove-temporary); \
 				;; \
-				${CASE_ANY}) \
+				${IF_ANY}) \
 					$(txt-skipped); \
 				;; \
 			esac; \
@@ -980,7 +980,7 @@ reset: ## Reset the development environment and clean up unused data
 			$(sum-temporary); \
 			$(txt-done); \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -1067,11 +1067,11 @@ format: ## Format code automatically
 	@$(newline)
 	@read -p "Would you like to show changes between commits? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(txt-diff); \
 			git diff; \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 		;; \
 	esac
@@ -1096,7 +1096,7 @@ setup: ## Setup the development environment ***
 	@$(newline)
 	@read -p "Would you like to change the current settings? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			read -p "Enter new username: " USERNAME; \
 			if [ "$$USERNAME" != "" ]; then \
 				git config user.name "$$USERNAME"; \
@@ -1111,7 +1111,7 @@ setup: ## Setup the development environment ***
 			fi; \
 			$(call log-complete,Configured successfully.); \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			echo "Skipping, use the current settings."; \
 		;; \
 	esac
@@ -1192,10 +1192,10 @@ backup: ## Create a backup copy of the project
 	@echo "The backup has been created and uploaded to the cloud storage."
 	@read -p "Would you like to show archived backup copies? " CONFIRMATION; \
 	case "$$CONFIRMATION" in \
-		${CASE_YES}) \
+		${IF_YES}) \
 			$(call helper-finder,${DIR_BACKUP}); \
 		;; \
-		${CASE_ANY}) \
+		${IF_ANY}) \
 			$(txt-skipped); \
 			$(txt-done); \
 		;; \
