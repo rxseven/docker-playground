@@ -52,11 +52,9 @@ The optimized production version of Onigiri was built, packed into a standardize
 
 ### Prerequisites
 
-The only tool you need is [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)*
+To run Onigiri locally, you don’t need to clone the entire project from GitHub repository and manually setup the development environment. The only thing you need is just [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)*.
 
 ### Setup
-
-To setup and run Onigiri locally, follow the instruction below:
 
 **1.** Create new project directory:
 
@@ -64,13 +62,7 @@ To setup and run Onigiri locally, follow the instruction below:
 mkdir onigiri && cd onigiri
 ```
 
-**2.** Create `ssl` directory inside the project’s root directory:
-
-```sh
-mkdir ssl && cd ..
-```
-
-**3.** Copy the self-signed certificate and public key for the production domain name from [`src/config/nginx/certs`](https://github.com/rxseven/onigiri-webapp/tree/master/src/config/nginx/certs) and paste into `ssl` directory:
+**2.** Copy the self-signed certificate and public key for the production domain name from [`src/config/nginx/certs`](https://github.com/rxseven/onigiri-webapp/tree/master/src/config/nginx/certs) and paste into `ssl` sub-directory:
 
 ```
 onigiri
@@ -87,7 +79,7 @@ In later steps, we will add and configure a domain name in Hosts file,`/etc/host
 
 > **Requiring HTTPS for Facebook Login** : From October 6, 2018, all Facebook apps are required to use HTTPS, even running in the development environment. For more information see [Facebook Developer News](https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/).
 
-**4.** Create Docker Compose file in the project’s root directory:
+**3.** Create Docker Compose file in the project’s root directory:
 
 ```sh
 touch docker-compose.yml
@@ -130,7 +122,7 @@ onigiri
 └── docker-compose.yml
 ```
 
-**5.** Add a custom domain name to Hosts file:
+**4.** Add a custom domain name to Hosts file:
 
 ```sh
 sudo nano /etc/hosts
@@ -144,9 +136,11 @@ Enter superuser password, then add the line below at the end of the existing lis
 
 > Note: if you want to run the live version of Onigiri, you must remove the production domain from the Hosts file. Otherwise, the request will be made to `127.0.0.1` which is your `localhost` instead.
 
-**6.** Start [Docker](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac).
+### Run
 
-**7.** Run the app and reverse proxy server:
+**1.** Start [Docker](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac).
+
+**2.** Run the app and reverse proxy server:
 
 ```sh
 docker-compose up
@@ -154,11 +148,13 @@ docker-compose up
 
 This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) image and **onigiri-app** container running a web server based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
 
-**8.** Open [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com) in the browser.
+**3.** Open [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com) in the browser.
 
 HTTPS connections from the browser goes to reverse proxy servers on the outer border of the host network. Reverse proxy server (running in **onigiri-proxy** container) then proxies the incoming requests on port 443 (HTTPS) towards the actual web server (running in **onigiri-app** container) which proxies the requests to the actual Onigiri app running on port 80 (HTTP).
 
 > Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+
+> Note: the **Login with Facebook** button won’t work for you, the Facebook app specified in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production) is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
 
 [Back to top](#table-of-contents)
 
@@ -265,6 +261,8 @@ make open
 ```
 
 > Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+
+> Note: if you did’t change the Facebook app ID in [`.env.development`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.development), the **Login with Facebook** button wouldn’t work for you, because the existing one is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
 
 > Tip: press `control + c` to stop the running containers.
 
@@ -505,6 +503,8 @@ make open
 ```
 
 > Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+
+> Note: if you did’t change the Facebook app ID in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production), the **Login with Facebook** button wouldn’t work for you, because the existing one is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
 
 > Tip: press `control + c` to stop the running container.
 
