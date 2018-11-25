@@ -38,6 +38,8 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 
 > **Daily limit** as Onigiri runs on a free plan, and the free trial is already expired, at which point, **Onigiri is restricted to sending 100 emails per day**. For more information, see [SendGrid Pricing & Plans](https://www.sendgrid.com/pricing/).
 
+> **Login with Facebook** button won’t work for you because the relevant Facebook app is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
+
 ### Why Onigiri is not hosted and running on AWS?
 
 One of the purposes of creating this project is to use only the services that are free of charge. Sure, [AWS Free Tier](https://aws.amazon.com/free/) offers a free usage tier for 12 months but my account is not eligible anymore.
@@ -262,7 +264,7 @@ make open
 
 > Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
 
-> Note: if you did’t change the Facebook app ID in [`.env.development`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.development), the **Login with Facebook** button wouldn’t work for you, because the existing one is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
+> Note: if you did’t change the Facebook app in [`.env.development`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.development), the **Login with Facebook** button wouldn’t work for you, because the existing one is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
 
 > Tip: press `control + c` to stop the running containers.
 
