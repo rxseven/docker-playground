@@ -13,7 +13,6 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 - [Live Demo](#live-demo)
 - [Running Onigiri Locally](#running-onigiri-locally)
 - [Configuring the Development Environment](#configuring-the-development-environment)
-- [Running the Production Build Locally](#running-the-production-build-locally)
 - [Deploying a containerized web application](#deploying-a-containerized-web-application)
 - [Available Scripts](#available-scripts)
 - [Features](#features)
@@ -488,9 +487,7 @@ The value of `inet` is what we need.
 
 > Note: this will only be available as long as you have the app running on the host.
 
-[Back to top](#table-of-contents)
-
-## Running the Production Build Locally
+### Running the Production Build Locally
 
 **1.** Run the following command to create an optimized production build and start a web server serving the app inside a container:
 
@@ -797,7 +794,6 @@ React & Redux starter kit with best practices bootstrapped with [Create React Ap
 
 - Setup Makefile *(in progress)*.
 - Refactor code with functional programming principles *(in progress)*.
-- Deploy the app on [DigitalOcean](https://www.digitalocean.com) or [Amazon Web Service (AWS)](https://aws.amazon.com).
 - Implement components in isolation with [Storybook](https://storybook.js.org).
 - Optimize the app’s performance.
 - Add more unit tests and static type checking to cover the entire project *(in progress)*.
