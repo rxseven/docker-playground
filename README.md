@@ -29,8 +29,6 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 
 ## Live Demo
 
-### Production application
-
 **Onigiri** is running on **Heroku** at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
 
 > **App sleeping...** as Onigiri and its API run on a free plan, when an app on Heroku has only one web dyno and that dyno doesn’t receive any traffic in 1 hour, the dyno goes to sleep. When someone accesses the app, the dyno manager will automatically wake up the web dyno to run the web process type. **This causes a short delay for this first request**, but subsequent requests will perform normally. For more information, see [App Sleeping on Heroku](https://blog.heroku.com/app_sleeping_on_heroku).
@@ -38,10 +36,6 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 > **Daily limit** as Onigiri runs on a free plan, and the free trial is already expired, at which point, **Onigiri is restricted to sending 100 emails per day**. For more information, see [SendGrid Pricing & Plans](https://www.sendgrid.com/pricing/).
 
 > **Login with Facebook** button won’t work for you because the relevant Facebook app is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
-
-### Why Onigiri was not deployed to AWS?
-
-One of the purposes of creating this project is to use only the services that are free of charge. Sure, [AWS Free Tier](https://aws.amazon.com/free/) offers a free usage tier for 12 months but my account is not eligible anymore.
 
 [Back to top](#table-of-contents)
 
@@ -53,7 +47,7 @@ The optimized production version of Onigiri was built, packed into a standardize
 
 ### Prerequisites
 
-To run Onigiri on your local machine, you don’t need to clone the entire project from GitHub repository and setup the development environment. The only thing you need is just have [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)* installed and configured.
+To run Onigiri on your local machine, you don’t need to clone the entire project from GitHub repository or have the development environment fully configured. The only thing you need is just have [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)* installed.
 
 ### Setup
 
@@ -72,9 +66,9 @@ onigiri
     └── onigiri-webapp.herokuapp.com.key
 ```
 
-An SSL certificate is a digital certificate that authenticates the identity of your app. Once that certificate is installed on your web server, your app has established a secure session with the web server via an HTTPS connections.
+An **SSL certificate** is a digital certificate that authenticates the identity of your app. Once that certificate is installed on your web server, your app has established a secure session with the web server via an HTTPS connections.
 
-In later steps, we will add and configure a domain name in Hosts file,`/etc/hosts` and use HTTPS with the self-signed certificate above to allow the browser to connect to the app securely.
+In later steps, we will add and configure a domain name in the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)) and use HTTPS with the self-signed certificate above to allow the browser to connect to the app securely.
 
 > For development and testing purposes, you can create and sign a certificate yourself with open source tool like [OpenSSL](https://www.openssl.org). **Self-signed certificates** are free and easy to create, but cannot be used for front-end decryption on public sites.
 
@@ -113,6 +107,8 @@ services:
     image: rxseven/onigiri-webapp:1.0.0
 ```
 
+Provided DNS is setup to forward `onigiri-webapp.herokuapp.com` to the host running a reverse proxy server, the request will be routed to **onigiri-proxy** container with the `VIRTUAL_HOST` environment variable set.
+
 Now, your final project structure should look like this:
 
 ```
@@ -123,7 +119,7 @@ onigiri
 └── docker-compose.yml
 ```
 
-**4.** Add a custom domain name to Hosts file:
+**4.** Add a custom domain name to the Hosts file on your local machine to point the domain name to the IP address of the environment you want to run:
 
 ```sh
 sudo nano /etc/hosts
@@ -134,6 +130,10 @@ Enter superuser password, then add the line below at the end of the existing lis
 ```
 127.0.0.1 onigiri-webapp.herokuapp.com
 ```
+
+**127.0.0.1** is the loopback Internet protocol (IP) address also referred to as the **localhost**. The address is used to establish an IP connection to the same machine or computer being used by the end-user. For more information, see [127.0.0.1 – What Are its Uses and Why is it Important?](http://www.tech-faq.com/127-0-0-1.html).
+
+> **Resolving host names with a Hosts file** – Domain names or IP addresses on a local machine can be resolved by adding entries in the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)). Entries in the local Hosts file have the added advantage that the system can run the application server, even when disconnected from the network.
 
 > Note: if you want to run the live version of Onigiri, you must remove the production domain from the Hosts file. Otherwise, the request will be made to `127.0.0.1` which is your `localhost` instead.
 
@@ -147,15 +147,27 @@ Enter superuser password, then add the line below at the end of the existing lis
 docker-compose up
 ```
 
-This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) image and **onigiri-app** container running a web server based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
+This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) image and **onigiri-app** container running an HTTP server based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
 
 **3.** Open [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com) in the browser.
 
-HTTPS connections from the browser goes to reverse proxy servers on the outer border of the host network. Reverse proxy server (running in **onigiri-proxy** container) then proxies the incoming requests on port 443 (HTTPS) towards the actual web server (running in **onigiri-app** container) which proxies the requests to the actual Onigiri app running on port 80 (HTTP).
-
-> Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+The reverse proxy server will use a self-signed certificate in `ssl` directory, once the browser has loaded the app, it will display an error message indicating that the app is unsafe (like [this](https://support.google.com/chrome/answer/95617)).
 
 > Note: the **Login with Facebook** button won’t work for you, the Facebook app specified in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production) is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
+
+### How this works
+
+By default, Docker exposes container ports to the IP address 0.0.0.0 (this matches all IPv4 addresses on the local machine, including 127.0.0.1).
+
+**onigiri-proxy** container sits between **onigiri-app** container and the clients (e.g. web browser) in order to **provide SSL termination functionality**. Inside the container, the **reverse proxy server** is listening on port 443 and publishes port 443 to the host system’s interfaces, the port exposed on the outside of the container (where clients connect). This port is accessible on the host (127.0.0.1:443) and the port is available to any client that can reach the host, e.g. [from a mobile device on the same network](#accessing-localhost-from-any-device-on-the-same-network) (192.168.1.24:443).
+
+**onigiri-app** container runs a **web server** serving static Onigiri app to the client, in response to their requests. This is the container being proxied by **onigiri-proxy** container, it must expose the port to be proxied. Inside the container, the **web server** is listening on [port 80](https://github.com/rxseven/onigiri-webapp/blob/master/Dockerfile.production#L65) (by default, Nginx HTTP server listens for incoming connection and binds on port 80), but it does not actually publish the port to the outside world, because we don’t want this container to be accessible on the host directly.
+
+The browser uses the entry in the local Hosts file to override the IP-address-to-URL mapping returned by a DNS server. HTTPS connections from the browser goes to the reverse proxy server on port 443 (HTTPS). The reverse proxy server then handles the SSL encryption/decryption (so that traffic between the reverse proxy server and web server is in HTTP) and proxies the incoming requests from the client towards the web server which proxies the requests to the Onigiri app running on port 80 (HTTP).
+
+> A **web server** or **HTTP sever** is a server that serve the pieces of information that form web pages to users, in response to their requests.
+
+> A **reverse proxy server** is a server that typically sits in front of other web servers in order to provide additional functionality that the web servers may not provide themselves. For more information, see [Automated Nginx Reverse Proxy for Docker](http://jasonwilder.com/blog/2014/03/25/automated-nginx-reverse-proxy-for-docker/).
 
 [Back to top](#table-of-contents)
 
@@ -341,7 +353,7 @@ All installed dependencies can be found in this directory, `/usr/src/app/node_mo
 ls
 ```
 
-> Note: if you cannot find the packages listed in `package.json` file in `node_modules` directory, run `yarn` to (re)install the missing packages.
+> Note: if you cannot find the packages listed within [`package.json`](https://github.com/rxseven/onigiri-webapp/blob/master/package.json) file in `node_modules` directory, run `yarn` to (re)install the missing packages.
 
 ### Running tests
 
