@@ -39,7 +39,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 
 > **Login with Facebook** button won’t work for you because the relevant Facebook app is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
 
-### Why Onigiri is not hosted and running on AWS?
+### Why Onigiri was not deployed to AWS?
 
 One of the purposes of creating this project is to use only the services that are free of charge. Sure, [AWS Free Tier](https://aws.amazon.com/free/) offers a free usage tier for 12 months but my account is not eligible anymore.
 
@@ -53,7 +53,7 @@ The optimized production version of Onigiri was built, packed into a standardize
 
 ### Prerequisites
 
-To run Onigiri locally, you don’t need to clone the entire project from GitHub repository and manually setup the development environment. The only thing you need is just [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)*.
+To run Onigiri on your local machine, you don’t need to clone the entire project from GitHub repository and setup the development environment. The only thing you need is just have [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)* installed and configured.
 
 ### Setup
 
