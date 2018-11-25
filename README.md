@@ -11,7 +11,7 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 ## Table of Contents
 
 - [Live Demo](#live-demo)
-- [Running Containerized Onigiri Locally](#running-containerized-onigiri-locally)
+- [Running Onigiri Locally](#running-onigiri-locally)
 - [Configuring the Development Environment](#configuring-the-development-environment)
 - [Running the Production Build Locally](#running-the-production-build-locally)
 - [Deploying a containerized web application](#deploying-a-containerized-web-application)
@@ -44,13 +44,19 @@ One of the purposes of creating this project is to use only the services that ar
 
 [Back to top](#table-of-contents)
 
-## Running Containerized Onigiri Locally
+## Running Onigiri Locally
 
 The optimized production version of Onigiri was built, packed into a standardized Docker image, and distributed to [Docker Hub](https://hub.docker.com/r/rxseven/onigiri-webapp), allowing you to easily download and run the container-based application anywhere, even on your personal laptop.
 
 > Onigiri was built in the **production environment** (see line 5 in [`scripts/build.js`](https://github.com/rxseven/onigiri-webapp/blob/master/scripts/build.js)), this means that all environment variables specified in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production) were used when building the app. Therefore, all API calls will be sending to the production [Onigiri API](https://github.com/rxseven/onigiri-api) running on [https://onigiri-api.herokuapp.com](https://onigiri-api.herokuapp.com).
 
-To run Onigiri locally, follow the instruction below:
+### Prerequisites
+
+The only tool you need is [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)*
+
+### Setup
+
+To setup and run Onigiri locally, follow the instruction below:
 
 **1.** Create new project directory:
 
@@ -64,20 +70,20 @@ mkdir onigiri && cd onigiri
 mkdir ssl && cd ..
 ```
 
-**3.** Copy a self-signed certificate, `onigiri-webapp.crt` and `onigiri-webapp.key` from [`src/config/nginx/certs`](https://github.com/rxseven/onigiri-webapp/tree/master/src/config/nginx/certs) and paste into `ssl` directory:
+**3.** Copy the self-signed certificate and public key for the production domain name from [`src/config/nginx/certs`](https://github.com/rxseven/onigiri-webapp/tree/master/src/config/nginx/certs) and paste into `ssl` directory:
 
 ```
 onigiri
 └── ssl
-    ├── onigiri-webapp.crt
-    └── onigiri-webapp.key
+    ├── onigiri-webapp.herokuapp.com.crt
+    └── onigiri-webapp.herokuapp.com.key
 ```
 
 An SSL certificate is a digital certificate that authenticates the identity of your app. Once that certificate is installed on your web server, your app has established a secure session with the web server via an HTTPS connections.
 
-In later steps, we will configure a custom domain name in `/etc/hosts` and use HTTPS with a self-signed certificate to allow the browser to connect to the app securely.
+In later steps, we will add and configure a domain name in Hosts file,`/etc/hosts` and use HTTPS with the self-signed certificate above to allow the browser to connect to the app securely.
 
-> For development and testing, you can create and sign a certificate yourself with open source tools like [OpenSSL](https://www.openssl.org). **Self-signed certificates** are free and easy to create, but cannot be used for front-end decryption on public sites.
+> For development and testing purposes, you can create and sign a certificate yourself with open source tool like [OpenSSL](https://www.openssl.org). **Self-signed certificates** are free and easy to create, but cannot be used for front-end decryption on public sites.
 
 > **Requiring HTTPS for Facebook Login** : From October 6, 2018, all Facebook apps are required to use HTTPS, even running in the development environment. For more information see [Facebook Developer News](https://developers.facebook.com/blog/post/2018/06/08/enforce-https-facebook-login/).
 
@@ -87,7 +93,7 @@ In later steps, we will configure a custom domain name in `/etc/hosts` and use H
 touch docker-compose.yml
 ```
 
-Then, add the content below to the newly created file:
+Then, add the configuration below to the newly created file:
 
 ```yml
 version: "3.7"
@@ -109,9 +115,9 @@ services:
   app:
     container_name: onigiri-app
     environment:
-      VIRTUAL_HOST: onigiri-webapp
+      VIRTUAL_HOST: onigiri-webapp.herokuapp.com
       VIRTUAL_PORT: 80
-    image: rxseven/onigiri-webapp:1.0.0-alpha.12
+    image: rxseven/onigiri-webapp:1.0.0
 ```
 
 Now, your final project structure should look like this:
@@ -119,12 +125,12 @@ Now, your final project structure should look like this:
 ```
 onigiri
 ├── ssl
-│   ├── onigiri-webapp.crt
-│   └── onigiri-webapp.key
+│   ├── onigiri-webapp.herokuapp.com.crt
+│   └── onigiri-webapp.herokuapp.com.key
 └── docker-compose.yml
 ```
 
-**5.** Add a custom host name to `/etc/hosts`:
+**5.** Add a custom domain name to Hosts file:
 
 ```sh
 sudo nano /etc/hosts
@@ -133,22 +139,26 @@ sudo nano /etc/hosts
 Enter superuser password, then add the line below at the end of the existing list:
 
 ```
-127.0.0.1 onigiri-webapp
+127.0.0.1 onigiri-webapp.herokuapp.com
 ```
 
-**6.** Run the following command to run the app on your local machine:
+> Note: if you want to run the live version of Onigiri, you must remove the production domain from the Hosts file. Otherwise, the request will be made to `127.0.0.1` which is your `localhost` instead.
+
+**6.** Start [Docker](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac).
+
+**7.** Run the app and reverse proxy server:
 
 ```sh
 docker-compose up
 ```
 
-This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) and **onigiri-app** container running a web server based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
+This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) image and **onigiri-app** container running a web server based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
 
-**7.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser.
+**8.** Open [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com) in the browser.
 
 HTTPS connections from the browser goes to reverse proxy servers on the outer border of the host network. Reverse proxy server (running in **onigiri-proxy** container) then proxies the incoming requests on port 443 (HTTPS) towards the actual web server (running in **onigiri-app** container) which proxies the requests to the actual Onigiri app running on port 80 (HTTP).
 
-> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+> Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
 
 [Back to top](#table-of-contents)
 
@@ -173,7 +183,7 @@ Optional, but nice to have:
 
 #### Software as a Service
 
-You also need to have to the following information:
+You also need to have to the following information beforehand:
 
 - [Facebook app ID](https://developers.facebook.com/docs/apps/) - a unique key given to every app created for Facebook
 - [Google app ID](https://developers.google.com/identity/protocols/OAuth2) - a unique application ID identifying the app in Google’s system
@@ -183,7 +193,7 @@ You also need to have to the following information:
 
 Creating a simple and reliable local development environment is essential to developer productivity as well as on-boarding new team members.
 
-Onigiri has pre-confiured Docker images prepared with essential and useful tools in order to provide a consistent development experience with best practices for you and your team, and have developers create and run containers from those images locally. **Your team is then developing in an identical environment to the one in which the code is going to run.** This will reduce the risk that something different locally will result in an issue in production.
+Onigiri has pre-confiured Docker images prepared with essential and useful tools in order to provide a consistent development experience with best practices for you and your team, and have developers create and run containers from those images locally. **Your team is then developing in an identical environment to the one in which the code is going to run.** This will reduce the risk that something different locally will result in an issue in production.
 
 Below is the list of tools and services required for developing and running Onigiri:
 
@@ -254,7 +264,7 @@ This command will build a Docker image for development (if one doesn’t already
 make open
 ```
 
-> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+> Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
 
 > Tip: press `control + c` to stop the running containers.
 
@@ -488,13 +498,13 @@ The value of `inet` is what we need.
 make preview
 ```
 
-**2.** Open [https://onigiri-webapp](https://onigiri-webapp) in the browser, or run the command below to quickly launch the production app locally:
+**2.** Open [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com) in the browser, or run the command below to quickly launch the production app locally:
 
 ```sh
 make open
 ```
 
-> Note: the server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
+> Note: the reverse proxy server will use a self-signed certificate, so your web browser will almost definitely display a warning upon accessing the page.
 
 > Tip: press `control + c` to stop the running container.
 
@@ -502,7 +512,7 @@ make open
 
 ## Deploying a containerized web application
 
-Deployment of the code can be a long path, and where it is ultimately deployed can be a very different platform, environment, and configuration from the local development environment where the app was built. **Containers can reduce the friction in this process.**
+Deployment of the code can be a long path, and where it is ultimately deployed can be a very different platform, environment, and configuration from the local development environment where the app was built. **Containers can reduce the friction in this process.**
 
 This section will demonstrate how to setup the Continuous Deployment (CD) workflow to deploy a single Docker container to AWS Elastic Beanstalk using Travis CI.
 
