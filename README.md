@@ -41,7 +41,17 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or on 
 
 ## Running Onigiri Locally
 
-The optimized production version of Onigiri was built, packed into a standardized Docker image, and distributed to [Docker Hub](https://hub.docker.com/r/rxseven/onigiri-webapp), allowing you to easily download and run the container-based application anywhere, even on your personal laptop.
+The optimized production version of Onigiri was built, packed into a standardized Docker image, and distributed to [Docker Hub](https://hub.docker.com/r/rxseven/onigiri-webapp), allowing you to easily download and virtually run the container-based application anywhere, even on your personal laptop.
+
+### Overview
+
+There are only five steps to get Onigiri up and running on your local machine:
+
+1. Create a fresh project directory
+2. Copy self-signed certificate from GitHub repository
+3. Add a custom domain name to the local Hosts file
+4. Create Docker Compose configuration file
+5. Run the app on the terminal!
 
 ### Prerequisites
 
