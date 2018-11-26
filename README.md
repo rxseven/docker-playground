@@ -31,9 +31,9 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or on 
 
 **Onigiri** is running on **Heroku** at [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com)
 
-> **App sleeping...** as Onigiri and its API run on Heroku’s free plan, when an app on Heroku has only one web dyno and that dyno doesn’t receive any traffic in 1 hour, the dyno goes to sleep. When someone accesses the app, the dyno manager will automatically wake up the web dyno to run the web process type. **This causes a short delay for this first request**, but subsequent requests will perform normally. For more information, see [App Sleeping on Heroku](https://blog.heroku.com/app_sleeping_on_heroku).
+> **App sleeping...** as Onigiri and its API run on [Heroku’s free plan](https://www.heroku.com/free), when an app on Heroku has only one web dyno and that dyno doesn’t receive any traffic in 1 hour, the dyno goes to sleep. When someone accesses the app, the dyno manager will automatically wake up the web dyno to run the web process type. **This causes a short delay for this first request**, but subsequent requests will perform normally. For more information, see [App Sleeping on Heroku](https://blog.heroku.com/app_sleeping_on_heroku).
 
-> **Daily limit** as Onigiri runs on SendGrind’s free plan, and the free trial is already expired, at which point, **Onigiri is restricted to sending 100 emails per day**. For more information, see [SendGrid Pricing & Plans](https://www.sendgrid.com/pricing/).
+> **Daily limit** as Onigiri runs on [SendGrind’s free plan](https://sendgrid.com/free/), and the free trial is already expired, at which point, **Onigiri is restricted to sending 100 emails per day**. For more information, see [SendGrid Pricing & Plans](https://www.sendgrid.com/pricing/).
 
 > **Login with Facebook** button won’t work for you because the relevant Facebook app is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
 
@@ -117,27 +117,27 @@ onigiri
 └── docker-compose.yml
 ```
 
-**4.** Add a custom domain name to the local Hosts file on your local machine to point the domain name to the IP address of the environment you want to run, which is the `localhost`:
+**4.** Add a custom domain name to the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)) on your local machine to point the domain name to the IP address of the environment you want to run, which is the `localhost`:
 
 ```sh
 sudo nano /etc/hosts
 ```
 
-Enter superuser password, then add the line below at the end of the existing entries:
+Enter [superuser password](https://en.wikipedia.org/wiki/Sudo), then add the line below at the end of the existing entries:
 
 ```
 127.0.0.1 onigiri-webapp.herokuapp.com
 ```
 
-> **Resolving host names with a local Hosts file** – Domain names or IP addresses on a local machine can be resolved by adding entries in the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)). Entries in the local Hosts file have the added advantage that the system can run the application server, even when disconnected from the network.
+> **Resolving host names with a local Hosts file** – Domain names or IP addresses on a local machine can be resolved by adding entries in the local Hosts file. Entries in the local Hosts file have the added advantage that the system can run the application server, even when disconnected from the network.
 
-> Note: if you want to run the live version of Onigiri, you must remove the production domain name from the entries in the local Hosts file. Otherwise, your requests will not be sending over the internet, but will rather be sending to `127.0.0.1` (loopback address) which is your `localhost` instead.
+> Note: if you want to run the live version of Onigiri, you must remove the production domain name from the entries listed in the local Hosts file. Otherwise, your requests will not be sending over the internet, but will rather be sending to `127.0.0.1` (loopback address) which is your `localhost` instead.
 
 ### Run
 
 **1.** Start [Docker](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac).
 
-**2.** Run the app and reverse proxy services:
+**2.** Run the **app** and **proxy** services with Docker Compose command:
 
 ```sh
 docker-compose up
@@ -235,7 +235,7 @@ cd onigiri-webapp
 make setup
 ```
 
-> Note: by running this command, you will be asking for the administrator password to allow the script to add custom domain names associated with self-signed SSL certificates in the local `/etc/hosts` file which requires the superuser privileges.
+> Note: by running this command, you will be asking for the [administrator password](https://en.wikipedia.org/wiki/Sudo) to allow the script to add custom domain names associated with self-signed SSL certificates in the local `/etc/hosts` file which requires the superuser privileges.
 
 > Note: this command will take a few minutes (depending on your hardware) to complete configuring the development environment.
 
@@ -267,7 +267,7 @@ REACT_APP_STRIPE_KEY=<STRIPE_PUBLIC_KEY>
 make start
 ```
 
-This command will build a Docker image for development (if one doesn’t already exist), create network and volume for persisting data, and start the development server ([Webpack DevServer](https://webpack.js.org/configuration/dev-server/)) along with the reverse proxy server ([Nginx](https://github.com/jwilder/nginx-proxy)).
+This command will build a Docker image for development (if one doesn’t already exist), create network and volume for persisting data, and start the **development server** ([Webpack DevServer](https://webpack.js.org/configuration/dev-server/)) along with the **reverse proxy server** ([Nginx](https://github.com/jwilder/nginx-proxy)).
 
 **2.** Open [https://onigiri-webapp.local](https://onigiri-webapp.local), or run the command below to quickly launch the app in the default browser:
 
@@ -339,7 +339,7 @@ In order to access the dependencies installed in **onigiri-webapp_node_modules**
 make shell
 ```
 
-This command will automatically change the directory to the working directory defined in `Dockerfile`, which is `/usr/src/app`.
+This command will automatically change the directory to the working directory defined in [`Dockerfile`](https://github.com/rxseven/onigiri-webapp/blob/master/Dockerfile#L24), which is [`/usr/src/app`](https://github.com/rxseven/onigiri-webapp/blob/master/.env#L49).
 
 **2.** Change directory to `node_modules`:
 
@@ -369,7 +369,7 @@ REACT_APP_GOOGLE_APP_ID=<GOOGLE_APP_ID>
 REACT_APP_STRIPE_KEY=<STRIPE_PUBLIC_KEY>
 ```
 
-**2.** Run the following command, then enter the available options to run tests with Jest and Enzyme:
+**2.** Run the following command, then enter the available options to run tests with [Jest](https://jestjs.io/) and [Enzyme](https://airbnb.io/enzyme/):
 
 ```sh
 make test
@@ -388,7 +388,7 @@ make test
 
 ### Running code linting
 
-Run the following command, then enter the available options to run code (JavaScript or SCSS) linting with ESLint or Stylelint:
+Run the following command, then enter the available options to run code (JavaScript or SCSS) linting with [ESLint](https://eslint.org/) or [Stylelint](https://stylelint.io/):
 
 ```sh
 make lint
@@ -400,7 +400,7 @@ make lint
 
 ### Running static type checking
 
-Run the following command, then enter the available options to catch JavaScript errors with Flow:
+Run the following command, then enter the available options to catch JavaScript errors with [Flow](https://flow.org/):
 
 ```sh
 make typecheck
@@ -415,7 +415,7 @@ make typecheck
 
 ### Formatting code automatically
 
-Run the following command to format your code against Prettier and ESLint rules:
+Run the following command to format your code against [Prettier](https://prettier.io/) and [ESLint](https://eslint.org/docs/rules/) rules:
 
 ```sh
 make format
@@ -429,7 +429,7 @@ Run the command below to build the app for production. It correctly bundles the 
 make build
 ```
 
-> Note: the production build will be created in the local `./build` directory. This directory is listed in [`.gitignore`](https://github.com/rxseven/onigiri-webapp/blob/master/.gitignore#L10) file to ensure that it will not be tracked by the source control.
+> Note: the production build will be created in the local [`./build`](https://facebook.github.io/create-react-app/docs/deployment) directory. This directory is listed in [`.gitignore`](https://github.com/rxseven/onigiri-webapp/blob/master/.gitignore#L10) file to ensure that it will not be tracked by the source control.
 
 ### Analyzing the bundle size
 
@@ -445,7 +445,7 @@ Once the analyzing process has finished and the report was generated, you will a
 
 ### Using Git hooks
 
-**ISSUE**: running scripts on any Git hooks in a Docker container is NOT POSSIBLE at the moment. To utilize this feature you have to rely on **nvm**.
+**ISSUE**: running scripts on any Git hooks in a Docker container is **NOT POSSIBLE** at the moment. To utilize this feature you have to rely on [nvm](https://github.com/creationix/nvm).
 
 ### Resetting the development environment
 
@@ -820,7 +820,7 @@ See [releases](https://github.com/rxseven/onigiri-webapp/releases).
 
 ## Acknowledgements
 
-This project is built and maintained by [Theerawat Pongsupawat](http://www.rxseven.com), frontend developer from Chiang Mai, Thailand.
+This project is maintained by [Theerawat Pongsupawat](http://www.rxseven.com), frontend developer from Chiang Mai, Thailand.
 
 ## Credits
 
