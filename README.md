@@ -1,6 +1,6 @@
 # Docker Playground
 
-[![Build Status](https://travis-ci.org/rxseven/onigiri-webapp.svg?branch=master)](https://travis-ci.org/rxseven/onigiri-webapp) [![Coverage Status](https://coveralls.io/repos/github/rxseven/onigiri-webapp/badge.svg)](https://coveralls.io/github/rxseven/onigiri-webapp) [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/) [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![Latest Release](https://img.shields.io/badge/latest-1.0.0-lightgrey.svg?style=flat 'Latest Release')](https://github.com/rxseven/onigiri-webapp/releases/tag/v1.0.0) [![Build Status](https://travis-ci.org/rxseven/onigiri-webapp.svg?branch=master 'Build Status')](https://travis-ci.org/rxseven/onigiri-webapp) [![Code Coverage](https://coveralls.io/repos/github/rxseven/onigiri-webapp/badge.svg 'Code Coverage')](https://coveralls.io/github/rxseven/onigiri-webapp) [![Docker Hub Pulls](https://img.shields.io/docker/pulls/rxseven/onigiri-webapp.svg)](https://hub.docker.com/r/rxseven/onigiri-webapp 'Docker Hub Pulls') [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/ 'CC BY-NC-ND 4.0') [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0 'AGPL v3')
 
 React & Redux single-page web application for collecting and organizing surveys.
 
@@ -43,8 +43,6 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or web
 
 The optimized production version of Onigiri was built, packed into a standardized Docker image, and distributed to [Docker Hub](https://hub.docker.com/r/rxseven/onigiri-webapp), allowing you to easily download and run the container-based application anywhere, even on your personal laptop.
 
-> Onigiri was built in the **production environment** (see line 5 in [`scripts/build.js`](https://github.com/rxseven/onigiri-webapp/blob/master/scripts/build.js)), this means that all environment variables specified in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production) were used when building the app. Therefore, all API calls will be sending to the production [Onigiri API](https://github.com/rxseven/onigiri-api) running on [https://onigiri-api.herokuapp.com](https://onigiri-api.herokuapp.com).
-
 ### Prerequisites
 
 To run Onigiri on your local machine, you don’t need to clone the entire project from GitHub repository or have the development environment fully configured. The only thing you need is just have [Docker Community Edition](https://store.docker.com/search?type=edition&offering=community) *(v18.06.1\*)* installed.
@@ -57,7 +55,7 @@ To run Onigiri on your local machine, you don’t need to clone the entire proje
 mkdir onigiri && cd onigiri
 ```
 
-**2.** Copy the self-signed certificate and public key for the production domain name from [`src/config/nginx/certs`](https://github.com/rxseven/onigiri-webapp/tree/master/src/config/nginx/certs) and paste into `ssl` sub-directory:
+**2.** Copy the self-signed certificate and its public key for the production domain name from [`src/config/nginx/certs`](https://github.com/rxseven/onigiri-webapp/tree/master/src/config/nginx/certs) and paste into `ssl` sub-directory:
 
 ```
 onigiri
@@ -68,7 +66,7 @@ onigiri
 
 An **SSL certificate** is a digital certificate that authenticates the identity of your app. Once that certificate is installed on your web server, your app has established a secure session with the web server via an HTTPS connections.
 
-In later steps, we will add and configure a domain name in the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)) and use HTTPS with the self-signed certificate above to allow the browser to connect to the app securely.
+In later steps, we will add and configure a custom domain name in the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)) and use HTTPS with the self-signed certificate above to allow the browser to connect to the app securely.
 
 > For development and testing purposes, you can create and sign a certificate yourself with open source tool like [OpenSSL](https://www.openssl.org). **Self-signed certificates** are free and easy to create, but cannot be used for front-end decryption on public sites.
 
@@ -119,7 +117,7 @@ onigiri
 └── docker-compose.yml
 ```
 
-**4.** Add a custom domain name to the Hosts file on your local machine to point the domain name to the IP address of the environment you want to run:
+**4.** Add a custom domain name to the local Hosts file on your local machine to point the domain name to the IP address of the environment you want to run:
 
 ```sh
 sudo nano /etc/hosts
@@ -131,39 +129,43 @@ Enter superuser password, then add the line below at the end of the existing lis
 127.0.0.1 onigiri-webapp.herokuapp.com
 ```
 
-**127.0.0.1** is the loopback Internet protocol (IP) address also referred to as the **localhost**. The address is used to establish an IP connection to the same machine or computer being used by the end-user. For more information, see [127.0.0.1 – What Are its Uses and Why is it Important?](http://www.tech-faq.com/127-0-0-1.html).
+> **Resolving host names with a local Hosts file** – Domain names or IP addresses on a local machine can be resolved by adding entries in the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)). Entries in the local Hosts file have the added advantage that the system can run the application server, even when disconnected from the network.
 
-> **Resolving host names with a Hosts file** – Domain names or IP addresses on a local machine can be resolved by adding entries in the local [Hosts file](https://en.wikipedia.org/wiki/Hosts_(file)). Entries in the local Hosts file have the added advantage that the system can run the application server, even when disconnected from the network.
-
-> Note: if you want to run the live version of Onigiri, you must remove the production domain from the Hosts file. Otherwise, the request will be made to `127.0.0.1` which is your `localhost` instead.
+> Note: if you want to run the live version of Onigiri, you must remove the production domain from the local Hosts file. Otherwise, the request will be made to `127.0.0.1` which is your `localhost` instead.
 
 ### Run
 
 **1.** Start [Docker](https://docs.docker.com/docker-for-mac/install/#install-and-run-docker-for-mac).
 
-**2.** Run the app and reverse proxy server:
+**2.** Run the app and reverse proxy services:
 
 ```sh
 docker-compose up
 ```
 
-This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) image and **onigiri-app** container running an HTTP server based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
+This command will create and start **onigiri-proxy** container running a reverse proxy server based on [jwilder/nginx-proxy](https://hub.docker.com/r/jwilder/nginx-proxy) image and **onigiri-app** container running a web server and Onigiri app based on [rxseven/onigiri-webapp](https://hub.docker.com/r/rxseven/onigiri-webapp).
 
 **3.** Open [https://onigiri-webapp.herokuapp.com](https://onigiri-webapp.herokuapp.com) in the browser.
 
-The reverse proxy server will use a self-signed certificate in `ssl` directory, once the browser has loaded the app, it will display an error message indicating that the app is unsafe (like [this](https://support.google.com/chrome/answer/95617)).
+The reverse proxy server will use a self-signed certificate in `ssl` directory to enable HTTPS connections. Once the browser has connected to the server, it will display an error message indicating that the app is unsafe. Just ignore the warning and allow the browser to access the unsafe site.
+
+Since Onigiri was built in the **production environment** (see line 5 in [`scripts/build.js`](https://github.com/rxseven/onigiri-webapp/blob/master/scripts/build.js)), this means that all environment variables specified in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production) were applied to the build process while the app was building. With this, you don’t need to run its API on your local machine, all API calls will be sending to the production [Onigiri API](https://github.com/rxseven/onigiri-api) running on [https://onigiri-api.herokuapp.com](https://onigiri-api.herokuapp.com).
 
 > Note: the **Login with Facebook** button won’t work for you, the Facebook app specified in [`.env.production`](https://github.com/rxseven/onigiri-webapp/blob/master/.env.production) is sill in [development mode](https://developers.facebook.com/docs/apps/managing-development-cycle), and you don’t have access to it.
 
 ### How this works
 
-By default, Docker exposes container ports to the IP address 0.0.0.0 (this matches all IPv4 addresses on the local machine, including 127.0.0.1).
+When you start Docker, a default bridge network (also called **bridge**) is created automatically, and newly-started containers connect to it. A bridge network allows containers (running on the same Docker daemon host) connected to the same bridge network to communicate directly with each other.
 
 **onigiri-proxy** container sits between **onigiri-app** container and the clients (e.g. web browser) in order to **provide SSL termination functionality**. Inside the container, the **reverse proxy server** is listening on port 443 and publishes port 443 to the host system’s interfaces, the port exposed on the outside of the container (where clients connect). This port is accessible on the host (127.0.0.1:443) and the port is available to any client that can reach the host, e.g. [from a mobile device on the same network](#accessing-localhost-from-any-device-on-the-same-network) (192.168.1.24:443).
 
-**onigiri-app** container runs a **web server** serving static Onigiri app to the client, in response to their requests. This is the container being proxied by **onigiri-proxy** container, it must expose the port to be proxied. Inside the container, the **web server** is listening on [port 80](https://github.com/rxseven/onigiri-webapp/blob/master/Dockerfile.production#L65) (by default, Nginx HTTP server listens for incoming connection and binds on port 80), but it does not actually publish the port to the outside world, because we don’t want this container to be accessible on the host directly.
+**onigiri-app** container runs a **web server** serving Onigiri app to the client, in response to their requests. This is the container being proxied by **onigiri-proxy** container, it must expose the port to be proxied. Inside the container, the **web server** is listening on [port 80](https://github.com/rxseven/onigiri-webapp/blob/master/Dockerfile.production#L65) (by default, Nginx HTTP server listens for incoming connection and binds on port 80), but it does not actually publish the port to the outside world, because we don’t want this container to be accessible on the host directly (by default the outside world cannot connect to containers).
 
-The browser uses the entry in the local Hosts file to override the IP-address-to-URL mapping returned by a DNS server. HTTPS connections from the browser goes to the reverse proxy server on port 443 (HTTPS). The reverse proxy server then handles the SSL encryption/decryption (so that traffic between the reverse proxy server and web server is in HTTP) and proxies the incoming requests from the client towards the web server which proxies the requests to the Onigiri app running on port 80 (HTTP).
+The browser uses the entry in the local Hosts file to override the IP-address-to-URL mapping returned by a DNS server. HTTPS connections from the browser goes to the reverse proxy server on port 443 (HTTPS). The reverse proxy server then [handles the SSL encryption/decryption](https://github.com/jwilder/nginx-proxy#ssl-support) (so that traffic between the reverse proxy server and the web server is in HTTP) and proxies the incoming requests from the client towards the web server [serving static content](https://docs.nginx.com/nginx/admin-guide/web-server/serving-static-content/) (Onigiri app) which is listening for incoming connections from other containers on the same bridge network on port 80.
+
+> By default, Docker exposes container ports to the IP address 0.0.0.0 (this matches all IPv4 addresses on the local machine, including 127.0.0.1).
+
+> **127.0.0.1** is the loopback Internet protocol (IP) address also referred to as the **localhost**. The address is used to establish an IP connection to the same machine or computer being used by the end-user. For more information, see [127.0.0.1 – What Are its Uses and Why is it Important?](http://www.tech-faq.com/127-0-0-1.html).
 
 > A **web server** or **HTTP sever** is a server that serve the pieces of information that form web pages to users, in response to their requests.
 
