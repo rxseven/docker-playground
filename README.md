@@ -213,14 +213,14 @@ Below is the list of tools and services required for developing and running Onig
 
 #### Approach 2 : Local development environment with nvm
 
-Alternatively, if you would prefer not to use Docker, below is the list of tools and services required for developing and running the containerized app:
+Alternatively, if you would prefer not to use Docker, below is the list of tools and services required for developing and running Onigiri:
 
 - [nvm](https://github.com/creationix/nvm/releases/tag/v0.33.5) *(v0.33.5\*)* and [Node.js](https://nodejs.org/en/blog/release/v8.9.3/) *(v8.9.3\*)*
 - [npm](https://github.com/npm/npm/releases/tag/v5.5.1) *(v5.5.1\*)* or [Yarn](https://github.com/yarnpkg/yarn/releases/tag/v1.3.2) *(v1.3.2\*)*
 
 ### Setup
 
-**1.** Clone Onigiri Webapp from GitHub and change the current working directory:
+**1.** Clone Onigiri Webapp from GitHub repository and change the current working directory:
 
 ```sh
 git clone https://github.com/rxseven/onigiri-webapp.git
@@ -235,7 +235,7 @@ cd onigiri-webapp
 make setup
 ```
 
-> Note: by running this command, you will be asking for the administrator password to allow the script to add custom host names for a self-signed SSL certificate in `/etc/hosts` file which requires the superuser privileges.
+> Note: by running this command, you will be asking for the administrator password to allow the script to add custom domain names associated with self-signed SSL certificates in the local `/etc/hosts` file which requires the superuser privileges.
 
 > Note: this command will take a few minutes (depending on your hardware) to complete configuring the development environment.
 
@@ -267,7 +267,7 @@ REACT_APP_STRIPE_KEY=<STRIPE_PUBLIC_KEY>
 make start
 ```
 
-This command will build a Docker image for development (if one doesn’t already exist), create network and volume for persisting data, and start the development server (Webpack DevServer) along with reverse proxy server (Nginx).
+This command will build a Docker image for development (if one doesn’t already exist), create network and volume for persisting data, and start the development server ([Webpack DevServer](https://webpack.js.org/configuration/dev-server/)) along with the reverse proxy server ([Nginx](https://github.com/jwilder/nginx-proxy)).
 
 **2.** Open [https://onigiri-webapp.local](https://onigiri-webapp.local), or run the command below to quickly launch the app in the default browser:
 
@@ -304,14 +304,14 @@ make shell
 
 ### Installing & Uninstalling npm dependencies
 
-Run one of the following commands, then enter a package name to manage dependencies with npm and Yarn:
+Run one of the following commands, then enter a package name to add or remove dependencies with npm or Yarn:
 
 ```sh
 make install
 make uninstall
 ```
 
-> Note: these commands will (un)install a package (and any packages that it depends on) in the persistent storage (volume) lather than the local `./node_modules` directory on the host’s file system.
+> Note: these commands will (un)install a package (and any packages that it depends on) in the persistent storage (volume) not in the local `./node_modules` directory on the host’s file system.
 
 ### Installing the dependencies listed within package.json
 
@@ -323,7 +323,7 @@ make update
 
 ### Accessing installed dependencies
 
-When the development container is being created, Docker creates a volume named `onigiri-webapp_node_modules` for persisting dependencies and binds to `/usr/src/app/node_modules` directory inside `onigiri-webapp-local` container. To verify that the volume exists, run the command below:
+When the development container is being created, Docker creates a volume named **onigiri-webapp\_node\_modules** for persisting dependencies and binds to `/usr/src/app/node_modules` directory inside **onigiri-webapp-local** container. To verify that the volume exists, run the command below:
 
 ```sh
 docker volume ls
@@ -331,7 +331,7 @@ docker volume ls
 
 This command will list all volumes on your virtual machine.
 
-In order to access the dependencies installed in `onigiri-webapp_node_modules` volume, you can access them via Unix shell in a running container:
+In order to access the dependencies installed in **onigiri-webapp_node_modules** volume, you can access them via Unix shell in a running container:
 
 **1.** Run Unix shell in a running container:
 
@@ -382,13 +382,13 @@ make test
 
 > Note: by default, when you run test in *watch mode*, Jest will only run the tests related to files changed (modified) since the last commit. This is an optimization designed to make your tests run fast regardless of how many tests in the project you have. However, you can also press `a` in the watch mode to force Jest to run all tests.
 
-> Note: code coverage reports will be generated in the local `./coverage` directory. This directory is listed in `.gitignore` file to ensure that it will not be tracked by the source control.
+> Note: code coverage reports will be generated in the local `./coverage` directory. This directory is listed in [`.gitignore`](https://github.com/rxseven/onigiri-webapp/blob/master/.gitignore#L7) file to ensure that it will not be tracked by the source control.
 
 > Tip: press `control + c` to stop the running tests.
 
 ### Running code linting
 
-Run the following command, then enter the available options to run code (JavaScript or SCSS) linting with ESLint and/or Stylelint:
+Run the following command, then enter the available options to run code (JavaScript or SCSS) linting with ESLint or Stylelint:
 
 ```sh
 make lint
@@ -409,9 +409,9 @@ make typecheck
 1. Run a default check
 2. Run a full check and print the results
 3. Run a focus check
-4. Install and update the library definitions (libdef)
+4. Install and update the library definitions ([libdef](https://flow.org/en/docs/libdefs/))
 
-> Note: the library definitions will be installed in the local `./flow-typed` directory and must be added to the source control.
+> Note: the library definitions will be installed in the local [`./flow-typed`](https://github.com/rxseven/onigiri-webapp/tree/master/flow-typed) directory and must be tracked by the source control.
 
 ### Formatting code automatically
 
@@ -429,7 +429,7 @@ Run the command below to build the app for production. It correctly bundles the 
 make build
 ```
 
-> Note: the production build will be created in the local `./build` directory. This directory is listed in `.gitignore` file to ensure that it will not be tracked by the source control.
+> Note: the production build will be created in the local `./build` directory. This directory is listed in [`.gitignore`](https://github.com/rxseven/onigiri-webapp/blob/master/.gitignore#L10) file to ensure that it will not be tracked by the source control.
 
 ### Analyzing the bundle size
 
@@ -439,7 +439,7 @@ To analyze and debug JavaScript and Sass code bloat through source maps, run the
 make analyze
 ```
 
-Once the analyzing process has finished and the report was generated, you will automatically be redirected to the browser displaying the treemap visualization of how the space is used in your minified bundle.
+Once the analyzing process has finished and the report was generated, you will automatically be redirected to the browser displaying the [treemap visualization](http://evmar.github.io/webtreemap/) of how the space is used in your minified bundle.
 
 > Note: the production build and the treemap will be created/generated in the local `./build` and `./tmp` directories respectively.
 
@@ -473,17 +473,17 @@ This command will remove containers, the default network, and volumes attached t
 make reset
 ```
 
-This command will remove containers, the default network, volumes attached to containers, and local images (including development, production, and intermediate ones).
+This command will remove containers, the default network, volumes attached to containers, local images (including development, production, and intermediate ones), artifacts, and temporary files in `./tmp` directory.
 
 ### Accessing localhost from any device on the same network
 
-While you are developing the project or running the production build locally, you can open the app running inside a Docker container from any device on the same local network through the IP address of the host machine.
+While you are developing the project or running the production build locally, you can open the app running inside Docker containers from any device on the same local network through the IP address of the host machine.
 
-**1.** Make sure that all devices are connecting to the same Wi-Fi router in your local network.
+**1.** Make sure that all devices are connected to the same router in your local network.
 
 **2.** [Start the development server](#starting-the-development-servers) or [run the production build](#running-the-production-build-locally).
 
-**3.** Open another Terminal window and get the IP address of the host machine by running the command below:
+**3.** Open another Terminal window and print the IP address of the host machine:
 
 ```sh
 ifconfig
@@ -495,15 +495,15 @@ The output may look like this:
 inet 192.168.1.10 netmask 0xffffff00 broadcast 192.168.1.255
 ```
 
-The value of `inet` is what we need.
+The value of `inet` is what you need.
 
 **4.** On a mobile device or any other computer, open `https://192.168.0.10` in the browser.
 
-> Note: this will only be available as long as you have the app running on the host.
+> Note: this connection will only be available as long as you have the app running in a container on the host.
 
 ### Running the Production Build Locally
 
-**1.** Run the following command to create an optimized production build and start a web server serving the app inside a container:
+**1.** Run the following command to create an optimized production build and start the web server serving the app inside a container:
 
 ```sh
 make preview
@@ -527,7 +527,7 @@ make open
 
 Deployment of the code can be a long path, and where it is ultimately deployed can be a very different platform, environment, and configuration from the local development environment where the app was built. **Containers can reduce the friction in this process.**
 
-This section will demonstrate how to setup the Continuous Deployment (CD) workflow to deploy a single Docker container to AWS Elastic Beanstalk using Travis CI.
+This section will demonstrate how to setup the Continuous Deployment (CD) workflow to deploy a single Docker container to AWS Elastic Beanstalk using [Travis CI](https://travis-ci.org).
 
 [AWS Elastic Beanstalk](https://aws.amazon.com/elasticbeanstalk/) is an easy-to-use service offered from [Amazon Web Services](https://aws.amazon.com) for deploying and scaling web applications and services. You can simply upload your code and Elastic Beanstalk automatically handles the deployment, from capacity provisioning, load balancing, auto-scaling to application health monitoring.
 
@@ -568,7 +568,7 @@ Once new Elastic Beanstalk environment was created, Amazon S3 will automatically
 
 #### Step 2/3 : Configuration
 
-**1.** Create `Dockkerrun.aws.json` file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk:
+**1.** Create [`Dockkerrun.aws.json`](https://github.com/rxseven/onigiri-webapp/blob/master/Dockerrun.aws.json) file at the root of the project directory to deploy a Docker container from an existing Docker image to Elastic Beanstalk:
 
 ```sh
 touch Dockkerrun.aws.json
@@ -594,7 +594,7 @@ A `Dockerrun.aws.json` file describes how to deploy a Docker container as an Ela
 }
 ```
 
-Replace `<TAG>` with the same value of `RELEASE_VERSION` specified in `.env` file.
+Replace [`<TAG>`](https://github.com/rxseven/onigiri-webapp/blob/master/Dockerrun.aws.json#L4) with the same value of `RELEASE_VERSION` specified in [`.env`](https://github.com/rxseven/onigiri-webapp/blob/master/.env#L3) file.
 
 > Note: for more information about single container Docker configuration, see [Single Container Docker Configuration](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/create_deploy_docker_image.html).
 
@@ -613,7 +613,7 @@ Those keys can be obtained from the AWS IAM console.
 
 > Note: for more information on defining variables in Travis CI’s repository settings, see [Environment Variables](https://docs.travis-ci.com/user/environment-variables#defining-variables-in-repository-settings).
 
-**2.** Open `.travis.yml` and add the following code under `deploy` section:
+**2.** Open [`.travis.yml`](https://github.com/rxseven/onigiri-webapp/blob/master/.travis.yml#L65) and add the following code under `deploy` section:
 
 ```yml
 # Deploy to AWS Elastic Beanstalk
@@ -657,7 +657,7 @@ Below is the list of parameters obtained from your Elastic Beanstalk and Amazon 
 
 ## Available Scripts
 
-Onigiri contains a lengthy `Makefile`, to automate setup, installation, run, build, test, and deployment.
+Onigiri contains a lengthy [`Makefile`](https://github.com/rxseven/onigiri-webapp/blob/master/Makefile), to automate setup, installation, run, build, test, and deployment.
 
 Most of the target names (script or task names) are standardized e.g. `make start`, `make install`, but some deserve explanation. The more we add fine-grained Make targets, the more we need to describe what they do in text form.
 
@@ -667,7 +667,7 @@ Run the command below to print the usage and list all available scripts:
 make
 ```
 
-> Note: if you are not using Docker, all npm scripts are listed under `scripts` section in `package.json` file.
+> Note: if you are not using Docker, all npm scripts are listed under `scripts` section in [`package.json`](https://github.com/rxseven/onigiri-webapp/blob/master/package.json#L18) file.
 
 [Back to top](#table-of-contents)
 
@@ -675,7 +675,7 @@ make
 
 ### Authentication
 
-Password-base and OAuth *(via third-party services, [Facebook](https://developers.facebook.com/products/account-creation) & [Google](https://cloud.google.com/))*
+Password-based and OAuth *(via third-party services, [Facebook](https://developers.facebook.com/products/account-creation) & [Google](https://cloud.google.com/))*
 
 - Sign-up *(register)*
 - Sign-in
@@ -713,7 +713,7 @@ Password-base and OAuth *(via third-party services, [Facebook](https://developer
 
 ## Technology Stack
 
-Onigiri is built with [MERN](https://www.mongodb.com/blog/post/the-modern-application-stack-part-1-introducing-the-mean-stack) stack, one of the most popular stack of technologies for building a modern single-page app.
+Onigiri was built with [MERN](https://www.mongodb.com/blog/post/the-modern-application-stack-part-1-introducing-the-mean-stack) stack, one of the most popular stack of technologies for building a modern single-page app.
 
 ### Web application
 
@@ -806,7 +806,7 @@ React & Redux starter kit with best practices bootstrapped with [Create React Ap
 
 ## Development Milestones
 
-- Setup Makefile *(in progress)*.
+- Add automated targets (scripts) to Makefile *(in progress)*.
 - Refactor code with functional programming principles *(in progress)*.
 - Implement components in isolation with [Storybook](https://storybook.js.org).
 - Optimize the app’s performance.
