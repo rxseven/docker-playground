@@ -13,12 +13,12 @@ With **Onigiri**, you can create and analyze surveys right in your pocket or on 
 - [Live Demo](#live-demo)
 - [Running Onigiri Locally](#running-onigiri-locally)
 - [Configuring the Development Environment](#configuring-the-development-environment)
-- [Deploying a containerized web application](#deploying-a-containerized-web-application)
+- [Deploying a Containerized Web Application](#deploying-a-containerized-web-application)
 - [Available Scripts](#available-scripts)
 - [Features](#features)
 - [Technology Stack](#technology-stack)
 - [Development Workflow](#development-workflow)
-- [Third-party services](#third-party-services)
+- [Third-party Services](#third-party-services)
 - [Browser Support](#browser-support)
 - [Related Projects](#related-projects)
 - [Development Milestones](#development-milestones)
@@ -541,7 +541,7 @@ make open
 
 [Back to top](#table-of-contents)
 
-## Deploying a containerized web application
+## Deploying a Containerized Web Application
 
 Deployment of the code can be a long path, and where it is ultimately deployed can be a very different platform, environment, and configuration from the local development environment where the app was built. **Containers can reduce the friction in this process.**
 
@@ -782,7 +782,7 @@ Onigiri was built with [MERN](https://www.mongodb.com/blog/post/the-modern-appli
 
 [Back to top](#table-of-contents)
 
-## Third-party services
+## Third-party Services
 
 ### Infrastructure
 
