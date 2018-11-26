@@ -267,7 +267,7 @@ REACT_APP_STRIPE_KEY=<STRIPE_PUBLIC_KEY>
 make start
 ```
 
-This command will build a Docker image for development (if one doesn’t already exist), create network and volume for persisting data, and start the **development server** ([Webpack DevServer](https://webpack.js.org/configuration/dev-server/)) along with the **reverse proxy server** ([Nginx](https://github.com/jwilder/nginx-proxy)).
+This command will build **local/onigiri-webapp:latest** image for development (if one doesn’t already exist), create **onigiri-webapp\_default** network and **onigiri-webapp\_node\_modules** volume for persisting npm dependencies, create and start **onigiri-webapp-local** running the **development server** ([Webpack DevServer](https://webpack.js.org/configuration/dev-server/)) along with **onigiri-webapp-local-proxy** running the **reverse proxy server** ([Nginx](https://github.com/jwilder/nginx-proxy)).
 
 **2.** Open [https://onigiri-webapp.local](https://onigiri-webapp.local), or run the command below to quickly launch the app in the default browser:
 
