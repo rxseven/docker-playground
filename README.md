@@ -4,7 +4,12 @@ Container-based environments for React with Docker.
 
 ## Table of Contents
 
+- [Acknowledgements](#acknowledgements)
 - [Licenses](#licenses)
+
+## Acknowledgements
+
+This repository is maintained by [Theerawat Pongsupawat](http://www.rxseven.com), frontend developer from Chiang Mai, Thailand.
 
 ## Licenses
 
