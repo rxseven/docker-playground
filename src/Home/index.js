@@ -3,6 +3,7 @@ import React from "react";
 const Home = () => (
   <div>
     <h1>Docker Playground for React</h1>
+    <p>Container-based environments for React with Docker.</p>
     <p>
       Lorem Ipsum is simply dummy text of the printing and typesetting industry.
       Lorem Ipsum has been the industry's standard dummy text ever since the
@@ -14,8 +15,6 @@ const Home = () => (
       publishing software like Aldus PageMaker including versions of Lorem
       Ipsum.
     </p>
-    <p>Line 2 - Content</p>
-    <p>Line 3 - Content</p>
   </div>
 );
 
