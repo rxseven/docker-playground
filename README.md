@@ -6,6 +6,7 @@ Container-based environments for React with Docker.
 
 - [Changelog](#changelog)
 - [Acknowledgements](#acknowledgements)
+- [Credits](#credits)
 - [Licenses](#licenses)
 
 ## Changelog
@@ -15,6 +16,10 @@ See [releases](https://github.com/rxseven/playground-docker/releases).
 ## Acknowledgements
 
 This repository is maintained by [Theerawat Pongsupawat](http://www.rxseven.com), frontend developer from Chiang Mai, Thailand.
+
+## Credits
+
+This project was bootstrapped with [Create React App](https://github.com/facebookincubator/create-react-app) and [Setup React App](https://github.com/rxseven/setup-react-app).
 
 ## Licenses
 
