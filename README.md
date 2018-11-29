@@ -1,4 +1,4 @@
-# Docker Playground
+# Docker Playground for React
 
 [![Build Status](https://travis-ci.org/rxseven/playground-docker.svg?branch=master 'Build Status')](https://travis-ci.org/rxseven/playground-docker) [![Code Coverage](https://coveralls.io/repos/github/rxseven/playground-docker/badge.svg 'Code Coverage')](https://coveralls.io/github/rxseven/playground-docker) [![Docker Hub Pulls](https://img.shields.io/docker/pulls/rxseven/playground.svg)](https://hub.docker.com/r/rxseven/playground 'Docker Hub Pulls') [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/ 'CC BY-NC-ND 4.0') [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0 'AGPL v3')
 
