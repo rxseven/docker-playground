@@ -4,8 +4,13 @@ Container-based environments for React with Docker.
 
 ## Table of Contents
 
+- [Changelog](#changelog)
 - [Acknowledgements](#acknowledgements)
 - [Licenses](#licenses)
+
+## Changelog
+
+See [releases](https://github.com/rxseven/playground-docker/releases).
 
 ## Acknowledgements
 
