@@ -12,7 +12,7 @@ const App = () => (
     <React.Fragment>
       <nav>
         <Link to="/">Home</Link> | <Link to="/about">About</Link> |{" "}
-        <Link to="/404">404</Link>
+        <Link to="/404">404</Link> | <a href="https://github.com/rxseven/playground-docker" rel="noopener noreferrer" target="_blank">View on GitHub</a>
       </nav>
       <main>
         <Switch>
