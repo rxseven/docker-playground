@@ -12,7 +12,7 @@ const App = () => (
     <React.Fragment>
       <nav>
         <Link to="/">Home</Link> | <Link to="/about">About</Link> |{" "}
-        <Link to="/404">404</Link>
+        <Link to="/404">404</Link> | <a href="https://github.com/rxseven/playground-docker" rel="noopener noreferrer" target="_blank">View on GitHub</a>
       </nav>
       <main>
         <Switch>
@@ -21,7 +21,7 @@ const App = () => (
           <Route component={NotFound} />
         </Switch>
       </main>
-      <footer>Footer - v0.0.33 | Docker Playground</footer>
+      <footer><code>v0.0.34</code></footer>
     </React.Fragment>
   </Router>
 );
